@@ -1,0 +1,19 @@
+form {
+  display: flex;
+  flex-direction: column;
+
+
+}
+
+.drop-box {
+  width: 50%;
+  margin: auto;
+  text-align: center;
+  padding: 2rem;
+  border: 2px solid grey;
+  border-radius: 16px;
+}
+
+#transcript-input {
+  display: none;
+}
