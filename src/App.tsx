@@ -1,68 +1,62 @@
-import Markdown from "react-markdown";
 import "./App.css";
 
 import { useState, useEffect, useRef } from "react";
 
-import { localPathToBase64 } from "./utils/fileUtils";
-import { extractTextFromImage } from "./services/groqService";
-
-import { Table } from "@mantine/core";
-
-import testImage from "./assets/image.png";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-
-
+import { ArrowRight } from "lucide-react";
+import { AppShell, Button, Container, Title, Text, Stack, SimpleGrid, Card, Paper } from "@mantine/core";
 
 function App() {
-  const fetchedRef = useRef(false);
-
-  const [result, updateResult] = useState('');
-
-  useEffect(() => {
-    if (fetchedRef.current) return;
-    fetchedRef.current = true;
-    async function fetchResult() {
-      try {
-
-      
-        const base64String = await localPathToBase64(testImage);
-        const textOutput = await extractTextFromImage(base64String);
-
-        updateResult(textOutput);
-    
-      } catch (e) {
-        console.log(e);
-        updateResult("Loading response...");
-      }
-    }
-
-    fetchResult();
-  }, [])
 
   return (
-    <>
-      <h1>Evalua</h1>
-      <p>The tool for schools across the United States to evaluate international students' transcripts to U.S. schooling system standards.</p>
+    <AppShell>
+      <Container size="xl">
+        <Stack>
+          <Title>Evalua</Title>
+          <Text>The tool for schools across the United States to evaluate international students' transcripts to U.S. schooling system standards.</Text>
 
-      <button>Get started </button>
+          <Button>Get started <ArrowRight /></Button>
 
-      <form>
-        <label className="drop-box" htmlFor="transcript-input">
-          Drag and drop your transcript or click to select a file!
-        </label>
-        <input id="transcript-input" name="transcript-input" type="file" />
-      </form>
+        <SimpleGrid cols={2}>
+          <Card>
+            <Title order={2}>
+                Seamless upload processing
+            </Title>
+            <Text>
+              Evalua lets you upload all kinds of files for transcripts: Word documents, PDFs, and even images with OCR powered translation.
+            </Text>
+            
+          </Card>
+          <Card>
+
+          </Card>
+
+          <Card></Card>
+          <Card>
+            <Title order={2}>
+              AI-powered transcript interpretation and analysis
+            </Title>
+            <Text>
+              Evalua will interpet your transcript, and with our powerful AI tools, award correct credit based on both your local and the international curricula associated with it.
+            </Text>
+          </Card>
+        </SimpleGrid>
+          {/* <form>
+            <label className="drop-box" htmlFor="transcript-input">
+              Drag and drop your transcript or click to select a file!
+            </label>
+            <input id="transcript-input" name="transcript-input" type="file" />
+          </form> */}
 
 
 
 
-      {/* <h1>Ai response:</h1>
-      <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-        {result}
-      </Markdown> */}
-      
-    </>
+          {/* <h1>Ai response:</h1>
+          <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+            {result}
+          </Markdown> */}
+        </Stack>
+      </Container>
+    </AppShell>
   )
 }
 
