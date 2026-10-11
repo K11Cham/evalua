@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 
 import { ArrowRight } from "lucide-react";
 import { AppShell, Button, Container, Title, Text, Stack, SimpleGrid, Card, Paper } from "@mantine/core";
+import ClaudeTestComponent from "./ClaudeTest";
 
 function App() {
 
@@ -15,6 +16,9 @@ function App() {
           <Text>The tool for schools across the United States to evaluate international students' transcripts to U.S. schooling system standards.</Text>
 
           <Button>Get started <ArrowRight /></Button>
+
+
+        <ClaudeTestComponent />
 
         <SimpleGrid cols={2}>
           <Card>
