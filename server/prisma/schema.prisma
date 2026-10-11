@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String            @id @default(uuid())
+  email             String            @unique
+  passwordHash      String
+  role              String            @default("user")
+  schoolDistrictId  String?           @map("school_district_id")
+  schoolDistrict    SchoolDistrict?   @relation(fields: [schoolDistrictId], references: [id])
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  documents         Document[]
+  processingJobs    ProcessingJob[]
+
+  @@map("users")
+}
+
+model SchoolDistrict {
+  id                String             @id @default(uuid())
+  name              String
+  state             String
+  code              String             @unique
+  requirements      Json
+  subjectCategories Json
+  creditDefinitions Json
+  transferPolicies  Json?
+  effectiveDate     DateTime           @map("effective_date")
+  sourceUrl         String?            @map("source_url")
+  isActive          Boolean            @default(true) @map("is_active")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+
+  users             User[]
+  districtMatchResults DistrictMatchResult[]
+
+  @@map("school_districts")
+}
+
+model Document {
+  id                String   @id @default(uuid())
+  userId            String   @map("user_id")
+  user              User     @relation(fields: [userId], references: [id])
+  originalFilename  String   @map("original_filename")
+  storagePath       String   @map("storage_path")
+  fileType          String   @map("file_type")
+  fileSizeBytes     Int      @map("file_size_bytes")
+  mimeType          String?  @map("mime_type")
+  pageCount         Int?
+  languageDetected  String?  @map("language_detected")
+  extractedText     String?  @map("extracted_text")
+  ocrConfidence     Decimal? @map("ocr_confidence") @db.Decimal(3, 2)
+  checksum          String
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  processingJobs    ProcessingJob[]
+  standardizedTranscripts StandardizedTranscript[]
+
+  @@map("documents")
+}
+
+model ProcessingJob {
+  id                String   @id @default(uuid())
+  userId            String?  @map("user_id")
+  user              User?    @relation(fields: [userId], references: [id])
+  documentId        String   @map("document_id")
+  document          Document @relation(fields: [documentId], references: [id])
+  status            String   @default("pending")
+  currentStage      String?  @map("current_stage")
+  errorMessage      String?  @map("error_message")
+  retryCount        Int      @default(0) @map("retry_count")
+  maxRetries        Int      @default(3) @map("max_retries")
+  startedAt         DateTime? @map("started_at")
+  completedAt       DateTime? @map("completed_at")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  standardizedTranscript StandardizedTranscript?
+  districtMatchResult  DistrictMatchResult?
+
+  @@map("processing_jobs")
+}
+
+model StandardizedTranscript {
+  id                   String   @id @default(uuid())
+  processingJobId      String   @unique @map("processing_job_id")
+  processingJob        ProcessingJob @relation(fields: [processingJobId], references: [id])
+  documentId           String   @map("document_id")
+  document             Document @relation(fields: [documentId], references: [id])
+  studentInfo          Json     @map("student_info")
+  institutionInfo      Json     @map("institution_info")
+  educationalSystemId  String?  @map("educational_system_id")
+  curriculumId         String?  @map("curriculum_id")
+  curriculumMatchConfidence String @map("curriculum_match_confidence")
+  academicPeriods      Json     @map("academic_periods")
+  validationStatus     String   @default("pending") @map("validation_status")
+  validationErrors     Json?    @map("validation_errors")
+  confidenceScore      Decimal? @map("confidence_score") @db.Decimal(3, 2)
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  calculatedCredits     CalculatedCredit[]
+
+  @@map("standardized_transcripts")
+}
+
+model CalculatedCredit {
+  id                   String   @id @default(uuid())
+  transcriptId         String   @map("transcript_id")
+  transcript           StandardizedTranscript @relation(fields: [transcriptId], references: [id])
+  courseId             String?  @map("course_id")
+  periodId             String   @map("period_id")
+  courseName           String   @map("course_name")
+  creditsTranscript     Decimal? @map("credits_transcript") @db.Decimal(5, 2)
+  creditsCurriculum    Decimal? @map("credits_curriculum") @db.Decimal(5, 2)
+  creditsCalculated     Decimal  @map("credits_calculated") @db.Decimal(5, 2)
+  creditUnit           String   @map("credit_unit")
+  sourceType           String   @map("source_type")
+  sourceReference      Json     @map("source_reference")
+  conversionMethod     String?  @map("conversion_method")
+  calculationNotes     String?  @map("calculation_notes")
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  @@map("calculated_credits")
+}
+
+model DistrictMatchResult {
+  id                   String   @id @default(uuid())
+  processingJobId      String   @unique @map("processing_job_id")
+  processingJob        ProcessingJob @relation(fields: [processingJobId], references: [id])
+  transcriptId         String   @map("transcript_id")
+  schoolDistrictId     String   @map("school_district_id")
+  schoolDistrict       SchoolDistrict @relation(fields: [schoolDistrictId], references: [id])
+  matchSummary         Json     @map("match_summary")
+  subjectMatches       Json     @map("subject_matches")
+  satisfiedRequirements Json     @map("satisfied_requirements")
+  outstandingRequirements Json   @map("outstanding_requirements")
+  requiresReview       Json?    @map("requires_review")
+  matchConfidence      Decimal? @map("match_confidence") @db.Decimal(3, 2)
+  provisional          Boolean  @default(true)
+  notes                String?
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  @@map("district_match_results")
+}
