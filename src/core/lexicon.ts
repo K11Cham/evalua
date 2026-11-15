@@ -180,14 +180,19 @@ const PERIOD_RES: RegExp[] = [
   /\b[1-6]\s*[ªºao°]\.?\s*(série|serie|ano|año|semestre|grado|bimestre|trimestre)\b/iu,
   /\b(qualifikationsphase|einführungsphase|kursstufe|oberstufe)\b/iu,
   /\b(first|second|third|fourth|1st|2nd|3rd|4th)\s+(year|semester|term|quarter)\b/iu,
-  /\b(freshman|sophomore|junior|senior)\b/iu,
+  /\b(freshman|sophomore|junior|senior)\s+(year|class)\b/iu,
   /الصف\s+\S+|कक्षा\s*\S+|\d+\s*класс/u,
 ];
 const YEAR_RE = /\b((?:19|20)\d{2})\s*[-–—/]\s*((?:19|20)?\d{2})\b/;
 
+/** Labels that describe the student rather than the report ("Class on Leaving", "Class at entry"). */
+export const STUDENT_CLASS = /leaving|left|entry|enrol|admitted|admission|last|previous|current|present|graduat|complet|al egresar|de ingreso|à la sortie|d'entrée|abgang|eintritt|на момент|عند/iu;
+
 export function isPeriodLabel(text: string): boolean {
   const s = asciiDigits(text);
   if (PERIOD_RES.some((r) => r.test(s))) return true;
+  // A term or semester in any language ("2e trimestre", "Học kỳ II", "第二学期").
+  if (s.length <= 80 && detectTerm(s)) return true;
   // OCR may drop or change diacritics ("Lóp 11" for "Lớp 11").
   const bare = stripDiacritics(s);
   return bare !== s && PERIOD_RES.some((r) => r.test(bare));
@@ -206,17 +211,89 @@ export function academicYear(text: string): string | undefined {
   return single ? single[1] : undefined;
 }
 
-export function termOf(text: string): string | undefined {
-  const s = asciiDigits(text).toLowerCase();
+export type TermUnit = 'term' | 'semester' | 'trimester' | 'quarter';
+
+export interface TermMatch {
+  /** Position within the school year, 1-based (the 3rd semester of a programme is the 1st of its 2nd year). */
+  index: number;
+  /** Position as printed (the 3rd semester stays 3). */
+  ordinal: number;
+  unit: TermUnit;
+  /** The words that matched, as printed. */
+  text: string;
+}
+
+/** Parts per school year for each unit, used to turn a programme-wide ordinal into a position within a year. */
+export const PER_YEAR: Record<TermUnit, number> = { term: 3, semester: 2, trimester: 3, quarter: 4 };
+
+// Words for "term", "semester" and so on, in the languages evalua reads. Order matters: longer words first.
+const UNIT_WORDS: [string, TermUnit][] = [
+  ['cuatrimestre', 'trimester'], ['trimestre', 'trimester'], ['trimester', 'trimester'],
+  ['semester', 'semester'], ['semestre', 'semester'], ['sem', 'semester'], ['hk', 'semester'], ['halbjahr', 'semester'], ['học kỳ', 'semester'], ['hoc ky', 'semester'], ['học kì', 'semester'],
+  ['학기', 'semester'], ['学期', 'semester'], ['полугодие', 'semester'], ['семестр', 'semester'], ['الفصل الدراسي', 'semester'], ['الترم', 'semester'],
+  ['quarter', 'quarter'], ['bimestre', 'quarter'], ['четверть', 'quarter'], ['quý', 'quarter'],
+  ['termly', 'term'], ['term', 'term'], ['terminal', 'term'],
+];
+const ORDINALS: Record<string, number> = {
+  first: 1, '1st': 1, second: 2, '2nd': 2, third: 3, '3rd': 3, fourth: 4, '4th': 4, fifth: 5, '5th': 5, sixth: 6, '6th': 6,
+  primer: 1, primero: 1, primera: 1, segundo: 2, segunda: 2, tercer: 3, tercero: 3, tercera: 3, cuarto: 4, cuarta: 4, quinto: 5, quinta: 5, sexto: 6, sexta: 6,
+  premier: 1, première: 1, premiere: 1, '1er': 1, '1re': 1, '1ère': 1, deuxième: 2, deuxieme: 2, '2e': 2, '2ème': 2, '2eme': 2, troisième: 3, troisieme: 3, '3e': 3, '3ème': 3, '3eme': 3, quatrième: 4, '4e': 4,
+  primeiro: 1, terceiro: 3, quarto: 4,
+  erste: 1, erstes: 1, ersten: 1, zweite: 2, zweites: 2, zweiten: 2, dritte: 3, drittes: 3,
+  'первое': 1, 'первая': 1, 'второе': 2, 'вторая': 2, 'третья': 3, 'четвертая': 4, 'четвёртая': 4,
+  'الأول': 1, 'الاول': 1, 'الثاني': 2, 'الثالث': 3,
+};
+const ROMAN_SMALL: Record<string, number> = { i: 1, ii: 2, iii: 3, iv: 4, v: 5, vi: 6 };
+const CJK_NUM: Record<string, number> = { 一: 1, 二: 2, 三: 3, 四: 4 };
+
+const esc = (w: string) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const UNIT_RE = [...UNIT_WORDS.map(([w]) => w)].sort((a, b) => b.length - a.length).map(esc).join('|');
+const ORD_RE = Object.keys(ORDINALS).sort((a, b) => b.length - a.length).map(esc).join('|');
+// Word boundaries that also work for non-Latin scripts (\b only knows ASCII letters).
+const B = '(?<![\\p{L}\\p{N}])';
+const E = '(?![\\p{L}\\p{N}])';
+const NUM = '(\\d{1,2}|i{1,3}|iv|v|vi)';
+// After NFKC, "1º" and "1ª" become "1o" and "1a".
+const SUFFIX = '(?:st|nd|rd|th|er|re|ère|e|ème|º|ª|°|o|a|\\.|-?я|-?е)?';
+const RE_ORD_UNIT = new RegExp(`${B}(${ORD_RE})\\s+(?:de\\s+|del\\s+)?(${UNIT_RE})${E}`, 'iu');
+const RE_NUM_UNIT = new RegExp(`${B}${NUM}\\s*${SUFFIX}\\s*(${UNIT_RE})${E}`, 'iu');
+const RE_UNIT_NUM = new RegExp(`${B}(${UNIT_RE})\\s*\\.?:?\\s*${NUM}${SUFFIX}${E}`, 'iu');
+const RE_UNIT_ORD = new RegExp(`${B}(${UNIT_RE})\\s+(${ORD_RE})${E}`, 'iu');
+
+const unitOfWord = (w: string): TermUnit => UNIT_WORDS.find(([x]) => w.toLowerCase().startsWith(x))?.[1] ?? 'term';
+const within = (ordinal: number, unit: TermUnit) => ((ordinal - 1) % PER_YEAR[unit]) + 1;
+
+/**
+ * Finds a term, semester, trimester or quarter in a label, in any supported language:
+ * "Second Term", "Term 2", "1st semester", "PRIMER SEMESTRE", "2e trimestre", "1º bimestre", "erstes Halbjahr",
+ * "1. Halbjahr", "Học kỳ II", "2학기", "第二学期", "上学期", "2 четверть", "II полугодие", "الفصل الدراسي الثاني".
+ */
+export function detectTerm(raw: string): TermMatch | null {
+  const s = asciiDigits(raw).toLowerCase().normalize('NFC');
+  const hit = (ordinal: number, unitWord: string, text: string): TermMatch | null =>
+    ordinal >= 1 && ordinal <= 12 ? { ordinal, index: within(ordinal, unitOfWord(unitWord)), unit: unitOfWord(unitWord), text } : null;
   let m: RegExpExecArray | null;
-  if ((m = /(?:sem(?:ester|estre)?|term|hk|học kỳ|학기)\s*\.?:?\s*(\d|i{1,3})(?:st|nd|rd|th)?\b/u.exec(s))) return m[1].startsWith('i') ? String(m[1].length) : m[1];
-  if ((m = /(\d)\s*(?:st|nd|rd|th)?\s*(?:sem(?:ester|estre)?|term|학기)\b/u.exec(s))) return m[1];
-  if ((m = /第([一二三四])学期/u.exec(s))) return String('一二三四'.indexOf(m[1]) + 1);
-  if (/上学期|[一二三]上/u.test(s)) return '1';
-  if (/下学期|[一二三]下/u.test(s)) return '2';
-  const ord = ['primer', 'segundo', 'tercer', 'cuarto', 'quinto', 'sexto'];
-  for (let i = 0; i < ord.length; i++) if (new RegExp(`\\b${ord[i]}o?\\s+semestre`).test(s)) return String((i % 2) + 1);
-  return undefined;
+  const num = (x: string) => (/^\d/.test(x) ? +x : ROMAN_SMALL[x]);
+  // Ordinal word, then the unit: "second term", "primer semestre", "2e trimestre", "erstes halbjahr".
+  if ((m = RE_ORD_UNIT.exec(s))) return hit(ORDINALS[m[1]], m[2], m[0]);
+  // Number (or Roman numeral) then the unit: "1st semester", "1º bimestre", "1. halbjahr", "2학기", "2 четверть", "ii полугодие".
+  if ((m = RE_NUM_UNIT.exec(s))) return hit(num(m[1]), m[2], m[0]);
+  // The unit, then a number or Roman numeral: "term 2", "semestre 1", "học kỳ ii", "trimestre 3".
+  if ((m = RE_UNIT_NUM.exec(s))) return hit(num(m[2]), m[1], m[0]);
+  // The unit, then an ordinal word after it: "الفصل الدراسي الثاني", "semestre primero".
+  if ((m = RE_UNIT_ORD.exec(s))) return hit(ORDINALS[m[2]], m[1], m[0]);
+  // Chinese: 第二学期, 上学期 / 下学期, 高一上 / 高二下.
+  if ((m = /第([一二三四1-4])学期/u.exec(s))) return hit(CJK_NUM[m[1]] ?? +m[1], '学期', m[0]);
+  if ((m = /([上下])学期/u.exec(s))) return hit(m[1] === '上' ? 1 : 2, '学期', m[0]);
+  if ((m = /[高初][一二三]([上下])/u.exec(s))) return hit(m[1] === '上' ? 1 : 2, '学期', m[0]);
+  // A bare "Termly" heading carries no position.
+  return null;
+}
+
+/** Position within the year of a term printed in a label ("2"), or undefined. */
+export function termOf(text: string): string | undefined {
+  const t = detectTerm(text);
+  return t ? String(t.index) : undefined;
 }
 
 const ROMAN: Record<string, number> = { vii: 7, viii: 8, ix: 9, x: 10, xi: 11, xii: 12, xiii: 13 };
@@ -232,10 +309,10 @@ export function genericLevel(text: string): number | null {
   if (m && +m[1] >= 6 && +m[1] <= 12) return +m[1];
   m = /(?:कक्षा|दर्जा|الصف|صف|classe|grado|curso|kelas|darasa|sınıf|klas|班|年级)\s*:?\s*(\d{1,2})/u.exec(s);
   if (m && +m[1] >= 6 && +m[1] <= 13) return Math.min(12, +m[1]);
-  if (/\bfreshman\b/.test(s)) return 9;
-  if (/\bsophomore\b/.test(s)) return 10;
-  if (/\bjunior\b/.test(s)) return 11;
-  if (/\bsenior\b/.test(s)) return 12;
+  // US class standing, only as a year label ("Junior year", "Class: Senior"). "Senior High School",
+  // "Senior Secondary School" and "Junior High" are names of school types, not grade levels.
+  const standing = /(?:^|\b(?:class|year|grade|standing)\s*:?\s*)(freshman|sophomore|junior|senior)(?:\s+(?:year|class))?\s*$|\b(freshman|sophomore|junior|senior)\s+(?:year|class)\b/u.exec(s.trim());
+  if (standing) return { freshman: 9, sophomore: 10, junior: 11, senior: 12 }[(standing[1] ?? standing[2]) as 'freshman'];
   return null;
 }
 

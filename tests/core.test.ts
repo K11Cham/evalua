@@ -6,7 +6,7 @@ import { evaluate } from '../src/core/evaluate.ts';
 import { roundToStep } from '../src/core/coverage.ts';
 import { carryOver } from '../src/core/merge.ts';
 import { detectSystem } from '../src/core/extract.ts';
-import { academicYear, genericLevel, headerRole, infoField, isGradeLike, isPeriodLabel, isSummaryLabel, splitGrade, termOf } from '../src/core/lexicon.ts';
+import { academicYear, detectTerm, genericLevel, headerRole, infoField, isGradeLike, isPeriodLabel, isSummaryLabel, splitGrade, termOf } from '../src/core/lexicon.ts';
 import { buildMatcher, fixOcrNumerals } from '../src/core/match.ts';
 import { runExtraction } from '../src/core/pipeline.ts';
 import { asciiDigits, displayName, key, parseDate, parseNumber, sameName, similarity } from '../src/core/text.ts';
@@ -460,6 +460,75 @@ describe('credit follows what was covered', () => {
     expect(roundToStep(2 / 3, 0.5)).toBe(0.5);
     expect(roundToStep(1, 0.5)).toBe(1);
     expect(roundToStep(0.5, 0.5)).toBe(0.5);
+  });
+});
+
+describe('years and terms across systems', () => {
+  it('finds a term, semester, trimester or quarter in every supported language', () => {
+    const cases: [string, number, string][] = [
+      ['Second Term', 2, 'term'], ['Term 3', 3, 'term'], ['3rd Quarter', 3, 'quarter'], ['Semester 1', 1, 'semester'],
+      ['PRIMER SEMESTRE', 1, 'semester'], ['TERCER SEMESTRE', 1, 'semester'], ['2e trimestre', 2, 'trimester'], ['1er trimestre', 1, 'trimester'],
+      ['1º bimestre', 1, 'quarter'], ['2. Halbjahr', 2, 'semester'], ['erstes Halbjahr', 1, 'semester'], ['GRADE LEVEL: 11 SY: 2024-2025 SEM: 2nd', 2, 'semester'],
+      ['Học kỳ II', 2, 'semester'], ['HK1', 1, 'semester'], ['1학년 2학기', 2, 'semester'], ['第二学期', 2, 'semester'], ['高一下', 2, 'semester'],
+      ['2 четверть', 2, 'quarter'], ['II полугодие', 2, 'semester'], ['الفصل الدراسي الثاني', 2, 'semester'],
+    ];
+    for (const [text, index, unit] of cases) expect([text, detectTerm(text)?.index, detectTerm(text)?.unit]).toEqual([text, index, unit]);
+    for (const text of ['Termly Remark', 'Long-term plan', 'SS 2 (2022/2023)', 'Senior High School', 'Bon trimestre.']) expect(detectTerm(text)).toBeNull();
+  });
+  it('does not read school-type names as US class standing', () => {
+    expect(genericLevel('ASANTEMAN VALLEY SENIOR HIGH SCHOOL')).toBeNull();
+    expect(genericLevel('Nusrat Senior Secondary School')).toBeNull();
+    expect(genericLevel('Junior High School')).toBeNull();
+    expect(genericLevel('Senior year')).toBe(12);
+    expect(genericLevel('Class: Junior')).toBe(11);
+  });
+  const combine = (...htmls: string[]) => {
+    const parts = htmls.map((h) => docxHtmlToDoc(h));
+    const doc = { kind: 'docx' as const, pages: [] as typeof parts[0]['pages'], tokens: [] as typeof parts[0]['tokens'], engine: 'test', warnings: [] as string[], parts: [] as { name: string; firstPage: number }[] };
+    parts.forEach((p, i) => {
+      const off = doc.pages.length;
+      doc.parts.push({ name: `f${i}`, firstPage: off });
+      doc.pages.push(...p.pages);
+      doc.tokens.push(...p.tokens.map((t) => ({ ...t, page: t.page + off })));
+    });
+    return runExtraction(doc, kb);
+  };
+  it('reads grade, school year and term per report, in other languages too', () => {
+    const fr = (trim: string, classe: string, year: string) =>
+      `<p>LYCÉE DES TROIS RIVIÈRES</p><p>Bulletin du ${trim}</p><p>Élève: BENALI Sami</p><p>Classe: ${classe}</p><p>Année scolaire: ${year}</p>` +
+      `<table><tr><th>Matières</th><th>Moyenne élève /20</th></tr><tr><td>Mathématiques</td><td>14,0</td></tr><tr><td>Philosophie</td><td>12,5</td></tr></table>`;
+    const ex2 = combine(fr('1er trimestre', 'Seconde', '2023-2024'), fr('2e trimestre', 'Seconde', '2023-2024'), fr('1er trimestre', 'Première', '2024-2025'));
+    expect(ex2.systemId.value).toBe('fr');
+    const maths = ex2.courses.filter((c) => c.name.original === 'Mathématiques');
+    expect(maths.map((c) => [c.level, c.term, c.academicYear])).toEqual([[10, '1', '2023-2024'], [10, '2', '2023-2024'], [11, '1', '2024-2025']]);
+    const vn = (hk: string, lop: string, year: string) =>
+      `<p>SỞ GIÁO DỤC VÀ ĐÀO TẠO — TRƯỜNG THPT SÔNG HƯƠNG XANH</p><p>${hk}</p><p>Họ và tên: Trần Minh Anh</p><p>Lớp: ${lop}</p><p>Năm học: ${year}</p>` +
+      `<table><tr><th>Môn học</th><th>Điểm</th></tr><tr><td>Toán</td><td>8,5</td></tr><tr><td>Ngữ văn</td><td>7,0</td></tr></table>`;
+    const ex3 = combine(vn('Học kỳ I', '10', '2023-2024'), vn('Học kỳ II', '10', '2023-2024'), vn('Học kỳ I', '11', '2024-2025'));
+    expect(ex3.courses.filter((c) => c.name.original === 'Toán').map((c) => [c.level, c.term, c.academicYear])).toEqual([[10, '1', '2023-2024'], [10, '2', '2023-2024'], [11, '1', '2024-2025']]);
+  });
+  it('never lets one file’s grade level leak into the next, and ignores “class on leaving”', () => {
+    const ng = (period: string) =>
+      `<p>GREENFIELD UNITY COLLEGE — SENIOR SECONDARY SCHOOL</p><p>${period}</p><p>Class on Leaving: SS 3 Science</p><table><tr><th>Subject</th><th>Grade</th></tr><tr><td>Mathematics</td><td>B2</td></tr></table>`;
+    const ex4 = combine(ng('SS 1 (2021/2022)'), ng('SS 2 (2022/2023)'));
+    expect(ex4.courses.map((c) => [c.level, c.academicYear])).toEqual([[10, '2021-2022'], [11, '2022-2023']]);
+  });
+  it('keeps wrapped subject names and wrapped comments inside the table', () => {
+    // Layout as a text PDF gives it: a long name wraps around its marks, a comment wraps onto a second line.
+    const tok = (text: string, x: number, y: number, w: number) => ({ text, page: 0, x, y, w, h: 9, conf: 1 });
+    const doc = {
+      kind: 'pdf-text' as const, engine: 'test', warnings: [] as string[], pages: [{ width: 600, height: 800 }],
+      tokens: [
+        tok('LYCÉE DES TROIS RIVIÈRES', 200, 40, 150), tok('Classe de Première — Année scolaire 2023-2024', 50, 90, 250),
+        tok('Matières', 50, 120, 40), tok('Moyenne élève /20', 300, 120, 80), tok('Appréciations', 420, 120, 70),
+        tok('Français', 50, 140, 40), tok('12,5', 320, 140, 20), tok('Travail régulier.', 420, 140, 80),
+        tok('Résultats fragiles, ne pas se', 420, 156, 140), tok('Mathématiques', 50, 160, 70), tok('9,5', 320, 160, 15), tok('décourager.', 420, 165, 60),
+        tok('Spécialité Sciences de la vie et de la', 50, 182, 190), tok('15,0', 320, 188, 20), tok('Très bon travail.', 420, 188, 80), tok('Terre', 50, 194, 30),
+        tok('Notes sur 20. La moyenne est de 10/20.', 50, 230, 200),
+      ],
+    };
+    const ex5 = runExtraction(doc, kb);
+    expect(ex5.courses.map((c) => [c.name.original, c.grade.value])).toEqual([['Français', '12.5'], ['Mathématiques', '9.5'], ['Spécialité Sciences de la vie et de la Terre', '15.0']]);
   });
 });
 

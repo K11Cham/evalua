@@ -28,6 +28,8 @@ export interface DocTokens {
   /** Human-readable name of what produced the text ("PDF text layer", "PP-OCRv6 small"…). */
   engine: string;
   warnings: string[];
+  /** When the record is made of several files: the first page of each, so one report's header never leaks into the next. */
+  parts?: { name: string; firstPage: number }[];
 }
 
 /** Where a value came from on the original document. */

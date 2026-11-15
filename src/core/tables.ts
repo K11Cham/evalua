@@ -1,7 +1,7 @@
 // Table understanding: finds header bands, builds columns (including two-level "matrix" headers and
 // side-by-side tables), assigns body cells to columns and turns rows into raw course records.
 import { buildRows, rowText, type Cell, type Row } from './layout.ts';
-import { headerRole, isGradeLike, isPeriodLabel, isSummaryLabel, type Role } from './lexicon.ts';
+import { headerRole, isGradeLike, isPeriodLabel, isSummaryLabel, STUDENT_CLASS, type Role } from './lexicon.ts';
 import { key } from './text.ts';
 import type { DocTokens } from './types.ts';
 
@@ -62,7 +62,8 @@ function isHeaderCandidate(row: Row): boolean {
       if (r === 'name') hasName = true;
     } else if (isPeriodLabel(c.text)) periods++;
   }
-  if (hasName && (roles >= 2 || periods >= 2)) return true;
+  // A subject heading beside period labels: "SUBJECT | SS 1 | SS 2", or a one-year sheet "SUBJECT | SS 1".
+  if (hasName && (roles >= 2 || periods >= 1)) return true;
   // A matrix header whose subject heading was misread: several period labels in a row.
   if (periods >= 3 && periods >= row.cells.length - 2) return true;
   // Sub-header rows ("Score % | Grade | Score % | Grade") and headers whose subject column was not recognised.
@@ -467,9 +468,18 @@ export function readTables(doc: DocTokens): TableResult {
   const courses: RawCourse[] = [];
   const used = new Set<number>();
   let lastHeading: Heading[] = [];
+  // A heading carries over to later tables of the same file only, never into the next file of a combined record.
+  const partStarts = [0, ...(doc.parts ?? []).map((x) => x.firstPage)].sort((x, y) => x - y);
+  const partOf = (page: number) => partStarts.filter((s0) => s0 <= page).pop() ?? 0;
+  let lastPart = 0;
   let prevTableEnd = -1;
 
   bands.forEach((band, b) => {
+    const part = partOf(rows[band.start].page);
+    if (part !== lastPart) {
+      lastHeading = [];
+      lastPart = part;
+    }
     for (let i = band.start; i <= band.end; i++) used.add(i);
     const nextStart = b + 1 < bands.length ? bands[b + 1].start : rows.length;
     const left = Math.min(...band.cols.map((c) => c.x0));
@@ -489,6 +499,28 @@ export function readTables(doc: DocTokens): TableResult {
       const single = r.cells.length === 1;
       const prose = single && (r.cells[0].text.split(/\s+/).length > 7 || /[.。;]\s*$/.test(r.cells[0].text) || /[:：]\s*\S/.test(r.cells[0].text));
       const outside = r.cells.every((c) => c.x > right + 20 || c.x + c.w < left - 20);
+      // A long subject name that wraps ("Spécialité Sciences de la vie et de la / Terre") is not prose: its first
+      // line sits in the subject column right above (or beside) the row with its marks.
+      const nameCol = band.cols.find((c) => c.role === 'name');
+      const next = rows[i + 1];
+      const wrappedName =
+        single && !!nameCol && !!next && next.page === r.page && Math.abs(next.y - r.y) < Math.max(next.h, r.h) * 1.7 && isDataRow(next) &&
+        // Subject names start at the column's left edge; the heading ("Matières") can be far narrower than they are.
+        r.cells[0].x >= nameCol.x0 - r.h * 1.5 && r.cells[0].x <= nameCol.x1 && !/[.。;:：]\s*$/.test(r.cells[0].text);
+      if (wrappedName) {
+        if (r.page === prev.page && seg.rows.length) pitches.push(r.y - prev.y);
+        seg.rows.push(r);
+        bodyIdx.push(i);
+        prev = r;
+        lastIdx = i;
+        continue;
+      }
+      // The second line of a wrapped cell in a comment column ("…ne pas se / décourager.") belongs to the table.
+      if (single && count) {
+        const c0 = r.cells[0];
+        const inSideColumn = band.cols.some((c) => c.role !== 'name' && c.role !== 'code' && overlap(c.x0, c.x1, c0.x, c0.x + c0.w) > 0.6 * c0.w) && !band.cols.some((c) => c.role === 'name' && overlap(c.x0, c.x1, c0.x, c0.x + c0.w) > 0);
+        if (inSideColumn && r.page === prev.page && r.y - prev.y < Math.max(prev.h, r.h) * 2.2) continue;
+      }
       // Page furniture (a printed web address, "1/2", a print timestamp) is never part of a table.
       const furniture = r.cells.some((c) => /https?:\/\/|www\./i.test(c.text)) || r.cells.every((c) => /^\s*(page\s*)?\d{1,3}\s*(\/|of)\s*\d{1,3}\s*$/i.test(c.text));
       if (prose || outside || furniture) {
@@ -563,7 +595,9 @@ export function readTables(doc: DocTokens): TableResult {
         const text = cells.map((c) => c.text).join(' ');
         // A line with several "label: value" pairs is student information unless it sits directly on top of the table.
         const adjacent = hr.page === rows[band.start].page && rows[band.start].y - hr.y < Math.max(hr.h, rows[band.start].h) * 2.6;
-        if (cells.length && cells.length <= 3 && text.length < 120 && isPeriodLabel(text) && (adjacent || !/[:：]\s*\S.*[:：]/.test(text))) {
+        // "Class on Leaving: SS 3" describes the student, not this table.
+        const aboutStudent = /^[^:：]{1,40}[:：]/.test(text) && STUDENT_CLASS.test(text.split(/[:：]/)[0]);
+        if (!aboutStudent && cells.length && cells.length <= 3 && text.length < 120 && isPeriodLabel(text) && (adjacent || !/[:：]\s*\S.*[:：]/.test(text))) {
           found = { text, cell: cells[0] };
           break;
         }

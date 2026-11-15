@@ -19,7 +19,7 @@ The golden set is 36 files rendered from 21 **fictitious** records in `fixtures/
 | Student name | 32/36 |
 | Date of birth | 33/36 |
 | Student ID | 34/36 |
-| School name | 31/34 |
+| School name | 32/34 |
 | Courses found (recall) | 98.1% (667/680) |
 | Rows that are not real courses | 6 |
 | Course name read exactly | 97.0% |
@@ -59,7 +59,7 @@ The golden set is 36 files rendered from 21 **fictitious** records in `fixtures/
 | Student name | 15/19 |
 | Date of birth | 16/19 |
 | Student ID | 17/19 |
-| School name | 15/18 |
+| School name | 16/18 |
 | Courses found (recall) | 96.3% (337/350) |
 | Rows that are not real courses | 6 |
 | Course name read exactly | 94.1% |
@@ -115,10 +115,6 @@ The golden set is 36 files rendered from 21 **fictitious** records in `fixtures/
 ## What went wrong
 
 Every miss, so the weak spots are visible:
-
-**gm-wassce.photo.jpg**
-
-- school: got “WEST AFRICAN SENIOR SCHOOL CERTIFICATE EXAMINATION (WASSCE)”
 
 **gm-termreport.photo.jpg**
 

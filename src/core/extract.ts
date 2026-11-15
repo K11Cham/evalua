@@ -1,7 +1,7 @@
 // Extraction: positioned text → structured record (student, school, system, courses), with provenance.
 import type { Cell, Row } from './layout.ts';
 import { rowText } from './layout.ts';
-import { academicYear, genericLevel, infoField, infoFieldExact, isGradeLike, looksLikeSchool, splitGrade, termOf, type InfoField } from './lexicon.ts';
+import { academicYear, detectTerm, genericLevel, infoField, infoFieldExact, isGradeLike, isPeriodLabel, looksLikeSchool, splitGrade, STUDENT_CLASS, termOf, type InfoField } from './lexicon.ts';
 import { buildMatcher, fixOcrNumerals } from './match.ts';
 import { readTables, type RawCourse, type TableResult } from './tables.ts';
 import { asciiDigits, displayName, dominantScript, key, parseDate, parseNumber, stripDiacritics } from './text.ts';
@@ -156,7 +156,7 @@ function cleanGrade(text: string): { value: string; descriptor: string } {
   return { value: v, descriptor: rest };
 }
 
-function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; docLevel: number | null; docYear?: string; ocr: boolean; match: ReturnType<typeof buildMatcher> }): ExtractedCourse {
+function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; header: PageHeader; ocr: boolean; match: ReturnType<typeof buildMatcher> }): ExtractedCourse {
   const original = (ctx.ocr ? fixOcrNumerals(raw.name.text) : raw.name.text).replace(/\s+/g, ' ').trim();
   const look = ctx.match(original);
   const nameConf = Math.min(0.99, raw.name.conf);
@@ -188,11 +188,71 @@ function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; doc
   course.credits = num(raw.credits);
   course.hours = num(raw.hours);
   if (raw.qualifier && raw.qualifier.text.trim()) course.qualifier = raw.qualifier.text.trim();
+  // The course's own period label (a matrix column, a heading over its table) comes first, then its report's header.
   const lv = resolveLevel(raw.period, ctx.profile);
-  course.level = lv.level ?? ctx.docLevel;
+  course.level = lv.level ?? ctx.header.level;
   course.term = lv.term ?? termOf(raw.period);
-  course.academicYear = academicYear(raw.period) ?? ctx.docYear;
+  course.academicYear = academicYear(raw.period) ?? ctx.header.year;
   return course;
+}
+
+interface PageHeader {
+  level: number | null;
+  year?: string;
+  span: ReturnType<typeof documentPeriod>;
+}
+
+const LEVEL_LABEL = /^(class|grade|form|level|year group|standard|std|clase|grado|curso|classe|klasse|jahrgangsstufe|série|serie|ano|lớp|班级|年级|학년|الصف|कक्षा|класс)\b/iu;
+const YEAR_LABEL = /^(year|academic year|school year|session|academic session|año escolar|ciclo escolar|año lectivo|année scolaire|schuljahr|ano letivo|ano lectivo|năm học|学年|学年度|学年度|학년도|العام الدراسي|السنة الدراسية|शैक्षणिक वर्ष|सत्र|учебный год)\b/iu;
+const YEAR_RANGE = /\b(?:19|20)\d{2}\s*[-–—/]\s*(?:19|20)?\d{2}\b/;
+const NOT_SCHOOL_YEAR = /born|birth|naci|naiss|geboren|生|생년|sinh|ميلاد|рожд|जन्म|issued|expedi|ausgestellt|emiss|printed|\d{1,2}:\d{2}/i;
+
+/**
+ * Grade level, school year and term for every page. Each is read from the page itself (labels such as
+ * "Class:", "Year:", "Année scolaire", "Năm học", a "Second Term" heading), and a page without them
+ * inherits from earlier pages of the same report only: a new file never inherits from the one before.
+ */
+function reportHeaders(tables: TableResult, pairs: Pair[], profile: SystemProfile | undefined, doc: DocTokens): PageHeader[] {
+  const pageCount = Math.max(1, doc.pages.length, ...tables.rows.map((r) => r.page + 1));
+  const starts = new Set([0, ...(doc.parts ?? []).map((p) => p.firstPage)]);
+  const own: { level?: number | null; year?: string; span: ReturnType<typeof documentPeriod> }[] = [];
+  for (let p = 0; p < pageCount; p++) {
+    const mine = pairs.filter((x) => x.row.page === p);
+    let level: number | null | undefined;
+    let year: string | undefined;
+    const lines = tables.freeRows.filter((r) => r.page === p).slice(0, 30).map(rowText);
+    // 1. A period line printed on the page ("SS 2 (2022/2023)", "Lớp 11 — Năm học 2024 - 2025").
+    for (const t of lines) {
+      if (level != null) break;
+      if (!/[:：]/.test(t) && isPeriodLabel(t)) level = resolveLevel(t, profile).level;
+    }
+    // 2. Labels: "Class: 10 Science 1", "Year: 2024/2025 Academic Year". Labels about the student rather than
+    //    this report ("Class on Leaving", "Class at entry", "Last class attended") are not this report's class.
+    for (const x of mine) {
+      if (level == null && LEVEL_LABEL.test(x.label.trim()) && !STUDENT_CLASS.test(x.label)) level = resolveLevel(`${x.label} ${x.value}`, profile).level;
+      if (!year && YEAR_LABEL.test(x.label.trim())) year = academicYear(x.value);
+    }
+    // 3. Any other line.
+    for (const t of lines) {
+      if (level == null && !(/[:：]/.test(t) && !/class|grade|कक्षा|classe|klasse|lớp/i.test(t))) level = resolveLevel(t, profile).level;
+      if (year || NOT_SCHOOL_YEAR.test(t)) continue;
+      // A school-year range anywhere ("2024/2025"), or a single year on a period line ("Summer 2023 — Year 11").
+      if (YEAR_RANGE.test(asciiDigits(t))) year = academicYear(t);
+      else if (isPeriodLabel(t) && /\b(?:19|20)\d{2}\b/.test(asciiDigits(t))) year = academicYear(t);
+    }
+    // Term headings come from lines outside tables: a table cell ("10,3 · Trimestre difficile") is not a heading.
+    own[p] = { level: level ?? undefined, year, span: documentPeriod(lines) };
+  }
+  const out: PageHeader[] = [];
+  let carried: PageHeader = { level: null, span: null };
+  for (let p = 0; p < pageCount; p++) {
+    if (starts.has(p)) carried = { level: null, span: null };
+    carried = { level: own[p].level ?? carried.level, year: own[p].year ?? carried.year, span: own[p].span ?? carried.span };
+    out[p] = carried;
+  }
+  // Exam certificates print no grade level: the system's default applies.
+  for (const h of out) if (h.level == null) h.level = profile?.defaultLevel ?? null;
+  return out;
 }
 
 /**
@@ -222,12 +282,7 @@ function stripPage(courses: RawCourse[]) {
 
 /** What a period label calls its part of the year. */
 function unitOf(label: string): ExtractedCourse['termUnit'] {
-  const s = label.toLowerCase();
-  if (/semest|học kỳ|hoc ky|학기|学期|halbjahr/u.test(s)) return 'semester';
-  if (/quarter|bimest|cuatrimest/u.test(s)) return 'quarter';
-  if (/trimest/u.test(s)) return 'trimester';
-  if (/\bterm\b|termly/u.test(s)) return 'term';
-  return undefined;
+  return detectTerm(label)?.unit ?? (/\btermly\b/i.test(label) ? 'term' : undefined);
 }
 
 /** Column headings that mean the grade covers the whole year, even on a term report. */
@@ -235,14 +290,17 @@ const WHOLE_YEAR = /\b(annual|yearly|cumulative|cum\.?|session(al)?|year average
 
 /** "Second Term", "1st Semester", "Term 3" printed once for the whole document. */
 function documentPeriod(lines: string[]): { term: string; label: string } | null {
-  const words: Record<string, string> = { first: '1', '1st': '1', second: '2', '2nd': '2', third: '3', '3rd': '3', fourth: '4', '4th': '4' };
   for (const line of lines.slice(0, 40)) {
-    const s = asciiDigits(line).trim();
+    const s = line.trim();
+    // A heading, not a sentence that happens to mention a term ("Bon trimestre.", "3rd term exams start…").
     if (s.length > 60) continue;
-    let m = /\b(first|second|third|fourth|1st|2nd|3rd|4th)\s+(term|semester|trimester|quarter)\b/i.exec(s);
-    if (m) return { term: words[m[1].toLowerCase()], label: `${m[1][0].toUpperCase()}${m[1].slice(1).toLowerCase()} ${m[2].toLowerCase()}` };
-    m = /\b(term|semester|trimester)\s*:?\s*(\d)\b/i.exec(s);
-    if (m) return { term: m[2], label: `${m[1][0].toUpperCase()}${m[1].slice(1).toLowerCase()} ${m[2]}` };
+    const t = detectTerm(s);
+    if (!t) continue;
+    const letters = (s.match(/[\p{L}\p{N}]/gu) ?? []).length;
+    const share = (t.text.match(/[\p{L}\p{N}]/gu) ?? []).length / Math.max(1, letters);
+    if (share >= 0.35 || isPeriodLabel(s.replace(t.text, ' ')) || /\b(?:19|20)\d{2}\b/.test(asciiDigits(s))) {
+      return { term: String(t.index), label: t.text.charAt(0).toUpperCase() + t.text.slice(1) };
+    }
   }
   return null;
 }
@@ -294,49 +352,23 @@ export function extract(doc: DocTokens, kb: KnowledgeBase, opts: ExtractOptions 
     if (d) issued = { value: d.iso, original: issuedP.value, confidence: conf(issuedP), source: src(issuedP.cell) };
   }
 
-  // ── document-level year and grade level (exam certificates have no per-table heading) ──
-  let docLevel: number | null = null;
-  let docYear: string | undefined;
-  // An explicit "Class:", "Grade:", "Form:" label beats a level guessed from other lines.
-  for (const p of pairs) {
-    if (docLevel != null) break;
-    if (/^(class|grade|form|level|year group|clase|grado|classe|klasse|série|serie|lớp|班级|年级|학년|الصف|कक्षा|класс)\b/iu.test(p.label.trim())) {
-      docLevel = resolveLevel(`${p.label} ${p.value}`, profile).level;
-    }
-  }
-  for (const r of tables.freeRows.slice(0, 30)) {
-    const t = rowText(r);
-    if (/[:：]/.test(t) && !/class|grade|कक्षा|classe|klasse|lớp/i.test(t)) continue;
-    if (docLevel == null) docLevel = resolveLevel(t, profile).level;
-    if (!docYear) {
-      const m = /\b(20\d{2})\b/.exec(asciiDigits(t));
-      if (m && !/born|birth|naci|naiss|geboren|生|생년|sinh|ميلاد|рожд|जन्म/i.test(t)) docYear = academicYear(t) ?? m[1];
-    }
-  }
-  if (docLevel == null) docLevel = profile?.defaultLevel ?? null;
+  // ── Each report's header: grade level, school year and term ──
+  // A record can hold several reports (one file per term or per year, or several reports in one PDF), so these
+  // are read page by page and never taken from another file.
+  const headers = reportHeaders(tables, pairs, profile, doc);
 
   const englishDoc = (profile?.languages[0] ?? '') === 'en' || (!profile && script === 'latin' && /\b(subject|grade|school|name|date of birth)\b/i.test(allText));
   const match = buildMatcher(kb, profile, englishDoc);
   stripRowNumbers(tables.courses);
-  const courses = tables.courses.map((c, i) => toCourse(c, i, { profile, docLevel, docYear, ocr: doc.kind === 'ocr', match }));
-  // A term or semester printed once for the whole document ("Second Term") applies to every course that has none.
+  const courses = tables.courses.map((c, i) => toCourse(c, i, { profile, header: headers[c.name.page] ?? headers[0], ocr: doc.kind === 'ocr', match }));
   for (const c of courses) {
     c.termUnit ??= unitOf(c.period.value);
     if (c.wholeYear) c.term = undefined;
   }
-  // Read per page: a record made of several term reports has one "First/Second/Third Term" heading on each.
-  // A page without one inherits the last heading seen (a report that runs onto a second page).
-  const pageCount = Math.max(1, ...tables.rows.map((r) => r.page + 1));
-  let carried: ReturnType<typeof documentPeriod> = null;
-  const spanOfPage: ReturnType<typeof documentPeriod>[] = [];
-  for (let p = 0; p < pageCount; p++) {
-    const found = documentPeriod(tables.rows.filter((r) => r.page === p).map(rowText));
-    if (found) carried = found;
-    spanOfPage[p] = carried;
-  }
+  // A term printed once on a report ("Second Term") applies to every course of that report that has none.
   for (const c of courses) {
     if (c.term || c.wholeYear) continue;
-    const span = spanOfPage[c.name.source?.page ?? 0];
+    const span = (headers[c.name.source?.page ?? 0] ?? headers[0]).span;
     if (!span) continue;
     c.term = span.term;
     c.termUnit = unitOf(span.label);

@@ -158,6 +158,7 @@ export async function ingestMany(files: File[], hint: OcrModelId | 'auto', progr
   for (let i = 0; i < files.length; i++) {
     const part = await ingestFile(files[i], hint, (m) => progress(`File ${i + 1} of ${files.length}: ${m}`));
     const offset = out.doc.pages.length;
+    (out.doc.parts ??= []).push({ name: files[i].name, firstPage: offset });
     out.doc.pages.push(...part.doc.pages);
     out.doc.tokens.push(...part.doc.tokens.map((t) => ({ ...t, page: t.page + offset })));
     out.doc.warnings.push(...part.doc.warnings);
