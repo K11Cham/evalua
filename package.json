@@ -6,15 +6,17 @@
   "description": "Helps US school counselors evaluate international transcripts: extract, map to district curriculum, suggest credits with reasoning.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -p tsconfig.json && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b",
+    "typecheck": "tsc -p tsconfig.json",
     "lint": "oxlint",
     "test": "vitest run",
     "fakes": "tsx tools/fakegen/generate.ts",
     "eval": "tsx tools/eval/run.ts",
     "kb:sql": "tsx tools/kb/build-sql.ts",
-    "check": "npm run typecheck && npm run lint && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "models": "tsx tools/models/fetch.ts",
+    "eval:browser": "tsx tools/eval/browser.ts"
   },
   "dependencies": {
     "@fontsource-variable/atkinson-hyperlegible-mono": "^5.3.0",

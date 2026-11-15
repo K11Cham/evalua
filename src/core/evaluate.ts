@@ -132,6 +132,16 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
       grade.confidence = 1;
       grade.reasons = [{ text: `US grade set by the counselor: ${ov.letter}.` }];
     }
+    if (grade.letter === 'F' && !ov.letter && !c.grade.edited && c.grade.confidence < 0.995) {
+      flags.push({
+        id: `fail-${c.id}`,
+        severity: 'check',
+        courseId: c.id,
+        title: `Converted to a failing grade: ${c.name.value || c.name.original}`,
+        detail: `The grade was read as “${c.grade.value}” from a scan or photo, which converts to F. A misread digit can cause this: compare with the original.`,
+        source: c.grade.source,
+      });
+    }
     const credit = suggestCredits(c, profile, district, grade.letter);
     const credits = ov.credits ?? credit.credits;
     const creditReasons = ov.credits != null ? [{ text: `Credits set by the counselor: ${ov.credits}.` }] : credit.reasons;

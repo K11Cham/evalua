@@ -1,0 +1,13 @@
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self'; worker-src 'self' blob:; connect-src 'self' blob: data: http://localhost:11434 http://127.0.0.1:11434; object-src 'none'; base-uri 'self'; frame-ancestors 'none'
+/models/*
+  Cache-Control: public, max-age=31536000, immutable
+/ort/*
+  Cache-Control: public, max-age=604800
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

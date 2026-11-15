@@ -2,8 +2,11 @@
 // they only point at what could not be read or does not line up.
 import type { TableResult } from './tables.ts';
 import { rowText } from './layout.ts';
-import { asciiDigits } from './text.ts';
+import { asciiDigits, parseNumber } from './text.ts';
 import type { DocTokens, Extraction, VerifyFlag } from './types.ts';
+
+// "Total: 335", "المجموع الكلي: 335 من 410", "कुल योग 499", "总分 612", "ИТОГО 58"
+const TOTAL_RE = /(?:grand total|total marks|total general|total de puntos|total|المجموع الكلي|المجموع|कुल योग|कुल|योग|总分|合计|합계|tổng điểm|tổng cộng|итого|всego|toplam)s*(?:marks|score|obtained|点|分)?s*[:：=-]?s*(d{1,4}(?:[.,]d{1,2})?)/iu;
 
 const srcOf = (c?: { page: number; x: number; y: number; w: number; h: number }) => (c ? { page: c.page, x: c.x, y: c.y, w: c.w, h: c.h } : undefined);
 
@@ -85,6 +88,28 @@ export function verify(ex: Extraction, doc: DocTokens, tables: TableResult): Ver
   const pageRef = /(?:page|página|pagina|seite|trang|стр\.?|صفحة)\s*(\d+)\s*(?:of|de|von|\/|из|من)\s*(\d+)/i.exec(asciiDigits(tables.rows.map(rowText).join(' ')));
   if (pageRef && +pageRef[2] > doc.pages.length) {
     add({ id: 'pages-missing', severity: 'important', title: 'Some pages may be missing', detail: `The document refers to ${pageRef[2]} pages but ${doc.pages.length} ${doc.pages.length === 1 ? 'was' : 'were'} provided.` });
+  }
+  // A printed total that the marks read do not add up to: a strong sign that a digit was misread.
+  const marks = ex.courses.map((c) => parseNumber(c.grade.value));
+  if (marks.length >= 3 && marks.every((m) => m != null)) {
+    const sum = Math.round(marks.reduce((a: number, m) => a + (m as number), 0) * 100) / 100;
+    for (const r of tables.rows) {
+      const t = asciiDigits(rowText(r));
+      const m = TOTAL_RE.exec(t);
+      if (!m) continue;
+      const printed = Number(m[1].replace(',', '.'));
+      if (!Number.isFinite(printed) || printed < sum * 0.4 || printed > sum * 2.5) continue;
+      if (Math.abs(printed - sum) > 0.011) {
+        add({
+          id: 'total-mismatch',
+          severity: 'important',
+          title: 'The marks read do not add up to the printed total',
+          detail: `The document prints a total of ${printed}, but the marks read add up to ${sum}. One or more marks may have been misread, or a subject is missing. Compare each mark with the original.`,
+          source: srcOf(r.cells[0]),
+        });
+      }
+      break;
+    }
   }
   // Structural notes from table reading.
   tables.notes.forEach((n, i) => {
