@@ -181,12 +181,12 @@ export function parseDate(raw: string, order: 'dmy' | 'mdy' | 'ymd' = 'dmy'): Pa
     }
   }
   // Year first: 2007/04/25, 2007-04-25
-  if ((m = /(\d{4})[\-./](\d{1,2})[\-./](\d{1,2})/.exec(s))) {
+  if ((m = /(\d{4})[-./](\d{1,2})[-./](\d{1,2})/.exec(s))) {
     const r = iso(+m[1], +m[2], +m[3]);
     if (r) return { iso: r, ambiguous: false };
   }
   // Numeric with year last: 17/08/2007, 04/26/2008, 19.10.2007
-  if ((m = /(\d{1,2})[\-./](\d{1,2})[\-./](\d{4})/.exec(s))) {
+  if ((m = /(\d{1,2})[-./](\d{1,2})[-./](\d{4})/.exec(s))) {
     const a = +m[1];
     const b = +m[2];
     const y = +m[3];

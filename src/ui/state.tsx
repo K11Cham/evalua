@@ -43,7 +43,7 @@ export const go = (path: string) => {
 };
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const seed = useMemo(seedKb, []);
+  const seed = useMemo(() => seedKb(), []);
   const [myDistricts, setMine] = useState<DistrictProfile[]>([]);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [route, setRoute] = useState<Route>(() => parseRoute(window.location.hash));

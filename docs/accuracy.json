@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-15T12:07:20.982Z",
+ "generated": "2026-11-15T12:27:41.600Z",
  "district": "generic-22",
  "scores": [
   {
@@ -8,7 +8,7 @@
    "system": "waec",
    "lang": "en",
    "engine": "PDF text layer",
-   "ms": 18,
+   "ms": 19,
    "systemOk": true,
    "nameOk": true,
    "dobOk": true,
@@ -101,7 +101,7 @@
    "system": "gabece",
    "lang": "en",
    "engine": "PDF text layer",
-   "ms": 8,
+   "ms": 7,
    "systemOk": true,
    "nameOk": true,
    "dobOk": true,
@@ -225,7 +225,7 @@
    "system": "waec",
    "lang": "en",
    "engine": "PP-OCRv6 small (Latin, Chinese, Japanese)",
-   "ms": 9,
+   "ms": 7,
    "systemOk": true,
    "nameOk": true,
    "dobOk": true,
@@ -247,7 +247,7 @@
    "letterOk": 10,
    "translationOk": 0,
    "translationTotal": 0,
-   "flags": 1,
+   "flags": 2,
    "missCount": 0
   },
   {
@@ -380,7 +380,7 @@
    "system": "in-cbse",
    "lang": "en",
    "engine": "PDF text layer",
-   "ms": 9,
+   "ms": 8,
    "systemOk": true,
    "nameOk": true,
    "dobOk": true,
@@ -619,7 +619,7 @@
    "letterOk": 22,
    "translationOk": 22,
    "translationTotal": 22,
-   "flags": 5,
+   "flags": 6,
    "missCount": 10
   },
   {
@@ -659,7 +659,7 @@
    "system": "de",
    "lang": "de",
    "engine": "Word document text",
-   "ms": 13,
+   "ms": 14,
    "systemOk": true,
    "nameOk": true,
    "dobOk": true,
@@ -690,7 +690,7 @@
    "system": "br",
    "lang": "pt-BR",
    "engine": "PP-OCRv6 small (Latin, Chinese, Japanese)",
-   "ms": 17,
+   "ms": 16,
    "systemOk": true,
    "nameOk": true,
    "dobOk": true,
@@ -752,7 +752,7 @@
    "system": "kr",
    "lang": "ko",
    "engine": "PP-OCRv5 Korean",
-   "ms": 17,
+   "ms": 16,
    "systemOk": true,
    "nameOk": true,
    "dobOk": true,
@@ -836,7 +836,7 @@
    "letterOk": 23,
    "translationOk": 23,
    "translationTotal": 23,
-   "flags": 2,
+   "flags": 3,
    "missCount": 0
   },
   {
@@ -845,7 +845,7 @@
    "system": "vn",
    "lang": "vi",
    "engine": "PP-OCRv6 small (Latin, Chinese, Japanese)",
-   "ms": 15,
+   "ms": 16,
    "systemOk": true,
    "nameOk": true,
    "dobOk": true,
@@ -867,7 +867,7 @@
    "letterOk": 23,
    "translationOk": 23,
    "translationTotal": 23,
-   "flags": 2,
+   "flags": 3,
    "missCount": 0
   },
   {
@@ -907,7 +907,7 @@
    "system": "eg",
    "lang": "ar",
    "engine": "PP-OCRv5 Arabic",
-   "ms": 8,
+   "ms": 6,
    "systemOk": true,
    "nameOk": false,
    "dobOk": false,
@@ -929,7 +929,7 @@
    "letterOk": 2,
    "translationOk": 6,
    "translationTotal": 6,
-   "flags": 4,
+   "flags": 7,
    "missCount": 12
   },
   {
@@ -938,7 +938,7 @@
    "system": "ru",
    "lang": "ru",
    "engine": "PDF text layer",
-   "ms": 17,
+   "ms": 15,
    "systemOk": true,
    "nameOk": true,
    "dobOk": true,

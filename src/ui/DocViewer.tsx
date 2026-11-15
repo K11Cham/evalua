@@ -39,6 +39,7 @@ export function DocViewer({ doc, previews, highlight, fileName }: Props) {
           +
         </button>
       </div>
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region must be reachable by keyboard */}
       <div className="viewer-scroll" tabIndex={0} aria-label="Document pages. Scroll to read.">
         {doc.pages.map((p, i) => {
           const hl = highlight && highlight.page === i ? highlight : null;

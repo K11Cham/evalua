@@ -25,7 +25,9 @@ export function useCase(id: string, kb: KnowledgeBase, who: string): CaseState {
   const [reading, setReading] = useState('');
   const busy = useRef(false);
   const recRef = useRef<CaseRecord | null>(null);
-  recRef.current = rec;
+  useEffect(() => {
+    recRef.current = rec;
+  }, [rec]);
 
   const process = useCallback(
     async (r: CaseRecord, d: CaseDoc, opts: { systemId?: string; hint?: OcrModelId | 'auto'; reuseTokens?: boolean } = {}) => {

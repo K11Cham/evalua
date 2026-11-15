@@ -61,7 +61,7 @@ export function convertGrade(course: ExtractedCourse, profile: SystemProfile | u
   if (!grade) {
     return result(null, '—', 0, [{ text: 'No grade could be read for this course.' }]);
   }
-  const use = (scale: GradeScale, value: string, entry: ScaleEntry, conf: number, note?: string): GradeConversion =>
+  const apply = (scale: GradeScale, value: string, entry: ScaleEntry, conf: number, note?: string): GradeConversion =>
     result(entry.us, scale.label, conf, [
       { text: `${note ?? `“${value}”`} → ${entry.us}${entry.descriptor ? ` (${entry.descriptor})` : ''}, using the table “${scale.label}”.`, source: scale.provenance.source },
       ...(scale.note ? [{ text: scale.note }] : []),
@@ -79,12 +79,12 @@ export function convertGrade(course: ExtractedCourse, profile: SystemProfile | u
       for (const scale of profile.scales) {
         if (scale.kind !== 'numeric' || scale.domain?.[1] !== 100) continue;
         const e = entryFor(scale, String(p));
-        if (e) return use(scale, grade, e, 0.85, `${grade} out of ${max} = ${p}%`);
+        if (e) return apply(scale, grade, e, 0.85, `${grade} out of ${max} = ${p}%`);
       }
     }
     for (const scale of order) {
       const e = entryFor(scale, grade);
-      if (e) return use(scale, grade, e, scale === chosen ? 0.9 : 0.7);
+      if (e) return apply(scale, grade, e, scale === chosen ? 0.9 : 0.7);
     }
   }
   if (!generic) return result(null, '—', 0, [{ text: `No conversion table covers the grade “${grade}”.` }]);
@@ -97,24 +97,24 @@ export function convertGrade(course: ExtractedCourse, profile: SystemProfile | u
   if (pct && n != null && course.maxMark && course.maxMark.value > 0 && n <= course.maxMark.value) {
     const p = Math.round((n / course.maxMark.value) * 1000) / 10;
     const e = entryFor(pct, String(p));
-    if (e) return use(pct, grade, e, 0.5, `${grade} out of ${course.maxMark.value} = ${p}%`);
+    if (e) return apply(pct, grade, e, 0.5, `${grade} out of ${course.maxMark.value} = ${p}%`);
   }
   // 3. A grade word printed on the document ("отлично", "satisfactory").
   if (words) {
     const { rest } = splitGrade(course.grade.original ?? '');
     for (const candidate of [rest, grade]) {
       const e = candidate ? entryFor(words, candidate) : null;
-      if (e) return use(words, candidate, e, 0.55, `“${course.grade.original ?? grade}”`);
+      if (e) return apply(words, candidate, e, 0.55, `“${course.grade.original ?? grade}”`);
     }
   }
   // 4. Plain letters, or a number that can only be a percentage.
   if (letters) {
     const e = entryFor(letters, grade);
-    if (e) return use(letters, grade, e, 0.5);
+    if (e) return apply(letters, grade, e, 0.5);
   }
   if (pct && n != null && n > 10 && n <= 100) {
     const e = entryFor(pct, grade);
-    if (e) return use(pct, grade, e, 0.35, `“${grade}” read as a percentage`);
+    if (e) return apply(pct, grade, e, 0.35, `“${grade}” read as a percentage`);
   }
   return result(null, '—', 0, [{ text: `No conversion table covers the grade “${grade}”. Enter the US equivalent manually.` }]);
 }

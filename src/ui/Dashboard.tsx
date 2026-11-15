@@ -82,6 +82,7 @@ export function Dashboard() {
         </p>
       </div>
 
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- drag-and-drop target; the button inside is the keyboard path */}
       <section className={`drop ${over ? 'over' : ''}`} onDragOver={(e) => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)} onDrop={onDrop} aria-labelledby="new-h">
         <div className="drop-grid">
           <div style={{ display: 'grid', gap: 14 }}>

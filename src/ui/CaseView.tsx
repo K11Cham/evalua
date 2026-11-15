@@ -351,7 +351,7 @@ export function CaseView({ id }: { id: string }) {
                   {periods.map((p, pi) => (
                     <tbody key={pi}>
                       <tr>
-                        <th className="period" colSpan={6} scope="rowgroup">
+                        <th className="period" colSpan={6} scope="rowgroup" aria-label={`Year or term: ${p.label || 'not printed'}`}>
                           <div className="row">
                             <span lang={ex.language}>
                               {p.label || 'No year or term printed'}{' '}
