@@ -120,17 +120,21 @@ async function makeEngine(name) {
     const model = name.slice(7);
     return {
       run: async (buf) => {
-        const res = await fetch('http://127.0.0.1:11434/api/generate', {
+        // The chat endpoint with an explicit context size; the generate endpoint truncated output.
+        const res = await fetch('http://127.0.0.1:11434/api/chat', {
           method: 'POST',
           body: JSON.stringify({
-            model, stream: false, images: [buf.toString('base64')],
-            prompt: model.startsWith('glm-ocr') ? 'Text Recognition:' : 'Transcribe all text in this document exactly as written. Output each table row on its own line with cells separated by " | ". Do not translate. Do not add commentary.',
-            options: { temperature: 0, num_predict: 4096 },
+            model, stream: false,
+            messages: [{
+              role: 'user', images: [buf.toString('base64')],
+              content: model.startsWith('glm-ocr') ? 'Text Recognition:' : 'Transcribe all text in this document exactly as written, one table row per line. Do not translate or comment.',
+            }],
+            options: { temperature: 0, num_predict: 4096, num_ctx: 8192 },
           }),
         });
         const j = await res.json();
         if (j.error) throw new Error(j.error);
-        return j.response.split('\n');
+        return j.message.content.split('\n');
       },
       close: () => {},
     };

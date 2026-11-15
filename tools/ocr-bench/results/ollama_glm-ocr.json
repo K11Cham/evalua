@@ -1,118 +1,118 @@
 {
  "engine": "ollama:glm-ocr",
- "label": "GLM-OCR 0.9B via Ollama (local GPU)",
+ "label": "GLM-OCR 0.9B via Ollama (local GPU, RTX 5060)",
  "files": [
   {
    "file": "gm-wassce.photo.jpg",
-   "ms": 130,
+   "ms": 1823,
    "n": 9,
-   "exact": 0,
-   "fuzzy": 0,
-   "row": 0,
-   "student": false
+   "exact": 9,
+   "fuzzy": 9,
+   "row": 9,
+   "student": true
   },
   {
    "file": "gm-gabece.scan.jpg",
-   "ms": 2989,
+   "ms": 4636,
    "n": 9,
-   "exact": 0,
-   "fuzzy": 0,
-   "row": 0,
-   "student": false
+   "exact": 9,
+   "fuzzy": 9,
+   "row": 9,
+   "student": true
   },
   {
    "file": "ng-sss.scan.jpg",
-   "ms": 3029,
+   "ms": 5650,
    "n": 33,
-   "exact": 0,
-   "fuzzy": 0,
-   "row": 0,
-   "student": false
+   "exact": 33,
+   "fuzzy": 33,
+   "row": 33,
+   "student": true
   },
   {
    "file": "ng-jamb.photo.jpg",
-   "ms": 2973,
+   "ms": 4126,
    "n": 4,
-   "exact": 0,
-   "fuzzy": 0,
-   "row": 0,
-   "student": false
+   "exact": 4,
+   "fuzzy": 4,
+   "row": 4,
+   "student": true
   },
   {
    "file": "ng-neco.scan.jpg",
-   "ms": 3342,
+   "ms": 4435,
    "n": 10,
-   "exact": 0,
-   "fuzzy": 0,
-   "row": 0,
+   "exact": 10,
+   "fuzzy": 10,
+   "row": 10,
    "student": true
   },
   {
    "file": "in-cbse.scan.png",
-   "ms": 2991,
+   "ms": 5747,
    "n": 6,
-   "exact": 0,
-   "fuzzy": 0,
-   "row": 0,
-   "student": false
+   "exact": 6,
+   "fuzzy": 6,
+   "row": 6,
+   "student": true
   },
   {
    "file": "ph-sf10.photo.jpg",
-   "ms": 2924,
+   "ms": 6570,
    "n": 16,
-   "exact": 0,
-   "fuzzy": 0,
+   "exact": 16,
+   "fuzzy": 16,
    "row": 0,
-   "student": false
+   "student": true
   },
   {
    "file": "cn-gaozhong.photo.jpg",
-   "ms": 3063,
+   "ms": 4688,
    "n": 56,
-   "exact": 0,
-   "fuzzy": 0,
-   "row": 0,
-   "student": false
+   "exact": 56,
+   "fuzzy": 56,
+   "row": 56,
+   "student": true
   },
   {
    "file": "mx-sep.photo.jpg",
-   "ms": 3081,
+   "ms": 7494,
    "n": 36,
-   "exact": 0,
-   "fuzzy": 0,
-   "row": 0,
-   "student": false
+   "exact": 36,
+   "fuzzy": 36,
+   "row": 36,
+   "student": true
   },
   {
    "file": "br-historico.scan.jpg",
-   "ms": 3539,
+   "ms": 5865,
    "n": 35,
-   "exact": 0,
-   "fuzzy": 3,
+   "exact": 35,
+   "fuzzy": 35,
    "row": 0,
    "student": true
   },
   {
    "file": "kr-record.scan.jpg",
-   "ms": 3394,
+   "ms": 8559,
    "n": 26,
-   "exact": 0,
-   "fuzzy": 0,
-   "row": 0,
-   "student": false
+   "exact": 20,
+   "fuzzy": 21,
+   "row": 21,
+   "student": true
   },
   {
    "file": "vn-hocba.scan.jpg",
-   "ms": 3081,
+   "ms": 6507,
    "n": 23,
-   "exact": 0,
-   "fuzzy": 0,
-   "row": 0,
-   "student": false
+   "exact": 15,
+   "fuzzy": 21,
+   "row": 21,
+   "student": true
   },
   {
    "file": "eg-thanaweya.scan.png",
-   "ms": 3241,
+   "ms": 24312,
    "n": 7,
    "exact": 0,
    "fuzzy": 0,
@@ -121,19 +121,19 @@
   },
   {
    "file": "ru-attestat.photo.jpg",
-   "ms": 3062,
+   "ms": 5192,
    "n": 14,
-   "exact": 0,
-   "fuzzy": 0,
-   "row": 0,
-   "student": false
+   "exact": 9,
+   "fuzzy": 14,
+   "row": 14,
+   "student": true
   },
   {
    "file": "in-hindi-board.scan.jpg",
-   "ms": 3161,
+   "ms": 5594,
    "n": 6,
-   "exact": 0,
-   "fuzzy": 0,
+   "exact": 3,
+   "fuzzy": 3,
    "row": 0,
    "student": false
   }
