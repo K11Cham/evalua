@@ -1,0 +1,1 @@
+{"name":"ocr-bench","private":true,"type":"module","dependencies":{"onnxruntime-node":"^1.31.1","ppu-paddle-ocr":"^6.7.1"},"allowScripts":{"onnxruntime-node@1.31.1":true}}

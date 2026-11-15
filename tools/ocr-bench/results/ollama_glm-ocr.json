@@ -1,0 +1,141 @@
+{
+ "engine": "ollama:glm-ocr",
+ "label": "GLM-OCR 0.9B via Ollama (local GPU)",
+ "files": [
+  {
+   "file": "gm-wassce.photo.jpg",
+   "ms": 130,
+   "n": 9,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "gm-gabece.scan.jpg",
+   "ms": 2989,
+   "n": 9,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "ng-sss.scan.jpg",
+   "ms": 3029,
+   "n": 33,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "ng-jamb.photo.jpg",
+   "ms": 2973,
+   "n": 4,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "ng-neco.scan.jpg",
+   "ms": 3342,
+   "n": 10,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": true
+  },
+  {
+   "file": "in-cbse.scan.png",
+   "ms": 2991,
+   "n": 6,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "ph-sf10.photo.jpg",
+   "ms": 2924,
+   "n": 16,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "cn-gaozhong.photo.jpg",
+   "ms": 3063,
+   "n": 56,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "mx-sep.photo.jpg",
+   "ms": 3081,
+   "n": 36,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "br-historico.scan.jpg",
+   "ms": 3539,
+   "n": 35,
+   "exact": 0,
+   "fuzzy": 3,
+   "row": 0,
+   "student": true
+  },
+  {
+   "file": "kr-record.scan.jpg",
+   "ms": 3394,
+   "n": 26,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "vn-hocba.scan.jpg",
+   "ms": 3081,
+   "n": 23,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "eg-thanaweya.scan.png",
+   "ms": 3241,
+   "n": 7,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "ru-attestat.photo.jpg",
+   "ms": 3062,
+   "n": 14,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  },
+  {
+   "file": "in-hindi-board.scan.jpg",
+   "ms": 3161,
+   "n": 6,
+   "exact": 0,
+   "fuzzy": 0,
+   "row": 0,
+   "student": false
+  }
+ ]
+}

@@ -1,29 +1,23 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
 node_modules
 dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
+.wrangler
 .env
+.env.*
+!.env.example
+*.local
+*.log
+.DS_Store
+test-results
+playwright-report
 
-# Server uploads
-server/uploads/
+# local agent notes (never committed)
+HANDOFF.md
+CLAUDE.md
+
+# OCR benchmark scratch
+tools/ocr-bench/.venv
+tools/ocr-bench/.tess-cache
+tools/ocr-bench/out
+tools/ocr-bench/*probe.mjs
+tools/ocr-bench/hybrid.mjs
+*.traineddata

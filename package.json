@@ -1,43 +1,52 @@
 {
   "name": "evalua",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
+  "description": "Helps US school counselors evaluate international transcripts: extract, map to district curriculum, suggest credits with reasoning.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "test": "vitest run",
+    "fakes": "tsx tools/fakegen/generate.ts",
+    "eval": "tsx tools/eval/run.ts",
+    "kb:sql": "tsx tools/kb/build-sql.ts",
+    "check": "npm run typecheck && npm run lint && npm run test"
   },
   "dependencies": {
-    "@mantine/core": "^9.6.1",
-    "@mantine/hooks": "^9.6.1",
-    "groq-sdk": "^1.6.0",
-    "lucide-react": "^1.53.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-markdown": "^10.1.0",
-    "rehype-raw": "^7.0.0",
-    "remark-gfm": "^4.0.1"
+    "@fontsource-variable/atkinson-hyperlegible-mono": "^5.3.0",
+    "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
+    "@fontsource-variable/besley": "^5.3.0",
+    "heic-to": "^1.6.7",
+    "idb": "^8.0.4",
+    "mammoth": "^1.13.0",
+    "pdfjs-dist": "^6.5.438",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@rolldown/plugin-babel": "^0.2.3",
-    "@types/babel__core": "^7.20.5",
-    "@types/node": "^24.13.3",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.7",
-    "@vitejs/plugin-react": "^6.1.1",
-    "babel-plugin-react-compiler": "^1.0.0",
-    "oxlint": "^1.81.0",
-    "postcss": "^8.5.28",
-    "postcss-preset-mantine": "^1.18.0",
-    "postcss-simple-vars": "^7.0.1",
-    "typescript": "~6.0.2",
-    "vite": "^8.3.0"
+    "@cloudflare/workers-types": "^5.20261115.1",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "docx": "^9.15.4",
+    "oxlint": "^1.93.0",
+    "playwright": "^1.65.1",
+    "sharp": "^0.35.5",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0",
+    "wrangler": "^4.162.0"
   },
   "allowScripts": {
-    "groq-sdk@1.6.0": true,
-    "fsevents@2.3.3": true
+    "esbuild@0.28.2": true,
+    "workerd@1.20261113.1": true,
+    "tesseract.js": false
   }
 }
