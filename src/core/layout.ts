@@ -143,8 +143,9 @@ function pageRows(tokens: Token[], page: number, pageWidth: number, deskew: bool
       if (last && gap < Math.max(last.h, t.h) * gapFactor) {
         const needsSpace = gap > Math.max(last.h, t.h) * 0.12 && !/[぀-鿿가-힯]$/.test(last.text);
         // Right-to-left text reads from the right-most token.
-        const rtl = RTL_CHAR.test(last.text) && RTL_CHAR.test(text);
-        last.text = rtl ? text + (needsSpace ? ' ' : '') + last.text : last.text + (needsSpace ? ' ' : '') + text;
+        const rtl = RTL_CHAR.test(last.text) || RTL_CHAR.test(text);
+        const sep = rtl ? gap > Math.max(last.h, t.h) * 0.04 : needsSpace;
+        last.text = rtl ? text + (sep ? ' ' : '') + last.text : last.text + (sep ? ' ' : '') + text;
         const right = Math.max(last.x + last.w, t.x + t.w);
         const top = Math.min(last.y, t.y);
         const bottom = Math.max(last.y + last.h, t.y + t.h);

@@ -19,7 +19,8 @@ const BASE_RUN = /[ء-يٮ-ۓ]+(?:\s+[ء-يٮ-ۓ]+)*/g;
 export function repairArabic(str: string): string {
   if (!PRESENTATION.test(str)) return str;
   const visual = str.replace(BASE_RUN, (run) => [...run].reverse().join(''));
-  return fixRtl(visual.normalize('NFKC'));
+  // Reverse first, then expand ligatures, so lam-alef pairs come out in the right order.
+  return fixRtl(visual).normalize('NFKC').replace(/ی/g, 'ي').replace(/ھ/g, 'ه').replace(/ک/g, 'ك');
 }
 
 export function pdfItemsToTokens(items: PdfTextItem[], pageHeight: number, page: number): Token[] {

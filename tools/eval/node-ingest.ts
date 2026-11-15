@@ -12,7 +12,7 @@ import { looksScanned, pdfItemsToTokens, type PdfTextItem } from '../../src/inge
 
 const HF_BASE = 'https://huggingface.co/snowfluke/ppu-paddle-ocr-models/resolve/main';
 const CACHE = path.resolve('tools/eval/.cache');
-const INGEST_VERSION = 'v6';
+const INGEST_VERSION = 'v7';
 
 interface OcrService {
   recognize(image: ArrayBuffer): Promise<{ lines: OcrSegment[][] }>;

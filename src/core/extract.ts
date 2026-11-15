@@ -1,10 +1,10 @@
 // Extraction: positioned text → structured record (student, school, system, courses), with provenance.
 import type { Cell, Row } from './layout.ts';
 import { rowText } from './layout.ts';
-import { academicYear, genericLevel, infoField, isGradeLike, looksLikeSchool, splitGrade, termOf, type InfoField } from './lexicon.ts';
+import { academicYear, genericLevel, infoField, infoFieldExact, isGradeLike, looksLikeSchool, splitGrade, termOf, type InfoField } from './lexicon.ts';
 import { buildMatcher, fixOcrNumerals } from './match.ts';
 import { readTables, type RawCourse, type TableResult } from './tables.ts';
-import { asciiDigits, displayName, dominantScript, key, parseDate, parseNumber } from './text.ts';
+import { asciiDigits, displayName, dominantScript, key, parseDate, parseNumber, stripDiacritics } from './text.ts';
 import type { DocTokens, ExtractedCourse, Extraction, Field, KnowledgeBase, SourceRef, SystemProfile } from './types.ts';
 
 const src = (c: Cell): SourceRef => ({ page: c.page, x: c.x, y: c.y, w: c.w, h: c.h });
@@ -56,18 +56,21 @@ interface Pair {
 function splitLabel(text: string): { label: string; value: string } | null {
   const m = /^(.{1,70}?)\s*[:：]\s*(.*)$/.exec(text);
   if (m && !/^\d+$/.test(m[1])) return { label: m[1], value: m[2] };
-  // No colon (OCR often drops it): try a known label at the start.
+  // No colon (OCR often drops it): accept only an exact known label at the start. Single Latin words are
+  // too ambiguous ("STUDENT ACADEMIC TRANSCRIPT"), so those need at least two words.
   const words = text.split(/\s+/);
   for (let n = Math.min(6, words.length - 1); n >= 1; n--) {
     const label = words.slice(0, n).join(' ');
-    if (infoField(label) !== 'other' && key(label).length >= 3) return { label, value: words.slice(n).join(' ') };
+    const latin = /[A-Za-z]/.test(label);
+    if (latin && n < 2) continue;
+    if (infoFieldExact(label) !== 'other' && key(label).length >= 2) return { label, value: words.slice(n).join(' ') };
   }
   return null;
 }
 
 function readInfo(rows: Row[], rtl: boolean): Pair[] {
   const pairs: Pair[] = [];
-  let last: Pair | null = null;
+  let lastRowPairs: Pair[] = [];
   for (const row of rows) {
     const cells = rtl ? [...row.cells].reverse() : row.cells;
     let found = false;
@@ -85,36 +88,40 @@ function readInfo(rows: Row[], rtl: boolean): Pair[] {
       if (!value) continue;
       const k = key(sp.label);
       const field = OTHER_LABEL.test(k) ? 'other' : infoField(sp.label);
-      const pair: Pair = { field, label: sp.label, value, cell, row };
-      pairs.push(pair);
-      last = pair;
+      pairs.push({ field, label: sp.label, value, cell, row });
       found = true;
     }
-    // A wrapped value: the next line continues a name or school that ran out of room.
-    if (!found && last && row.cells.length === 1 && row.page === last.row.page && row.y - last.row.y < last.row.h * 1.7 && (last.field === 'name' || last.field === 'school')) {
-      const c = row.cells[0];
-      const overlapsLabel = c.x < last.cell.x + last.cell.w && c.x + c.w > last.cell.x - 4;
-      if (overlapsLabel && !/[:：]/.test(c.text) && c.text.length < 60) {
-        last.value += ' ' + c.text;
-        last.row = row;
-        continue;
+    // Wrapped values: a following line that starts under a name or school and carries no label of its own.
+    let continued = false;
+    for (const c of row.cells) {
+      if (/[:：]/.test(c.text) || c.text.length > 60 || splitLabel(c.text)) continue;
+      const p = lastRowPairs.find(
+        (q) => (q.field === 'name' || q.field === 'school') && row.page === q.row.page && row.y - q.row.y > 0 && row.y - q.row.y < q.row.h * 1.8 && c.x >= q.cell.x - 6 && c.x < q.cell.x + q.cell.w,
+      );
+      if (p) {
+        p.value += ' ' + c.text;
+        p.row = row;
+        continued = true;
       }
     }
-    if (!found) last = null;
+    if (found) lastRowPairs = pairs.filter((p) => p.row === row);
+    else if (!continued) lastRowPairs = [];
   }
   return pairs;
 }
 
 function resolveLevel(label: string, profile: SystemProfile | undefined): { level: number | null; term?: string } {
   const s = asciiDigits(label);
+  // OCR often drops or changes diacritics ("Lóp 10" for "Lớp 10"), so also compare without them.
+  const bare = stripDiacritics(s);
   for (const rule of profile?.levels ?? []) {
     try {
-      if (new RegExp(rule.pattern, 'iu').test(s)) return { level: rule.level, term: rule.term };
+      if (new RegExp(rule.pattern, 'iu').test(s) || new RegExp(stripDiacritics(rule.pattern), 'iu').test(bare)) return { level: rule.level, term: rule.term };
     } catch {
       // A malformed pattern in a profile must never break extraction.
     }
   }
-  return { level: genericLevel(s) };
+  return { level: genericLevel(s) ?? genericLevel(bare) };
 }
 
 const COUNTRY_WORDS: Record<string, string[]> = {

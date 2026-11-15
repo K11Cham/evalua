@@ -31,7 +31,9 @@ export function key(s: string): string {
     .toLowerCase()
     .replace(/[ـ‌-‏ً-ْ]/g, '') // tatweel, bidi marks, Arabic vowel marks
     .replace(/[أإآٱ]/g, 'ا')
-    .replace(/ى/g, 'ي')
+    .replace(/[ىی]/g, 'ي')
+    .replace(/ھ/g, 'ه')
+    .replace(/ک/g, 'ك')
     .replace(/[^\p{L}\p{N}\p{M}]+/gu, ' ')
     .trim();
 }

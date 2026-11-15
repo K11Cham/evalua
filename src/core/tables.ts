@@ -412,11 +412,13 @@ export function readTables(doc: DocTokens): TableResult {
         const pitch = pitches.length ? [...pitches].sort((a, b2) => a - b2)[Math.floor(pitches.length / 2)] : r.h * 1.5;
         if (r.y - prev.y > Math.max(pitch * 2.4, r.h * 3) && !isDataRow(r)) break;
       }
-      if (!multi && isHeadingRow(r)) {
+      const headingLike = multi ? !isDataRow(r) && r.cells.length <= 4 && r.cells.every((c) => isPeriodLabel(c.text) && c.text.length < 80) : isHeadingRow(r);
+      if (headingLike) {
         // Belongs to the next table if no subject rows follow before the next header band.
         let dataAhead = false;
         for (let k = i + 1; k < nextStart; k++) if (isDataRow(rows[k])) ((dataAhead = true), (k = nextStart));
         if (!dataAhead) break;
+        if (multi) continue;
         used.add(i);
         segments.push({ heading: { text: rowText(r), cell: r.cells[0] }, rows: [] });
         prev = r;
@@ -458,7 +460,9 @@ export function readTables(doc: DocTokens): TableResult {
       for (const hr of headingRows) {
         const cells = groupsIdx.length > 1 ? hr.cells.filter((c) => overlap(gx0, gx1, c.x, c.x + c.w) > 0.5 * Math.min(c.w, gx1 - gx0)) : hr.cells;
         const text = cells.map((c) => c.text).join(' ');
-        if (cells.length && cells.length <= 3 && text.length < 120 && isPeriodLabel(text) && !/[:：]\s*\S.*[:：]/.test(text)) {
+        // A line with several "label: value" pairs is student information unless it sits directly on top of the table.
+        const adjacent = hr.page === rows[band.start].page && rows[band.start].y - hr.y < Math.max(hr.h, rows[band.start].h) * 2.6;
+        if (cells.length && cells.length <= 3 && text.length < 120 && isPeriodLabel(text) && (adjacent || !/[:：]\s*\S.*[:：]/.test(text))) {
           found = { text, cell: cells[0] };
           break;
         }

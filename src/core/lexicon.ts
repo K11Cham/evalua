@@ -1,6 +1,6 @@
 // Multilingual vocabulary used to understand transcript structure:
 // column headers, field labels, period (year/term) labels, summary rows, grade words.
-import { asciiDigits, key, similarity } from './text.ts';
+import { asciiDigits, key, similarity, stripDiacritics } from './text.ts';
 
 export type Role =
   | 'name' | 'final' | 'grade' | 'score' | 'component' | 'credits' | 'hours' | 'max' | 'min'
@@ -119,12 +119,23 @@ export function infoField(label: string): InfoField {
   const k = key(label.replace(/\(.*?\)/g, ' '));
   if (!k) return 'other';
   for (const { term, field } of LABEL_INDEX) if (k === term) return field;
+  // OCR often drops spaces ("Date ofBirth").
+  const tight = k.replace(/ /g, '');
+  for (const { term, field } of LABEL_INDEX) if (term.length >= 5 && tight === term.replace(/ /g, '')) return field;
   for (const { term, field } of LABEL_INDEX) if (term.length >= 3 && containsTerm(k, term)) return field;
   if (k.length >= 6) {
     for (const { term, field } of LABEL_INDEX) {
       if (term.length >= 6 && Math.abs(term.length - k.length) <= 2 && similarity(k, term) >= 0.84) return field;
     }
   }
+  return 'other';
+}
+
+/** Exact label match only (used when there is no colon to mark the label). */
+export function infoFieldExact(label: string): InfoField {
+  const k = key(label.replace(/\(.*?\)/g, ' '));
+  if (!k) return 'other';
+  for (const { term, field } of LABEL_INDEX) if (k === term) return field;
   return 'other';
 }
 
@@ -161,7 +172,7 @@ const PERIOD_RES: RegExp[] = [
   /\b(seconde|première|premiere|terminale|troisième|quatrième)\b/iu,
   /[高初][一二三]|[一二三四五六]年级|第[一二三四五六]学[期年]|[上下]学期/u,
   /\d\s*학년|\d\s*학기/u,
-  /\b[1-6]\s*[ªºa°]\s*(série|serie|ano|año|semestre|grado)\b/iu,
+  /\b[1-6]\s*[ªºao°]\.?\s*(série|serie|ano|año|semestre|grado|bimestre|trimestre)\b/iu,
   /\b(qualifikationsphase|einführungsphase|kursstufe|oberstufe)\b/iu,
   /\b(first|second|third|fourth|1st|2nd|3rd|4th)\s+(year|semester|term|quarter)\b/iu,
   /\b(freshman|sophomore|junior|senior)\b/iu,
@@ -171,7 +182,10 @@ const YEAR_RE = /\b((?:19|20)\d{2})\s*[-–—/]\s*((?:19|20)?\d{2})\b/;
 
 export function isPeriodLabel(text: string): boolean {
   const s = asciiDigits(text);
-  return PERIOD_RES.some((r) => r.test(s));
+  if (PERIOD_RES.some((r) => r.test(s))) return true;
+  // OCR may drop or change diacritics ("Lóp 11" for "Lớp 11").
+  const bare = stripDiacritics(s);
+  return bare !== s && PERIOD_RES.some((r) => r.test(bare));
 }
 
 export function academicYear(text: string): string | undefined {
@@ -190,7 +204,7 @@ export function academicYear(text: string): string | undefined {
 export function termOf(text: string): string | undefined {
   const s = asciiDigits(text).toLowerCase();
   let m: RegExpExecArray | null;
-  if ((m = /(?:sem(?:ester|estre)?|term|hk|học kỳ|학기)\s*\.?:?\s*(\d|i{1,3})\b/u.exec(s))) return m[1].startsWith('i') ? String(m[1].length) : m[1];
+  if ((m = /(?:sem(?:ester|estre)?|term|hk|học kỳ|학기)\s*\.?:?\s*(\d|i{1,3})(?:st|nd|rd|th)?\b/u.exec(s))) return m[1].startsWith('i') ? String(m[1].length) : m[1];
   if ((m = /(\d)\s*(?:st|nd|rd|th)?\s*(?:sem(?:ester|estre)?|term|학기)\b/u.exec(s))) return m[1];
   if ((m = /第([一二三四])学期/u.exec(s))) return String('一二三四'.indexOf(m[1]) + 1);
   if (/上学期|[一二三]上/u.test(s)) return '1';
@@ -209,8 +223,10 @@ export function genericLevel(text: string): number | null {
   if (m && +m[1] >= 6 && +m[1] <= 13) return Math.min(12, +m[1]);
   m = /\b(?:class|grade|std|standard)\s*\.?:?\s*(vii|viii|ix|xiii|xii|xi|x)\b/u.exec(s);
   if (m) return Math.min(12, ROMAN[m[1]]);
-  m = /(\d{1,2})\s*(?:класс|학년)/u.exec(s);
+  m = /(\d{1,2})\s*(?:класс|학년|वीं|年级|\. klasse|\. sınıf)/u.exec(s);
   if (m && +m[1] >= 6 && +m[1] <= 12) return +m[1];
+  m = /(?:कक्षा|दर्जा|الصف|صف|classe|grado|curso|kelas|darasa|sınıf|klas|班|年级)\s*:?\s*(\d{1,2})/u.exec(s);
+  if (m && +m[1] >= 6 && +m[1] <= 13) return Math.min(12, +m[1]);
   if (/\bfreshman\b/.test(s)) return 9;
   if (/\bsophomore\b/.test(s)) return 10;
   if (/\bjunior\b/.test(s)) return 11;
