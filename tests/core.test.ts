@@ -342,6 +342,23 @@ describe('credit follows what was covered', () => {
     expect(maths.reduce((a, s) => a + s.credits, 0)).toBeCloseTo(1, 2);
     expect(ev.totalEarned).toBeGreaterThanOrEqual(5);
   });
+  it('reads several term reports uploaded together, each page with its own term', () => {
+    // A multi-file upload becomes one record with one page per file.
+    const pages = ['First Term', 'Second Term', 'Third Term'].map((t) => docxHtmlToDoc(termReport(t, '11 S1', rows)));
+    const doc = { kind: 'docx' as const, pages: [] as typeof pages[0]['pages'], tokens: [] as typeof pages[0]['tokens'], engine: 'test', warnings: [] as string[] };
+    for (const p of pages) {
+      const off = doc.pages.length;
+      doc.pages.push(...p.pages);
+      doc.tokens.push(...p.tokens.map((t) => ({ ...t, page: t.page + off })));
+    }
+    const combined = runExtraction(doc, kb);
+    const maths = combined.courses.filter((c) => c.name.original === 'MATHEMATICS');
+    expect(maths.map((c) => c.term)).toEqual(['1', '2', '3']);
+    const ev = evaluate(combined, kb, jcps);
+    const mathCredit = ev.suggestions.filter((s) => s.conceptId === 'math.general').reduce((a, s) => a + s.credits, 0);
+    expect(mathCredit).toBeCloseTo(1, 5);
+    expect(ev.flags.some((f) => f.id === 'partial-year')).toBe(false);
+  });
   it('places mathematics on the US course sequence and suggests where to continue', () => {
     const ev = evaluate(ex, kb, jcps);
     // WAEC mathematics is a spiral course: year 2 of 3 (SS2 = grade 11) stands for the second US course.

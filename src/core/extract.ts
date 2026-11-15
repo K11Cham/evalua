@@ -204,8 +204,9 @@ function stripRowNumbers(courses: RawCourse[]) {
   const hits = nums.filter(Boolean).length;
   if (hits < 3 || hits < courses.length * 0.6) return;
   const values = nums.map((m) => (m ? +m[1] : null)).filter((v): v is number => v != null);
-  const rising = values.filter((v, i) => i === 0 || v > values[i - 1]).length >= values.length * 0.8;
-  if (!rising) return;
+  // Numbering may restart at 1 for each report in a combined record; every run must count up by one.
+  const counting = values.filter((v, i) => i === 0 || v === values[i - 1] + 1 || v === 1).length >= values.length * 0.8;
+  if (!counting) return;
   courses.forEach((c, i) => {
     const m = nums[i];
     if (m) c.name = { ...c.name, text: asciiDigits(c.name.text).slice(m[0].length).trim() };
@@ -316,15 +317,24 @@ export function extract(doc: DocTokens, kb: KnowledgeBase, opts: ExtractOptions 
     c.termUnit ??= unitOf(c.period.value);
     if (c.wholeYear) c.term = undefined;
   }
-  const span = documentPeriod(tables.rows.map(rowText));
-  if (span) {
-    for (const c of courses) {
-      if (c.term || c.wholeYear) continue;
-      c.term = span.term;
-      c.termUnit = unitOf(span.label);
-      if (!c.period.value) c.period = { value: span.label, original: span.label, confidence: 0.9 };
-      else if (!c.period.value.toLowerCase().includes(span.label.toLowerCase())) c.period.value = `${span.label} · ${c.period.value}`;
-    }
+  // Read per page: a record made of several term reports has one "First/Second/Third Term" heading on each.
+  // A page without one inherits the last heading seen (a report that runs onto a second page).
+  const pageCount = Math.max(1, ...tables.rows.map((r) => r.page + 1));
+  let carried: ReturnType<typeof documentPeriod> = null;
+  const spanOfPage: ReturnType<typeof documentPeriod>[] = [];
+  for (let p = 0; p < pageCount; p++) {
+    const found = documentPeriod(tables.rows.filter((r) => r.page === p).map(rowText));
+    if (found) carried = found;
+    spanOfPage[p] = carried;
+  }
+  for (const c of courses) {
+    if (c.term || c.wholeYear) continue;
+    const span = spanOfPage[c.name.source?.page ?? 0];
+    if (!span) continue;
+    c.term = span.term;
+    c.termUnit = unitOf(span.label);
+    if (!c.period.value) c.period = { value: span.label, original: span.label, confidence: 0.9 };
+    else if (!c.period.value.toLowerCase().includes(span.label.toLowerCase())) c.period.value = `${span.label} · ${c.period.value}`;
   }
 
   const extraction: Extraction = {

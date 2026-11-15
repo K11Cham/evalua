@@ -365,7 +365,10 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
     flags.push({ id: 'completed-abroad', severity: 'important', title: 'The record may show completed secondary education', detail: `${finished.text} (${finished.source.title})` });
   }
   // A single term or semester on its own: say so once, plainly.
-  const partials = drafts.filter((d) => (span.get(d.courseId)?.share ?? 1) < 1 && !d.zero);
+  // Judge by course, not by row: three term reports of one course make a full year.
+  const shareOfGroup = new Map<string, number>();
+  for (const d of drafts) if (!d.zero) shareOfGroup.set(groupKey(d), (shareOfGroup.get(groupKey(d)) ?? 0) + (span.get(d.courseId)?.share ?? 1));
+  const partials = drafts.filter((d) => !d.zero && (shareOfGroup.get(groupKey(d)) ?? 1) < 0.99);
   if (partials.length && partials.length === drafts.filter((d) => !d.zero).length) {
     const sp = span.get(partials[0].courseId)!;
     flags.push({
