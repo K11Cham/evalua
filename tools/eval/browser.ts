@@ -10,20 +10,23 @@ import type { Truth } from '../fakegen/types.ts';
 const args = process.argv.slice(2);
 const shotsAt = args.indexOf('--shots');
 const shots = shotsAt >= 0 ? args[shotsAt + 1] : '';
-const filters = args.filter((a, i) => !a.startsWith('-') && i !== shotsAt + 1);
+const baseAt = args.indexOf('--base');
+const remote = baseAt >= 0 ? args[baseAt + 1].replace(/\/$/, '') : '';
+const filters = args.filter((a, i) => !a.startsWith('-') && (shotsAt < 0 || i !== shotsAt + 1) && (baseAt < 0 || i !== baseAt + 1));
 const DEFAULT = ['gm-wassce.pdf', 'gm-gabece.scan.jpg', 'ng-jamb.photo.jpg', 'gh-shs.docx', 'mx-sep.photo.jpg', 'cn-gaozhong.photo.jpg', 'fr-lycee.scan.pdf', 'kr-record.scan.jpg', 'eg-thanaweya.scan.png', 'ru-attestat.pdf', 'br-historico.docx', 'in-hindi-board.scan.jpg'];
 const manifest = JSON.parse(readFileSync('fixtures/fake/manifest.json', 'utf8')) as Truth[];
 const targets = manifest.filter((m) => (filters.length ? filters.some((f) => m.file.includes(f)) : DEFAULT.includes(m.file)));
 const PORT = 4173;
 
-const server = spawn(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { stdio: 'ignore', shell: process.platform === 'win32' });
-const stop = () => server.kill();
+const BASE = remote || `http://localhost:${PORT}`;
+const server = remote ? null : spawn(process.platform === 'win32' ? 'npx.cmd vite preview --port ' + PORT + ' --strictPort' : 'npx vite preview --port ' + PORT + ' --strictPort', { stdio: 'ignore', shell: true });
+const stop = () => server?.kill();
 process.on('exit', stop);
 
 async function waitForServer() {
   for (let i = 0; i < 60; i++) {
     try {
-      if ((await fetch(`http://localhost:${PORT}/`)).ok) return;
+      if ((await fetch(`${BASE}/`)).ok) return;
     } catch {
       // not up yet
     }
@@ -39,7 +42,7 @@ const page = await ctx.newPage();
 const external: string[] = [];
 page.on('request', (r) => {
   const u = new URL(r.url());
-  if (!['localhost', '127.0.0.1'].includes(u.hostname) && !/^(blob|data):/.test(r.url())) external.push(r.url());
+  if (u.origin !== new URL(BASE).origin && !/^(blob|data):/.test(r.url())) external.push(r.url());
 });
 const errors: string[] = [];
 page.on('pageerror', (e) => errors.push(e.message));
@@ -48,7 +51,7 @@ if (shots) mkdirSync(shots, { recursive: true });
 let failed = 0;
 for (const t of targets) {
   const t0 = Date.now();
-  await page.goto(`http://localhost:${PORT}/#/`);
+  await page.goto(`${BASE}/#/`);
   await page.waitForSelector('input[type=file]', { state: 'attached' });
   await page.setInputFiles('input[type=file]', path.resolve('fixtures/fake', t.file));
   await page.waitForURL(/#\/case\//);
@@ -67,7 +70,7 @@ for (const t of targets) {
 
 if (shots) {
   // Other screens, for a visual check.
-  await page.goto(`http://localhost:${PORT}/#/`);
+  await page.goto(`${BASE}/#/`);
   await page.waitForSelector('table.ledger');
   await page.screenshot({ path: path.join(shots, '_dashboard.png') });
   await page.locator('table.ledger a.rowlink').first().click();
@@ -79,10 +82,10 @@ if (shots) {
   await page.waitForSelector('article.report');
   await page.screenshot({ path: path.join(shots, '_report.png'), fullPage: true });
   await page.pdf({ path: path.join(shots, '_report.pdf'), format: 'Letter' });
-  await page.goto(`http://localhost:${PORT}/#/reference/waec`);
+  await page.goto(`${BASE}/#/reference/waec`);
   await page.waitForSelector('article');
   await page.screenshot({ path: path.join(shots, '_reference.png') });
-  await page.goto(`http://localhost:${PORT}/#/districts`);
+  await page.goto(`${BASE}/#/districts`);
   await page.waitForSelector('table.ledger');
   await page.screenshot({ path: path.join(shots, '_districts.png') });
 }
@@ -90,6 +93,7 @@ if (shots) {
 await browser.close();
 stop();
 console.log(`\n${targets.length - failed}/${targets.length} files read correctly in the browser.`);
-console.log(external.length ? `REQUESTS TO OTHER SITES (${external.length}):\n  ${[...new Set(external)].join('\n  ')}` : 'No requests left the local site.');
+console.log(`Site: ${BASE}`);
+console.log(external.length ? `REQUESTS TO OTHER SITES (${external.length}):\n  ${[...new Set(external)].join('\n  ')}` : 'No requests went to any other site.');
 if (errors.length) console.log(`Page errors:\n  ${[...new Set(errors)].join('\n  ')}`);
 process.exit(failed || external.length ? 1 : 0);

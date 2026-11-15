@@ -24,3 +24,4 @@ tools/ocr-bench/hybrid.mjs
 tools/eval/.cache
 public/models
 public/ort
+migrations/seed.sql

@@ -68,7 +68,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
       .finally(() => setReady(true));
   }, []);
 
-  const kb = useMemo<KnowledgeBase>(() => ({ ...seed, districts: [...myDistricts, ...seed.districts] }), [seed, myDistricts]);
+  // The shared knowledge base is also served from /api/kb (Cloudflare D1). It replaces the bundled copy only
+  // when it is newer, so the app keeps working offline and when the API is down.
+  const [remote, setRemote] = useState<KnowledgeBase | null>(() => {
+    try {
+      const cached = localStorage.getItem('evalua.kb');
+      return cached ? (JSON.parse(cached) as KnowledgeBase) : null;
+    } catch {
+      return null;
+    }
+  });
+  useEffect(() => {
+    const newest = (k: KnowledgeBase) => [...k.systems, ...k.districts].reduce((v, x) => (x.provenance.addedOn > v ? x.provenance.addedOn : v), '');
+    fetch('/api/kb')
+      .then((r) => (r.ok ? (r.json() as Promise<KnowledgeBase>) : null))
+      .then((k) => {
+        if (!k?.systems?.length || !k.concepts?.length) return;
+        if (k.schoolYear > seed.schoolYear || (k.schoolYear === seed.schoolYear && newest(k) > newest(seed))) {
+          setRemote(k);
+          localStorage.setItem('evalua.kb', JSON.stringify(k));
+        } else {
+          setRemote(null);
+          localStorage.removeItem('evalua.kb');
+        }
+      })
+      .catch(() => undefined);
+  }, [seed]);
+
+  const base = remote ?? seed;
+  const kb = useMemo<KnowledgeBase>(() => ({ ...base, districts: [...myDistricts, ...base.districts] }), [base, myDistricts]);
 
   const saveDistrict = useCallback(async (p: DistrictProfile) => {
     await putDistrict(p);

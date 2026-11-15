@@ -6,9 +6,9 @@
   "description": "Helps US school counselors evaluate international transcripts: extract, map to district curriculum, suggest credits with reasoning.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -p tsconfig.json && vite build",
+    "build": "npm run typecheck && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json && tsc -p functions/tsconfig.json",
     "lint": "oxlint",
     "test": "vitest run",
     "fakes": "tsx tools/fakegen/generate.ts",
@@ -16,7 +16,8 @@
     "kb:sql": "tsx tools/kb/build-sql.ts",
     "check": "npm run typecheck && npm run lint && npm run test",
     "models": "tsx tools/models/fetch.ts",
-    "eval:browser": "tsx tools/eval/browser.ts"
+    "eval:browser": "tsx tools/eval/browser.ts",
+    "deploy": "npm run build && npm run kb:sql && wrangler d1 execute evalua-kb --remote --yes --file=migrations/0001_kb.sql && wrangler d1 execute evalua-kb --remote --yes --file=migrations/seed.sql && wrangler pages deploy dist --project-name evalua --branch main --commit-dirty=true"
   },
   "dependencies": {
     "@fontsource-variable/atkinson-hyperlegible-mono": "^5.3.0",

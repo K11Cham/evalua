@@ -90,9 +90,9 @@ export function verify(ex: Extraction, doc: DocTokens, tables: TableResult): Ver
     add({ id: 'pages-missing', severity: 'important', title: 'Some pages may be missing', detail: `The document refers to ${pageRef[2]} pages but ${doc.pages.length} ${doc.pages.length === 1 ? 'was' : 'were'} provided.` });
   }
   // A printed total that the marks read do not add up to: a strong sign that a digit was misread.
-  const marks = ex.courses.map((c) => parseNumber(c.grade.value));
-  if (marks.length >= 3 && marks.every((m) => m != null)) {
-    const sum = Math.round(marks.reduce((a: number, m) => a + (m as number), 0) * 100) / 100;
+  const marks = ex.courses.map((c) => parseNumber(c.grade.value)).filter((m): m is number => m != null);
+  if (marks.length >= 3 && marks.length >= ex.courses.length * 0.6) {
+    const sum = Math.round(marks.reduce((a, m) => a + m, 0) * 100) / 100;
     for (const r of tables.rows) {
       const t = asciiDigits(rowText(r));
       const m = TOTAL_RE.exec(t);

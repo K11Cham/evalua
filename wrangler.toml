@@ -1,0 +1,10 @@
+# Cloudflare Pages project: static app in dist/, API in functions/, knowledge base in D1.
+name = "evalua"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-11-01"
+
+# Shared knowledge base (reference data only — never student records).
+[[d1_databases]]
+binding = "KB"
+database_name = "evalua-kb"
+database_id = "5ba00034-7c71-455a-8b11-739db8e4dba2"
