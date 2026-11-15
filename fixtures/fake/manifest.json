@@ -400,6 +400,330 @@
   ]
  },
  {
+  "id": "gm-termreport",
+  "file": "gm-termreport.scan.pdf",
+  "format": "scan-pdf",
+  "system": "waec",
+  "country": "The Gambia",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "Touray M.L Amie",
+   "dob": ""
+  },
+  "school": {
+   "name": "Brikama Lantern Senior Secondary School"
+  },
+  "courses": [
+   {
+    "name": "MATHEMATICS",
+    "en": "Mathematics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "ENGLISH LANGUAGE",
+    "en": "English Language",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.english",
+    "us": "A"
+   },
+   {
+    "name": "BIOLOGY",
+    "en": "Biology",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "CHEMISTRY",
+    "en": "Chemistry",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "PHYSICS",
+    "en": "Physics",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "FURTHER MATHEMATICS",
+    "en": "Further Mathematics",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.advanced",
+    "us": "B"
+   },
+   {
+    "name": "ECONOMICS",
+    "en": "Economics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.economics",
+    "us": "A"
+   },
+   {
+    "name": "PHYSICAL EDUCATION",
+    "en": "Physical Education",
+    "grade": "E",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "pe",
+    "us": "D"
+   },
+   {
+    "name": "INFORMATION & COMMUNICATION TECHNOLOGY",
+    "en": "Information & Communication Technology",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "cs",
+    "us": "A"
+   }
+  ]
+ },
+ {
+  "id": "gm-termreport",
+  "file": "gm-termreport.pdf",
+  "format": "pdf",
+  "system": "waec",
+  "country": "The Gambia",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "Touray M.L Amie",
+   "dob": ""
+  },
+  "school": {
+   "name": "Brikama Lantern Senior Secondary School"
+  },
+  "courses": [
+   {
+    "name": "MATHEMATICS",
+    "en": "Mathematics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "ENGLISH LANGUAGE",
+    "en": "English Language",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.english",
+    "us": "A"
+   },
+   {
+    "name": "BIOLOGY",
+    "en": "Biology",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "CHEMISTRY",
+    "en": "Chemistry",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "PHYSICS",
+    "en": "Physics",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "FURTHER MATHEMATICS",
+    "en": "Further Mathematics",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.advanced",
+    "us": "B"
+   },
+   {
+    "name": "ECONOMICS",
+    "en": "Economics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.economics",
+    "us": "A"
+   },
+   {
+    "name": "PHYSICAL EDUCATION",
+    "en": "Physical Education",
+    "grade": "E",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "pe",
+    "us": "D"
+   },
+   {
+    "name": "INFORMATION & COMMUNICATION TECHNOLOGY",
+    "en": "Information & Communication Technology",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "cs",
+    "us": "A"
+   }
+  ]
+ },
+ {
+  "id": "gm-termreport",
+  "file": "gm-termreport.photo.jpg",
+  "format": "photo-jpg",
+  "system": "waec",
+  "country": "The Gambia",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "Touray M.L Amie",
+   "dob": ""
+  },
+  "school": {
+   "name": "Brikama Lantern Senior Secondary School"
+  },
+  "courses": [
+   {
+    "name": "MATHEMATICS",
+    "en": "Mathematics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "ENGLISH LANGUAGE",
+    "en": "English Language",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.english",
+    "us": "A"
+   },
+   {
+    "name": "BIOLOGY",
+    "en": "Biology",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "CHEMISTRY",
+    "en": "Chemistry",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "PHYSICS",
+    "en": "Physics",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "FURTHER MATHEMATICS",
+    "en": "Further Mathematics",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.advanced",
+    "us": "B"
+   },
+   {
+    "name": "ECONOMICS",
+    "en": "Economics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.economics",
+    "us": "A"
+   },
+   {
+    "name": "PHYSICAL EDUCATION",
+    "en": "Physical Education",
+    "grade": "E",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "pe",
+    "us": "D"
+   },
+   {
+    "name": "INFORMATION & COMMUNICATION TECHNOLOGY",
+    "en": "Information & Communication Technology",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "cs",
+    "us": "A"
+   }
+  ]
+ },
+ {
   "id": "ng-sss",
   "file": "ng-sss.scan.jpg",
   "format": "scan-jpg",

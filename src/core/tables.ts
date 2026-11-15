@@ -216,6 +216,91 @@ function assign(cols: HCol[], body: Row[]): (Cell | undefined)[][] {
   });
 }
 
+/**
+ * Where the body's own columns are: maximal x-ranges that cells occupy, separated by gutters that
+ * (almost) no row crosses. Headings are often centred over a wide column while the data is left-aligned,
+ * so the heading's position alone does not say where its column's data sits.
+ */
+export function dataColumns(body: Row[]): { x0: number; x1: number }[] {
+  const cells = body.flatMap((r) => r.cells);
+  if (body.length < 3 || !cells.length) return [];
+  const min = Math.floor(Math.min(...cells.map((c) => c.x)));
+  const max = Math.ceil(Math.max(...cells.map((c) => c.x + c.w)));
+  const cover = new Uint16Array(max - min + 2);
+  for (const r of body) {
+    const seen = new Uint8Array(cover.length);
+    for (const c of r.cells) for (let x = Math.floor(c.x) - min; x <= Math.ceil(c.x + c.w) - min; x++) seen[x] = 1;
+    for (let x = 0; x < seen.length; x++) cover[x] += seen[x];
+  }
+  const tol = Math.floor(body.length * 0.1);
+  const hs = cells.map((c) => c.h).sort((a, b) => a - b);
+  const minGap = hs[Math.floor(hs.length / 2)] * 0.25;
+  const runs: { x0: number; x1: number }[] = [];
+  let start = -1;
+  for (let x = 0; x <= cover.length; x++) {
+    const on = x < cover.length && cover[x] > tol;
+    if (on && start < 0) start = x;
+    if (!on && start >= 0) {
+      const run = { x0: start + min, x1: x - 1 + min };
+      const last = runs[runs.length - 1];
+      if (last && run.x0 - last.x1 < minGap) last.x1 = run.x1;
+      else runs.push(run);
+      start = -1;
+    }
+  }
+  return runs;
+}
+
+/**
+ * Lines the header columns up with the body's columns. Two headings that sit over one body column are
+ * merged (a row-number column glued to the subject column), and extents follow the data.
+ */
+function reconcile(cols: HCol[], body: Row[]): HCol[] {
+  const data = dataColumns(body);
+  if (data.length < 2 || data.length > cols.length) return cols;
+  const centre = (c: { x0: number; x1: number }) => (c.x0 + c.x1) / 2;
+  const home = cols.map((c) => data.findIndex((d) => centre(c) >= d.x0 - 2 && centre(c) <= d.x1 + 2));
+  // A heading centred over a wide, left-aligned column can sit to the right of where most of that
+  // column's text ends, in the gutter. It belongs to the neighbouring body column that has no real
+  // heading of its own, or whose longest cell reaches under it.
+  const real = (di: number) => cols.some((c, i) => home[i] === di && c.role && c.role !== 'code');
+  const reach = data.map((d) => {
+    const mine = body.flatMap((r) => r.cells).filter((c) => c.x + c.w / 2 >= d.x0 && c.x + c.w / 2 <= d.x1);
+    return { x0: Math.min(d.x0, ...mine.map((c) => c.x)), x1: Math.max(d.x1, ...mine.map((c) => c.x + c.w)) };
+  });
+  cols.forEach((c, i) => {
+    if (home[i] >= 0) return;
+    const x = centre(c);
+    const left = data.findLastIndex((d) => d.x1 < x);
+    const right = data.findIndex((d) => d.x0 > x);
+    if (left >= 0 && x <= reach[left].x1 && !real(left)) home[i] = left;
+    else if (right >= 0 && x >= reach[right].x0 && !real(right)) home[i] = right;
+    else if (left >= 0 && right >= 0 && real(right) && !real(left)) home[i] = left;
+    else if (left >= 0 && right >= 0 && real(left) && !real(right)) home[i] = right;
+  });
+  // Every body column needs a heading; otherwise the headings do not describe this body.
+  if (data.some((_, di) => !home.includes(di))) return cols;
+  const out: HCol[] = [];
+  data.forEach((d, di) => {
+    const mine = cols.filter((_, i) => home[i] === di);
+    const lead = mine.find((c) => c.role === 'name') ?? mine.find((c) => c.role && c.role !== 'code') ?? mine[0];
+    out.push({ ...lead, x0: Math.min(d.x0, lead.x0), x1: Math.max(d.x1, lead.x1), text: lead.text });
+  });
+  // Headings over no data (an empty column) keep their place.
+  cols.forEach((c, i) => {
+    if (home[i] < 0) out.push(c);
+  });
+  out.sort((a, b) => a.x0 - b.x0);
+  for (let i = 0; i + 1 < out.length; i++) {
+    if (out[i].x1 > out[i + 1].x0) {
+      const mid = (Math.max(out[i].x0, out[i + 1].x0) + Math.min(out[i].x1, out[i + 1].x1)) / 2;
+      out[i].x1 = mid;
+      out[i + 1].x0 = mid;
+    }
+  }
+  return out;
+}
+
 /** Guesses roles for columns the header vocabulary did not recognise, from the body content. */
 function inferRoles(cols: HCol[], grid: (Cell | undefined)[][]): boolean {
   const stats = cols.map((_, i) => {
@@ -404,13 +489,29 @@ export function readTables(doc: DocTokens): TableResult {
       const single = r.cells.length === 1;
       const prose = single && (r.cells[0].text.split(/\s+/).length > 7 || /[.。;]\s*$/.test(r.cells[0].text) || /[:：]\s*\S/.test(r.cells[0].text));
       const outside = r.cells.every((c) => c.x > right + 20 || c.x + c.w < left - 20);
-      if (prose || outside) {
+      // Page furniture (a printed web address, "1/2", a print timestamp) is never part of a table.
+      const furniture = r.cells.some((c) => /https?:\/\/|www\./i.test(c.text)) || r.cells.every((c) => /^\s*(page\s*)?\d{1,3}\s*(\/|of)\s*\d{1,3}\s*$/i.test(c.text));
+      if (prose || outside || furniture) {
         if (count) break;
         continue;
       }
       if (r.page === prev.page && count >= 2) {
         const pitch = pitches.length ? [...pitches].sort((a, b2) => a - b2)[Math.floor(pitches.length / 2)] : r.h * 1.5;
-        if (r.y - prev.y > Math.max(pitch * 2.4, r.h * 3) && !isDataRow(r)) break;
+        const gap = r.y - prev.y;
+        if (gap > Math.max(pitch * 4, r.h * 5) || (gap > Math.max(pitch * 2.4, r.h * 3) && !isDataRow(r))) break;
+      }
+      // A table carries on to the next page only if subject rows resume near the top of that page.
+      if (r.page !== prev.page && count) {
+        let resumes = false;
+        for (let k = i; k < Math.min(i + 4, nextStart); k++) {
+          if (rows[k].page !== r.page) break;
+          if (isDataRow(rows[k]) && rows[k].cells.length >= Math.min(3, band.cols.length)) {
+            resumes = true;
+            break;
+          }
+        }
+        if (!resumes) break;
+        if (!isDataRow(r)) continue;
       }
       const headingLike = multi ? !isDataRow(r) && r.cells.length <= 4 && r.cells.every((c) => isPeriodLabel(c.text) && c.text.length < 80) : isHeadingRow(r);
       if (headingLike) {
@@ -434,10 +535,10 @@ export function readTables(doc: DocTokens): TableResult {
     const body = segments.flatMap((s) => s.rows);
     if (!body.length) return;
     bodyIdx.forEach((i) => used.add(i));
+    band.cols = reconcile(band.cols, body);
     const grid = assign(band.cols, body);
-    if (inferRoles(band.cols, grid)) {
-      notes.push({ kind: 'no-header', detail: 'Some column headings were not recognised; the subject and grade columns were inferred from their contents.' });
-    }
+    const guessedRoles = inferRoles(band.cols, grid);
+    const coursesBefore = courses.length;
 
     // Headings: the closest rows above the band that are not part of another table.
     const headingRows: Row[] = [];
@@ -479,6 +580,10 @@ export function readTables(doc: DocTokens): TableResult {
         headings[gi] = current;
       }
     });
+    // Only worth telling the counselor when the guessed columns produced courses.
+    if (guessedRoles && courses.length > coursesBefore) {
+      notes.push({ kind: 'no-header', detail: 'Some column headings were not recognised; the subject and grade columns were inferred from their contents.' });
+    }
     lastHeading = headings;
     for (const h of headings) {
       if (!h.cell) continue;

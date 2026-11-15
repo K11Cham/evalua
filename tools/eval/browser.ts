@@ -12,10 +12,16 @@ const shotsAt = args.indexOf('--shots');
 const shots = shotsAt >= 0 ? args[shotsAt + 1] : '';
 const baseAt = args.indexOf('--base');
 const remote = baseAt >= 0 ? args[baseAt + 1].replace(/\/$/, '') : '';
-const filters = args.filter((a, i) => !a.startsWith('-') && (shotsAt < 0 || i !== shotsAt + 1) && (baseAt < 0 || i !== baseAt + 1));
-const DEFAULT = ['gm-wassce.pdf', 'gm-gabece.scan.jpg', 'ng-jamb.photo.jpg', 'gh-shs.docx', 'mx-sep.photo.jpg', 'cn-gaozhong.photo.jpg', 'fr-lycee.scan.pdf', 'kr-record.scan.jpg', 'eg-thanaweya.scan.png', 'ru-attestat.pdf', 'br-historico.docx', 'in-hindi-board.scan.jpg'];
+const filters = args.filter((a, i) => !a.startsWith('-') && (shotsAt < 0 || i !== shotsAt + 1) && (baseAt < 0 || i !== baseAt + 1) && args[i - 1] !== '--file');
+const DEFAULT = ['gm-wassce.pdf', 'gm-gabece.scan.jpg', 'gm-termreport.scan.pdf', 'ng-jamb.photo.jpg', 'gh-shs.docx', 'mx-sep.photo.jpg', 'cn-gaozhong.photo.jpg', 'fr-lycee.scan.pdf', 'kr-record.scan.jpg', 'eg-thanaweya.scan.png', 'ru-attestat.pdf', 'br-historico.docx', 'in-hindi-board.scan.jpg'];
 const manifest = JSON.parse(readFileSync('fixtures/fake/manifest.json', 'utf8')) as Truth[];
-const targets = manifest.filter((m) => (filters.length ? filters.some((f) => m.file.includes(f)) : DEFAULT.includes(m.file)));
+// --file <path> checks one local file that is not a fixture (for debugging a real record locally; nothing is
+// saved: the browser profile is temporary). Its course count is unknown, so it only reports what was read.
+const fileAt = args.indexOf('--file');
+const extra = fileAt >= 0 ? args[fileAt + 1] : '';
+const targets: (Truth & { abs?: string })[] = extra
+  ? [{ id: 'local', file: path.basename(extra), abs: path.resolve(extra), format: 'pdf', system: '', country: '', lang: '', pages: 0, student: { name: '', dob: '' }, school: { name: '' }, courses: [] }]
+  : manifest.filter((m) => (filters.length ? filters.some((f) => m.file.includes(f) && m.file !== extra) : DEFAULT.includes(m.file)));
 const PORT = 4173;
 
 const BASE = remote || `http://localhost:${PORT}`;
@@ -53,7 +59,7 @@ for (const t of targets) {
   const t0 = Date.now();
   await page.goto(`${BASE}/#/`);
   await page.waitForSelector('input[type=file]', { state: 'attached' });
-  await page.setInputFiles('input[type=file]', path.resolve('fixtures/fake', t.file));
+  await page.setInputFiles('input[type=file]', t.abs ?? path.resolve('fixtures/fake', t.file));
   await page.waitForURL(/#\/case\//);
   try {
     await page.waitForSelector('#courses-h, [role=alert]', { timeout: 180_000 });

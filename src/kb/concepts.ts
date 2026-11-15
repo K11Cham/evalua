@@ -118,6 +118,7 @@ export const concepts: Concept[] = [
     'history', 'world history', 'historia', 'historia universal', 'historia universal contemporánea', 'histoire', 'histoire-géographie', 'histoire géographie',
     'geschichte', 'história', 'storia', '历史', '歷史', '세계사', '역사', '동아시아사', 'lịch sử', 'इतिहास', 'التاريخ', 'история', 'всеобщая история', 'sejarah', 'tarih',
   ]),
+  c('ss.history.us', 'United States History', 'social', SOC, ['united states history', 'us history', 'u s history', 'american history', 'history of the united states']),
   c('ss.history.national', 'National History (home country)', 'social', SOC, [
     'historia de méxico', 'history of mexico', '한국사', '中国历史', 'history of ghana', 'nigerian history', 'история россии', 'lịch sử việt nam', 'história do brasil',
     'histoire de france', 'philippine history', 'indian history', 'national history',
@@ -186,6 +187,7 @@ export const concepts: Concept[] = [
     'entrepreneurship', 'marketing', 'office practice', 'contabilidad', 'administración', 'comptabilité', 'gestion', 'betriebswirtschaftslehre', 'contabilidade',
     '会计', '商业', '회계', 'kế toán', 'वाणिज्य', 'लेखाशास्त्र', 'المحاسبة', 'cost accounting', 'insurance', 'salesmanship', 'store management',
   ]),
+  c('cte.finance', 'Personal Finance / Financial Literacy', 'cte', BUS, ['financial literacy', 'personal finance', 'money management', 'educación financiera']),
   c('cte.agriculture', 'Agricultural Science', 'cte', AG, [
     'agricultural science', 'agriculture', 'agric science', 'animal husbandry', 'fisheries', 'crop husbandry', 'general agriculture', 'agricultura', 'agronomía',
     'landwirtschaft', '农业', '농업', 'nông nghiệp', 'कृषि', 'الزراعة', 'horticulture',

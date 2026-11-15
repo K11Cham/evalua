@@ -926,5 +926,57 @@ const generic: SystemProfile = {
   provenance: GENERIC_SRC,
 };
 
+// ── School calendars: how a year is divided, so a report for one part counts as that fraction of a year.
+// The document's own wording wins ("semester" is always one of two); these are the defaults when it only says "term".
+const cal = (unit: 'term' | 'semester', perYear: number, note: string, source: SourceInfo): NonNullable<SystemProfile['calendar']> => ({ unit, perYear, note, provenance: { source, schoolYear: YEAR, addedOn: ADDED } });
+const CALENDARS: Record<string, NonNullable<SystemProfile['calendar']>> = {
+  waec: cal('term', 3, 'Senior secondary schools in The Gambia, Nigeria and Sierra Leone divide the school year into three terms (first, second, third), and school reports are issued each term. Ghanaian senior high schools have moved to two semesters; a report that says “semester” is read as one of two.', {
+    title: 'Three-term year as printed on West African school reports (“First/Second/Third Term”, “termly” results); confirm with the sending school',
+  }),
+  cn: cal('semester', 2, 'The Chinese school year has two semesters (上学期, 下学期).', CN_SRC.source),
+  'mx-sep': cal('semester', 2, 'The bachillerato is organised in six semesters, two per year.', MX_SRC.source),
+  ph: cal('semester', 2, 'Senior high school (Grades 11–12) runs two semesters a year, each with two quarters.', PH_SRC.source),
+  'ph-k12': cal('semester', 2, 'Senior high school (Grades 11–12) runs two semesters a year, each with two quarters.', PH_SRC.source),
+  kr: cal('semester', 2, 'Korean high schools have two semesters (1학기, 2학기) a year.', KR_SRC.source),
+  vn: cal('semester', 2, 'The Vietnamese school year has two semesters (học kỳ I, học kỳ II).', VN_SRC.source),
+  fr: cal('term', 3, 'The French school year has three trimesters; most lycées issue a report each trimester.', FR_SRC.source),
+  de: cal('semester', 2, 'German schools issue reports for each half-year (Halbjahr).', DE_SRC.source),
+  br: cal('term', 4, 'Brazilian schools commonly report by bimestre, four per year.', BR_SRC.source),
+};
+for (const s of [waec, gabece, jamb, ib, uk, inCbse, inCisce, cn, mx, fr, de, ph, br, kr, vn, ru, eg, generic]) {
+  const c = CALENDARS[s.id];
+  if (c) s.calendar = c;
+}
+
+// ── What each year of WAEC-family mathematics covers, in the topic vocabulary of src/kb/usCourses.ts.
+// Read 2026-11-15. No Gambian (MoBSE) or Nigerian (NERDC) year-by-year mathematics curriculum could be found
+// online, so Ghana's official SHS curriculum (also taught to the WASSCE syllabus) is the year-by-year reference.
+const NACCA_SHS: SourceInfo = { title: 'Ghana NaCCA: Senior High School Mathematics Curriculum (September 2023), SHS 1–3', url: 'https://curriculumresources.edu.gh/wp-content/uploads/2024/11/Mathematics-Curriculum.pdf' };
+const WAEC_FURTHER: SourceInfo = { title: 'WAEC WASSCE syllabus: Further Mathematics / Mathematics (Elective) (undated copy, RACHEL offline library)', url: 'https://rachel.core2learn.org/modules/en-wassce/WASSCESYLABUS/FURTHER_MATHEMATICS_OR_MATHEMATICS%20_ELECTIVE.pdf' };
+waec.sequences = [
+  {
+    concept: 'math.general', ladder: 'math', kind: 'spiral', confidence: 0.6, source: NACCA_SHS,
+    // Ghana Common Core Programme B7–B9 (junior high): linear equations and inequalities, gradient and equation of a line,
+    // Pythagoras and basic trig ratios, simultaneous equations, surds, construction and loci, mean/median/mode.
+    before: ['lin-eq', 'lin-fn', 'coord-geo', 'right-trig', 'systems', 'exp-rad', 'construct', 'stats-1'],
+    byLevel: {
+      '10': ['poly-factor', 'rational', 'geo-proof', 'right-trig', 'area-vol', 'vectors', 'stats-1', 'prob-inf'],
+      '11': ['exp-rad', 'exp-log', 'variation', 'systems', 'seq-series', 'exp-fn', 'transform', 'vectors', 'prob-inf'],
+      '12': ['quad-solve', 'circles', 'trig-fn', 'stats-1', 'prob-inf'],
+    },
+    note: 'Year-by-year topics follow Ghana’s official SHS curriculum, used as the reference for WAEC-family schools. Gambian and Nigerian schools teach to the same WASSCE syllabus but may order topics differently, so check placement against the school’s scheme of work. The WASSCE General Mathematics syllabus also lists introductory calculus (simple differentiation and integration), which is not counted as a US calculus course.',
+  },
+  {
+    concept: 'math.advanced', ladder: 'math', kind: 'targeted', minRung: 4, confidence: 0.4, source: WAEC_FURTHER,
+    before: [],
+    byLevel: {
+      '10': ['fn-analysis', 'poly-fn', 'rational', 'exp-log', 'binomial'],
+      '11': ['seq-series', 'matrices', 'trig-id', 'conics', 'vectors'],
+      '12': ['limits', 'derivative', 'deriv-app', 'integral', 'integ-app'],
+    },
+    note: 'The WAEC Further Mathematics syllabus lists its topics (functions, polynomials, logarithms, binomial theorem, matrices, conics, differentiation, integration, statistics, mechanics) without a year split; evalua spreads them over three years in syllabus order. Check with the school.',
+  },
+];
+
 export const systems: SystemProfile[] = [waec, gabece, jamb, ib, uk, inCbse, inCisce, cn, mx, fr, de, ph, br, kr, vn, ru, eg, generic];
 export type { GradeScale };

@@ -34,6 +34,7 @@ export function key(s: string): string {
     .replace(/[ىی]/g, 'ي')
     .replace(/ھ/g, 'ه')
     .replace(/ک/g, 'ك')
+    .replace(/\s*&\s*/g, ' and ')
     .replace(/[^\p{L}\p{N}\p{M}]+/gu, ' ')
     .trim();
 }
@@ -207,8 +208,13 @@ export function displayName(raw: string): string {
   let s = raw.trim().replace(/\s+/g, ' ');
   const comma = /^([^,]+),\s*(.+)$/.exec(s);
   if (comma) s = `${comma[2]} ${comma[1]}`;
+  // Initials ("G.D", "A.") stay in capitals.
+  const initials = (w: string) => /^(\p{L}\.)+\p{L}?\.?$/u.test(w);
   if (/[A-Z]/.test(s) && s === s.toUpperCase()) {
-    s = s.toLowerCase().replace(/(^|[\s\-'’])(\p{L})/gu, (_m, a: string, b: string) => a + b.toUpperCase());
+    s = s
+      .split(' ')
+      .map((w) => (initials(w) ? w.toUpperCase() : w.toLowerCase().replace(/(^|[-'’])(\p{L})/gu, (_m, a: string, b: string) => a + b.toUpperCase())))
+      .join(' ');
   } else {
     // Mixed case with a shouting surname: "Akosua Serwaa MENSAH"
     s = s.replace(/\b(\p{Lu}{2,})\b/gu, (w) => w[0] + w.slice(1).toLowerCase());

@@ -24,7 +24,7 @@ export function CaseView({ id }: { id: string }) {
   const [aiError, setAiError] = useState('');
 
   const district = useMemo(() => kb.districts.find((d) => d.id === rec?.districtId) ?? kb.districts.find((d) => d.id === 'generic-22')!, [kb, rec?.districtId]);
-  const evaluation = useMemo(() => (rec?.extraction ? evaluate(rec.extraction, kb, district, rec.overrides) : null), [rec?.extraction, rec?.overrides, kb, district]);
+  const evaluation = useMemo(() => (rec?.extraction ? evaluate(rec.extraction, kb, district, rec.overrides, rec.assume) : null), [rec?.extraction, rec?.overrides, rec?.assume, kb, district]);
 
   if (missing) {
     return (
@@ -154,6 +154,8 @@ export function CaseView({ id }: { id: string }) {
   }
   const pending = (evaluation?.suggestions ?? []).filter((s) => s.needsReview).length;
   const untranslated = ex.courses.filter((c) => c.translation === 'none' && c.name.original);
+  // Years where the record shows a later term but not the earlier ones.
+  const partialLevels = [...new Set(ex.courses.filter((c) => c.term && Number(c.term) > 1 && c.level != null && !c.wholeYear).map((c) => c.level!))].sort();
   const provider = activeProvider(settings);
   const system = kb.systems.find((s) => s.id === ex.systemId.value);
 
@@ -167,6 +169,7 @@ export function CaseView({ id }: { id: string }) {
             <a href="#verify" onClick={(e) => jump(e, 'verify')}>To verify ({openFlags.length})</a>
             <a href="#student" onClick={(e) => jump(e, 'student')}>Student</a>
             <a href="#courses" onClick={(e) => jump(e, 'courses')}>Courses ({ex.courses.length})</a>
+            <a href="#placement" onClick={(e) => jump(e, 'placement')}>Placement</a>
             <a href="#requirements" onClick={(e) => jump(e, 'requirements')}>Requirements</a>
             <a href="#notes" onClick={(e) => jump(e, 'notes')}>Notes and changes</a>
             <span style={{ marginLeft: 'auto' }} className="row">
@@ -489,10 +492,12 @@ export function CaseView({ id }: { id: string }) {
                                     </option>
                                   ))}
                                 </select>
+                                {s?.usCourse && <span className="orig"><strong>counts as {s.usCourse.title}</strong></span>}
                                 {s?.catalogTitle && <span className="orig">closest catalog course: {s.catalogTitle}</span>}
                               </td>
                               <td className="num">
                                 <input className="cr" type="number" min={0} max={20} step={0.25} aria-label="Suggested credits" value={s?.credits ?? 0} disabled={locked || ov.exclude} onChange={(e) => override(c.id, { credits: Math.max(0, +e.target.value) }, 'Changed credits', `${c.name.value} → ${e.target.value}`)} />
+                                {s && s.share < 1 && <span className="orig mono" title="Fraction of a school year this row documents">{s.share} of a year</span>}
                               </td>
                               <td>
                                 <select className="letter" aria-label="US letter grade" value={s?.grade.letter ?? ''} disabled={locked || ov.exclude} onChange={(e) => override(c.id, { letter: (e.target.value || undefined) as USLetter | undefined }, 'Changed US grade', `${c.name.value} → ${e.target.value || 'table value'}`)}>
@@ -539,6 +544,79 @@ export function CaseView({ id }: { id: string }) {
             )}
           </section>
 
+          {/* ── placement ── */}
+          {evaluation && (evaluation.placements.length > 0 || partialLevels.length > 0) && (
+            <section className="panel" id="placement" aria-labelledby="place-h">
+              <h2 id="place-h">Placement and expected coverage</h2>
+              <p className="small muted">
+                Credit above follows documented work. Placement follows what the student’s own system is expected to have covered by the date of this record, so you can continue them in the right course.
+              </p>
+              {partialLevels.length > 0 && (
+                <fieldset className="assume" disabled={locked}>
+                  <legend>Part of a year is on this record</legend>
+                  {partialLevels.map((lv) => (
+                    <label key={lv} className="small">
+                      <input
+                        type="checkbox"
+                        checked={rec.assume?.earlierTermsDone.includes(lv) ?? false}
+                        onChange={(e) =>
+                          update((c) => {
+                            const cur = c.assume?.earlierTermsDone ?? [];
+                            c.assume = { earlierTermsDone: e.target.checked ? [...new Set([...cur, lv])] : cur.filter((x) => x !== lv) };
+                          }, { action: e.target.checked ? 'Confirmed earlier terms completed' : 'Removed confirmation of earlier terms', detail: `grade ${lv}` })
+                        }
+                      />{' '}
+                      The school or family confirms the earlier terms of grade {lv} were completed (count them with this report)
+                    </label>
+                  ))}
+                </fieldset>
+              )}
+              {evaluation.placements.map((p) => (
+                <div key={p.ladder} className="placement">
+                  <h3>
+                    {p.label} <span className="muted small">· as of {p.asOf}</span> <Confidence value={p.confidence} label="Placement confidence" />
+                  </h3>
+                  {p.continueIn && (
+                    <p>
+                      Continue in <strong>{p.continueIn.title}</strong>
+                      {p.continueIn.catalogTitle && p.continueIn.catalogTitle !== p.continueIn.title ? ` (${p.continueIn.catalogTitle})` : ''}.
+                    </p>
+                  )}
+                  <div className="req">
+                    {p.steps.map((st) => (
+                      <Fragment key={st.id}>
+                        <div>
+                          <strong>{st.title}</strong>
+                        </div>
+                        <div className={`bar ${st.coverage >= 0.75 ? 'full' : ''}`} role="img" aria-label={`${Math.round(st.coverage * 100)}% of ${st.title} expected to be covered`}>
+                          <i style={{ width: `${Math.round(st.coverage * 100)}%` }} />
+                        </div>
+                        <div className="nums">{Math.round(st.coverage * 100)}%</div>
+                      </Fragment>
+                    ))}
+                  </div>
+                  <details style={{ marginTop: 8 }}>
+                    <summary className="small">Why, topic by topic</summary>
+                    <ol className="why-list" style={{ marginTop: 6 }}>
+                      {p.reasons.map((r, i) => (
+                        <li key={i}>
+                          {r.text} {r.source && <Source source={r.source} />}
+                        </li>
+                      ))}
+                      {p.steps
+                        .filter((st) => st.coverage > 0 && st.coverage < 1 && st.missing.length)
+                        .map((st) => (
+                          <li key={st.id}>
+                            {st.title}: covered — {st.covered.join('; ') || 'none'}; still to come — {st.missing.join('; ')}.
+                          </li>
+                        ))}
+                    </ol>
+                  </details>
+                </div>
+              ))}
+            </section>
+          )}
+
           {/* ── requirements ── */}
           {evaluation && (
             <section className="panel" id="requirements" aria-labelledby="req-h">
@@ -562,6 +640,17 @@ export function CaseView({ id }: { id: string }) {
                       {p.earned} / {p.required}
                       {p.remaining > 0 ? <span className="muted"> · needs {p.remaining}</span> : p.required > 0 ? <span className="tag ok" style={{ marginLeft: 6 }}>met</span> : null}
                     </div>
+                    {p.includes && p.includes.length > 0 && (
+                      <ul className="includes">
+                        {p.includes.map((i) => (
+                          <li key={i.label}>
+                            <span className={`tag ${i.met ? 'ok' : i.partial ? 'check' : ''}`}>{i.met ? 'on record' : i.partial ? 'in progress' : 'still needed'}</span> {i.label}
+                            {i.expected && <span className="small"> — {i.expected}</span>}
+                            {i.note && <span className="muted small"> — {i.note}</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </Fragment>
                 ))}
               </div>

@@ -91,7 +91,7 @@ export function specHtml(spec: FakeSpec, opts: HtmlOpts = {}): string {
     <header>
       <div class="seal" aria-hidden="true"><span>${esc(spec.country.toUpperCase())}</span></div>
       <div class="issuer">${spec.issuer.map((l, i) => `<div class="i${i}">${esc(l)}</div>`).join('')}</div>
-      <h1>${esc(spec.title)}</h1>
+      <h1${spec.titleColor ? ` style="color:${spec.titleColor};text-decoration:underline"` : ''}>${esc(spec.title)}</h1>
       ${spec.subtitle ? `<h2>${esc(spec.subtitle)}</h2>` : ''}
     </header>
     <section class="info">${spec.info

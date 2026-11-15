@@ -86,6 +86,20 @@ export function convertGrade(course: ExtractedCourse, profile: SystemProfile | u
       const e = entryFor(scale, grade);
       if (e) return apply(scale, grade, e, scale === chosen ? 0.9 : 0.7);
     }
+    // The school's own letter is not in the system's published table, but a percentage mark is printed
+    // on the same row: convert the percentage with the system's table instead.
+    const score = course.score ? parseNumber(course.score.value) : null;
+    if (score != null && score >= 0 && score <= 100) {
+      for (const scale of profile.scales) {
+        if (scale.kind !== 'numeric' || scale.domain?.[1] !== 100) continue;
+        const e = entryFor(scale, String(score));
+        if (e) {
+          const r = apply(scale, String(score), e, 0.82, `The mark ${score}% (printed with the school’s own grade “${grade}”)`);
+          r.reasons.push({ text: `“${grade}” is the school’s internal letter, not one of the system’s published grades, so the percentage mark was used.` });
+          return r;
+        }
+      }
+    }
   }
   if (!generic) return result(null, '—', 0, [{ text: `No conversion table covers the grade “${grade}”.` }]);
 

@@ -225,6 +225,11 @@ label.field input, label.field select { font-weight: 400; color: var(--ink); fon
 .reading .lines i:nth-child(2) { width: 82%; } .reading .lines i:nth-child(3) { width: 64%; } .reading .lines i:nth-child(4) { width: 90%; } .reading .lines i:nth-child(5) { width: 48%; }
 @keyframes sweep { to { background-position: -200% 0; } }
 
+.includes { grid-column: 1 / -1; list-style: none; margin: -2px 0 8px; padding: 0 0 0 12px; display: grid; gap: 3px; font-size: 0.86rem; border-left: 2px solid var(--rule); }
+.placement + .placement { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.placement h3 { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.assume { border: 1px dashed var(--rule-strong); border-radius: var(--radius); padding: 8px 12px 10px; margin: 0 0 14px; display: grid; gap: 6px; background: var(--paper); }
+.assume legend { font-weight: 600; font-size: 0.86rem; padding: 0 4px; }
 .log { list-style: none; margin: 0; padding: 0; font-size: 0.86rem; display: grid; gap: 5px; max-height: 260px; overflow: auto; }
 .log time { font-family: var(--mono); color: var(--ink-3); font-size: 0.78rem; }
 
@@ -281,3 +286,6 @@ dialog::backdrop { background: rgba(27, 36, 46, 0.5); }
   .report tr, .report .keep { break-inside: avoid; }
   .report h2 { break-after: avoid; }
 }
+.rules { margin: 0; display: grid; gap: 10px; }
+.rules dt { font-weight: 600; }
+.rules dd { margin: 2px 0 0; font-size: 0.92rem; color: var(--ink-2); }

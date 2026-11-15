@@ -36,6 +36,8 @@ export interface CaseRecord {
   overrides: Record<string, Override>;
   /** Ids of "items to verify" a person has checked off. */
   resolved: string[];
+  /** Facts the counselor confirmed that are not on the document. */
+  assume?: { earlierTermsDone: number[] };
   notes: Note[];
   log: LogEntry[];
   error?: string;

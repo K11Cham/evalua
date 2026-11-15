@@ -12,7 +12,7 @@ export function Report({ id }: { id: string }) {
   const [rec, setRec] = useState<CaseRecord | null | undefined>(undefined);
   useEffect(() => void getCase(id).then((r) => setRec(r ?? null)), [id]);
   const district = useMemo(() => kb.districts.find((d) => d.id === rec?.districtId) ?? kb.districts.find((d) => d.id === 'generic-22')!, [kb, rec?.districtId]);
-  const ev = useMemo(() => (rec?.extraction ? evaluate(rec.extraction, kb, district, rec.overrides) : null), [rec, kb, district]);
+  const ev = useMemo(() => (rec?.extraction ? evaluate(rec.extraction, kb, district, rec.overrides, rec.assume) : null), [rec, kb, district]);
 
   useEffect(() => {
     if (rec?.extraction) document.title = `${caseLabel(rec)} ${rec.extraction.student.name.value} — transcript evaluation`;
@@ -104,7 +104,14 @@ export function Report({ id }: { id: string }) {
           <tbody>
             {ev.progress.map((p) => (
               <tr key={p.requirementId}>
-                <td>{p.label}</td>
+                <td>
+                  {p.label}
+                  {p.includes?.length ? (
+                    <div className="fine">
+                      {p.includes.map((i) => `${i.met ? '✓' : i.partial ? '◐' : '○'} ${i.label}${i.expected ? ' (expected covered earlier; not on record)' : ''}`).join('  ·  ')}
+                    </div>
+                  ) : null}
+                </td>
                 <td className="num">{p.required}</td>
                 <td className="num">{p.earned}</td>
                 <td className="num">{p.remaining}</td>
@@ -158,9 +165,15 @@ export function Report({ id }: { id: string }) {
                     <td lang={ex.language}>{c.name.original || c.name.value}</td>
                     <td>{c.name.value}</td>
                     <td className="mono">{c.grade.value || '—'}</td>
-                    <td>{s?.conceptLabel}</td>
+                    <td>
+                      {s?.conceptLabel}
+                      {s?.usCourse && <div className="fine">counts as {s.usCourse.title}</div>}
+                    </td>
                     <td>{s?.requirementLabel}</td>
-                    <td className="num">{s?.credits}</td>
+                    <td className="num">
+                      {s?.credits}
+                      {s && s.share < 1 && <div className="fine">{s.share} of a year</div>}
+                    </td>
                     <td>
                       {s?.grade.letter ?? '—'}
                       {decided ? <span className="mark" title="Set by the counselor">C</span> : s?.needsReview ? <span className="mark" title="Not yet confirmed">?</span> : null}
@@ -174,6 +187,31 @@ export function Report({ id }: { id: string }) {
         <p className="fine">
           <span className="mark">C</span> set or changed by the counselor. <span className="mark">?</span> suggested by evalua and not yet confirmed. Unmarked rows are accepted suggestions.
         </p>
+
+        {ev.placements.length > 0 && (
+          <div className="keep">
+            <h2>Placement</h2>
+            {ev.placements.map((p) => (
+              <div key={p.ladder} className="keep" style={{ marginBottom: '8pt' }}>
+                <p style={{ margin: '0 0 3pt' }}>
+                  <strong>{p.label}</strong> (as of {p.asOf}; confidence {Math.round(p.confidence * 100)}%):{' '}
+                  {p.continueIn ? <>continue in <strong>{p.continueIn.catalogTitle ?? p.continueIn.title}</strong>.</> : 'all courses on the sequence are expected to be covered.'}
+                </p>
+                <p className="fine" style={{ margin: 0 }}>
+                  Expected coverage: {p.steps.map((st) => `${st.title} ${Math.round(st.coverage * 100)}%`).join(' · ')}.
+                </p>
+                <ul className="fine">
+                  {p.reasons.map((r, i) => (
+                    <li key={i}>{r.text}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            {(rec.assume?.earlierTermsDone.length ?? 0) > 0 && (
+              <p className="fine">Counselor confirmed earlier terms were completed for grade {rec.assume!.earlierTermsDone.join(', ')}; those terms are counted with the reports on file.</p>
+            )}
+          </div>
+        )}
 
         {openFlags.length > 0 && (
           <div className="keep">

@@ -4,6 +4,7 @@ import { estimateSkew, SKEW_WIDTH } from './deskew.ts';
 import { docxHtmlToDoc } from './docx.ts';
 import { OCR_MODELS, type OcrModelId } from './ocrModels.ts';
 import { segmentsToTokens } from './ocrTokens.ts';
+import { greyStretch, hasColouredInk } from './prepare.ts';
 import { looksScanned, pdfItemsToTokens, type PdfTextItem } from './pdfText.ts';
 import type { OcrRequest, OcrResponse } from './ocr.worker.ts';
 
@@ -69,7 +70,18 @@ function skewOf(canvas: HTMLCanvasElement): number {
 }
 
 async function ocrCanvas(canvas: HTMLCanvasElement, page: number, hint: OcrModelId | 'auto', progress: Progress) {
-  const png = await toBlob(canvas, 'image/png');
+  // OCR reads a greyscale, contrast-stretched copy; the colour page stays as the preview.
+  const prepared = document.createElement('canvas');
+  prepared.width = canvas.width;
+  prepared.height = canvas.height;
+  const pctx = prepared.getContext('2d', { willReadFrequently: true })!;
+  pctx.drawImage(canvas, 0, 0);
+  const img = pctx.getImageData(0, 0, prepared.width, prepared.height);
+  if (hasColouredInk(img.data)) {
+    greyStretch(img.data);
+    pctx.putImageData(img, 0, 0);
+  }
+  const png = await toBlob(prepared, 'image/png');
   const res = await ocr(await png.arrayBuffer(), hint, progress);
   const info: PageInfo = { width: canvas.width, height: canvas.height, skew: skewOf(canvas) };
   return { tokens: segmentsToTokens(res.lines, page), info, model: res.model };

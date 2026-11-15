@@ -92,8 +92,9 @@ function readInfo(rows: Row[], rtl: boolean): Pair[] {
       found = true;
     }
     // Wrapped values: a following line that starts under a name or school and carries no label of its own.
+    // A line that has labels of its own ("NUMBER: KR117") is a new field, never a continuation.
     let continued = false;
-    for (const c of row.cells) {
+    for (const c of found ? [] : row.cells) {
       if (/[:：]/.test(c.text) || c.text.length > 60 || splitLabel(c.text)) continue;
       const p = lastRowPairs.find(
         (q) => (q.field === 'name' || q.field === 'school') && row.page === q.row.page && row.y - q.row.y > 0 && row.y - q.row.y < q.row.h * 1.8 && c.x >= q.cell.x - 6 && c.x < q.cell.x + q.cell.w,
@@ -171,6 +172,8 @@ function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; doc
     const g = cleanGrade(raw.grade.text);
     const shape = isGradeLike(raw.grade.text) ? 1 : 0.55;
     course.grade = { value: g.value, original: raw.grade.text, confidence: Math.min(0.99, raw.grade.conf) * shape * (raw.gradeGuessed ? 0.7 : 1), source: src(raw.grade) };
+    // "Annual", "Cumulative", "Cả năm" columns are whole-year results ("SEM FINAL GRADE" is not).
+    if (raw.gradeHeader && WHOLE_YEAR.test(raw.gradeHeader) && !/\bsem/i.test(raw.gradeHeader)) course.wholeYear = true;
   }
   if (raw.score) {
     const first = /-?\d+(?:[.,]\d+)?/.exec(asciiDigits(raw.score.text));
@@ -190,6 +193,50 @@ function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; doc
   course.term = lv.term ?? termOf(raw.period);
   course.academicYear = academicYear(raw.period) ?? ctx.docYear;
   return course;
+}
+
+/**
+ * Report cards often number their rows ("1 MATHEMATICS", "2ENGLISH LANGUAGE"). When most names in the
+ * table start with a run of increasing numbers, the numbers are a row index, not part of the name.
+ */
+function stripRowNumbers(courses: RawCourse[]) {
+  const nums = courses.map((c) => /^\s*\(?(\d{1,2})[.)]?\s*(?=\p{L})/u.exec(asciiDigits(c.name.text)));
+  const hits = nums.filter(Boolean).length;
+  if (hits < 3 || hits < courses.length * 0.6) return;
+  const values = nums.map((m) => (m ? +m[1] : null)).filter((v): v is number => v != null);
+  const rising = values.filter((v, i) => i === 0 || v > values[i - 1]).length >= values.length * 0.8;
+  if (!rising) return;
+  courses.forEach((c, i) => {
+    const m = nums[i];
+    if (m) c.name = { ...c.name, text: asciiDigits(c.name.text).slice(m[0].length).trim() };
+  });
+}
+
+/** What a period label calls its part of the year. */
+function unitOf(label: string): ExtractedCourse['termUnit'] {
+  const s = label.toLowerCase();
+  if (/semest|học kỳ|hoc ky|학기|学期|halbjahr/u.test(s)) return 'semester';
+  if (/quarter|bimest|cuatrimest/u.test(s)) return 'quarter';
+  if (/trimest/u.test(s)) return 'trimester';
+  if (/\bterm\b|termly/u.test(s)) return 'term';
+  return undefined;
+}
+
+/** Column headings that mean the grade covers the whole year, even on a term report. */
+const WHOLE_YEAR = /\b(annual|yearly|cumulative|cum\.?|session(al)?|year average|final average)\b|cả năm|学年|总评|학년말|итогов|jahres|moyenne annuelle|promedio final|média anual/iu;
+
+/** "Second Term", "1st Semester", "Term 3" printed once for the whole document. */
+function documentPeriod(lines: string[]): { term: string; label: string } | null {
+  const words: Record<string, string> = { first: '1', '1st': '1', second: '2', '2nd': '2', third: '3', '3rd': '3', fourth: '4', '4th': '4' };
+  for (const line of lines.slice(0, 40)) {
+    const s = asciiDigits(line).trim();
+    if (s.length > 60) continue;
+    let m = /\b(first|second|third|fourth|1st|2nd|3rd|4th)\s+(term|semester|trimester|quarter)\b/i.exec(s);
+    if (m) return { term: words[m[1].toLowerCase()], label: `${m[1][0].toUpperCase()}${m[1].slice(1).toLowerCase()} ${m[2].toLowerCase()}` };
+    m = /\b(term|semester|trimester)\s*:?\s*(\d)\b/i.exec(s);
+    if (m) return { term: m[2], label: `${m[1][0].toUpperCase()}${m[1].slice(1).toLowerCase()} ${m[2]}` };
+  }
+  return null;
 }
 
 export interface ExtractResult {
@@ -242,7 +289,14 @@ export function extract(doc: DocTokens, kb: KnowledgeBase, opts: ExtractOptions 
   // ── document-level year and grade level (exam certificates have no per-table heading) ──
   let docLevel: number | null = null;
   let docYear: string | undefined;
-  for (const r of tables.freeRows.slice(0, 14)) {
+  // An explicit "Class:", "Grade:", "Form:" label beats a level guessed from other lines.
+  for (const p of pairs) {
+    if (docLevel != null) break;
+    if (/^(class|grade|form|level|year group|clase|grado|classe|klasse|série|serie|lớp|班级|年级|학년|الصف|कक्षा|класс)\b/iu.test(p.label.trim())) {
+      docLevel = resolveLevel(`${p.label} ${p.value}`, profile).level;
+    }
+  }
+  for (const r of tables.freeRows.slice(0, 30)) {
     const t = rowText(r);
     if (/[:：]/.test(t) && !/class|grade|कक्षा|classe|klasse|lớp/i.test(t)) continue;
     if (docLevel == null) docLevel = resolveLevel(t, profile).level;
@@ -255,7 +309,23 @@ export function extract(doc: DocTokens, kb: KnowledgeBase, opts: ExtractOptions 
 
   const englishDoc = (profile?.languages[0] ?? '') === 'en' || (!profile && script === 'latin' && /\b(subject|grade|school|name|date of birth)\b/i.test(allText));
   const match = buildMatcher(kb, profile, englishDoc);
+  stripRowNumbers(tables.courses);
   const courses = tables.courses.map((c, i) => toCourse(c, i, { profile, docLevel, docYear, ocr: doc.kind === 'ocr', match }));
+  // A term or semester printed once for the whole document ("Second Term") applies to every course that has none.
+  for (const c of courses) {
+    c.termUnit ??= unitOf(c.period.value);
+    if (c.wholeYear) c.term = undefined;
+  }
+  const span = documentPeriod(tables.rows.map(rowText));
+  if (span) {
+    for (const c of courses) {
+      if (c.term || c.wholeYear) continue;
+      c.term = span.term;
+      c.termUnit = unitOf(span.label);
+      if (!c.period.value) c.period = { value: span.label, original: span.label, confidence: 0.9 };
+      else if (!c.period.value.toLowerCase().includes(span.label.toLowerCase())) c.period.value = `${span.label} · ${c.period.value}`;
+    }
+  }
 
   const extraction: Extraction = {
     systemId: { value: profile?.id ?? 'generic', confidence: forced ? 1 : profile ? Math.min(0.99, 0.55 + guess.score / 40) : 0.3 },

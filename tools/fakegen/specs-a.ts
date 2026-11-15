@@ -573,4 +573,65 @@ export const ngNeco: FakeSpec = {
   specimen: 'SPECIMEN — FICTITIOUS RECORD FOR SOFTWARE TESTING',
 };
 
-export const specsA: FakeSpec[] = [gmWassce, gmGabece, ngSss, ngJamb, ngNeco, ghShs, ibDp, ukGcse, inCbse, phSf10];
+// ───────────────────────── The Gambia: one term's report card from a senior secondary school ─────────────────────────
+// Modelled on the layout of school-management-system report cards: a narrow "#" column, Mark(%), the school's
+// own letter grade and a remark, the term printed in red, and termly totals. Fictitious school and student.
+const termRow = (no: number, n: string, pct: number, k: string): FakeCourse => {
+  const g = pct >= 80 ? 'A' : pct >= 65 ? 'B' : pct >= 55 ? 'C' : pct >= 45 ? 'D' : pct >= 40 ? 'E' : 'F';
+  const remark = { A: 'Excellent', B: 'V. Good', C: 'Good', D: 'Credit', E: 'Pass', F: 'Fail' }[g]!;
+  // Expected US letter: the percentage converted with the WAEC percentage bands (the school letter is not a WAEC grade).
+  const us = pct >= 70 ? 'A' : pct >= 60 ? 'B' : pct >= 50 ? 'C' : pct >= 40 ? 'D' : 'F';
+  return c(n, titleCase(n), g, k, us, { x: { no: String(no), pct: String(pct), word: remark } });
+};
+
+export const gmTermReport: FakeSpec = {
+  id: 'gm-termreport',
+  system: 'waec',
+  country: 'The Gambia',
+  lang: 'en',
+  // An image-only PDF (as a browser "print to PDF" of a portal page can be), a text PDF and a phone photo.
+  formats: ['scan-pdf', 'pdf', 'photo-jpg'],
+  layout: 'slip',
+  style: 'serif',
+  issuer: ['Brikama Lantern Senior Secondary School', 'Knowledge Is Light', 'P.O. Box 88, Brikama, The Gambia'],
+  title: 'Second Term',
+  titleColor: '#e0001b',
+  info: [
+    { label: 'STUDENT', value: 'TOURAY M.L AMIE', role: 'name' },
+    { label: 'NUMBER', value: 'BL3307', role: 'id' },
+    { label: 'CLASS', value: '11 S2' },
+    { label: 'YEAR', value: '2025/2026 Academic Year' },
+    { label: 'Shift', value: 'AFTERNOON' },
+    { label: 'Number of Credit', value: '9' },
+  ],
+  student: { name: 'Touray M.L Amie', dob: '' },
+  school: { name: 'Brikama Lantern Senior Secondary School' },
+  cols: [
+    { h: '#', f: 'x.no', align: 'c' },
+    { h: 'Subject', f: 'n' },
+    { h: 'Mark(%)', f: 'x.pct', align: 'c' },
+    { h: 'Grade', f: 'g', align: 'c' },
+    { h: 'Remark', f: 'x.word', align: 'c' },
+  ],
+  years: [
+    {
+      label: 'Second Term', level: 11, term: '2', academicYear: '2025-2026',
+      courses: [
+        termRow(1, 'MATHEMATICS', 88, 'math.general'),
+        termRow(2, 'ENGLISH LANGUAGE', 71, 'ela.english'),
+        termRow(3, 'BIOLOGY', 76, 'sci.biology'),
+        termRow(4, 'CHEMISTRY', 64, 'sci.chemistry'),
+        termRow(5, 'PHYSICS', 58, 'sci.physics'),
+        termRow(6, 'FURTHER MATHEMATICS', 69, 'math.advanced'),
+        termRow(7, 'ECONOMICS', 81, 'ss.economics'),
+        termRow(8, 'PHYSICAL EDUCATION', 42, 'pe'),
+        termRow(9, 'INFORMATION & COMMUNICATION TECHNOLOGY', 90, 'cs'),
+      ],
+    },
+  ],
+  notes: ['Overall Termly Grade: A — GPA (out of 5.0): 4.10', 'Termly Remark: Very good performance.', '* This document is only official if it contains the school stamp and signature'],
+  signatures: ["Teacher's Signature", "Principal's Signature"],
+  specimen: 'SPECIMEN — FICTITIOUS RECORD FOR SOFTWARE TESTING',
+};
+
+export const specsA: FakeSpec[] = [gmWassce, gmGabece, gmTermReport, ngSss, ngJamb, ngNeco, ghShs, ibDp, ukGcse, inCbse, phSf10];

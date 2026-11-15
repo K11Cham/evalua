@@ -6,12 +6,14 @@ import { buildRows, rowText } from '../core/layout.ts';
 import type { DistrictProfile, Requirement } from '../core/types.ts';
 import { ACCEPT, ingestFile } from '../ingest/browser.ts';
 import { uid } from '../store/db.ts';
-import { Freshness, Icon } from './bits.tsx';
+import { Freshness, Icon, Source } from './bits.tsx';
 import { go, schoolYearOf, useApp } from './state.tsx';
 
 export function Districts() {
   const { kb, myDistricts, saveDistrict } = useApp();
   const templates = kb.districts.filter((d) => d.kind === 'template');
+  // Full district profiles that ship with evalua (not copies made in this browser).
+  const published = kb.districts.filter((d) => d.kind === 'district' && !myDistricts.some((m) => m.id === d.id));
 
   const copy = async (d: DistrictProfile) => {
     const id = `my-${uid().slice(0, 8)}`;
@@ -68,6 +70,41 @@ export function Districts() {
         </div>
       )}
 
+      {published.length > 0 && (
+        <>
+          <h2 style={{ marginBottom: 8 }}>Published district profiles</h2>
+          <p className="small muted" style={{ marginTop: 0 }}>Researched from the district’s own handbook and state rules, with every source linked. Use them as they are, or copy one to adjust it.</p>
+          <div className="table-wrap" style={{ marginBottom: 24 }}>
+            <table className="ledger">
+              <thead>
+                <tr>
+                  <th>District</th>
+                  <th>Source and freshness</th>
+                  <th className="num">Total</th>
+                  <th className="num">Catalog</th>
+                  <th><span className="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {published.map((d) => (
+                  <tr key={d.id}>
+                    <td><a className="rowlink" href={`#/districts/${encodeURIComponent(d.id)}`}>{d.name}</a></td>
+                    <td><Freshness p={d.provenance} /></td>
+                    <td className="num">{d.totalCredits}</td>
+                    <td className="num">{d.catalog.length}</td>
+                    <td>
+                      <button className="btn small" onClick={() => void copy(d)}>
+                        <Icon name="plus" /> Copy to edit
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
       <h2 style={{ marginBottom: 8 }}>State-minimum templates</h2>
       <div className="table-wrap">
         <table className="ledger">
@@ -100,7 +137,7 @@ export function Districts() {
 }
 
 export function DistrictEditor({ id }: { id: string }) {
-  const { kb, saveDistrict, removeDistrict, settings, saveSettings } = useApp();
+  const { kb, myDistricts, saveDistrict, removeDistrict, settings, saveSettings } = useApp();
   const original = kb.districts.find((d) => d.id === id);
   const [d, setD] = useState<DistrictProfile | null>(original ? structuredClone(original) : null);
   const [dirty, setDirty] = useState(false);
@@ -123,7 +160,8 @@ export function DistrictEditor({ id }: { id: string }) {
       </div>
     );
   }
-  const readOnly = d.kind === 'template';
+  // Only profiles saved in this browser can be edited; templates and published districts are copied first.
+  const readOnly = !myDistricts.some((m) => m.id === d.id);
   const set = (change: (x: DistrictProfile) => void) => {
     const next = structuredClone(d);
     change(next);
@@ -182,7 +220,7 @@ export function DistrictEditor({ id }: { id: string }) {
       <div className="page-head">
         <div>
           <div className="kicker">
-            <a href="#/districts">District profiles</a> · {readOnly ? 'state-minimum template (read only)' : 'my district'}
+            <a href="#/districts">District profiles</a> · {!readOnly ? 'my district' : d.kind === 'template' ? 'state-minimum template (read only)' : 'published district profile (read only)'}
           </div>
           <h1>{d.name}</h1>
         </div>
@@ -287,6 +325,24 @@ export function DistrictEditor({ id }: { id: string }) {
           ))}
         </div>
       </section>
+
+      {d.policies.some((p) => !p.id.startsWith('concept:')) && (
+        <section className="panel">
+          <h2>District rules <span className="count">{d.policies.filter((p) => !p.id.startsWith('concept:')).length}</span></h2>
+          <dl className="rules">
+            {d.policies
+              .filter((p) => !p.id.startsWith('concept:'))
+              .map((p) => (
+                <div key={p.id}>
+                  <dt>{p.title}</dt>
+                  <dd>
+                    {p.text} <Source source={p.source} />
+                  </dd>
+                </div>
+              ))}
+          </dl>
+        </section>
+      )}
 
       <section className="panel">
         <h2>Course catalog <span className="count">{d.catalog.length} courses</span></h2>

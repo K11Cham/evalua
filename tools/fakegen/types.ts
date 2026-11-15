@@ -77,6 +77,8 @@ export interface FakeSpec {
   /** Signature captions. */
   signatures?: string[];
   specimen: string;
+  /** Colour for the title (report cards often print the term in red). */
+  titleColor?: string;
 }
 
 export interface TruthCourse {

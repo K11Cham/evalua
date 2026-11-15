@@ -64,6 +64,9 @@ function containsTerm(hay: string, term: string): boolean {
 
 /** Classifies a header cell. Longest matching term wins, so "moyenne classe" beats "moyenne". */
 export function headerRole(text: string): Role | null {
+  // Row-number columns ("#", "No.", "S/N") and percentage columns ("Mark(%)") are recognised by their symbols.
+  if (/^\s*(#|№|n[o°º]\.?|s\/?n\.?|sr\.?\s*no\.?|s\.?\s*no\.?)\s*$/i.test(text)) return 'code';
+  if (/%/.test(text) && text.length <= 24 && !/class|classe|turma|grupo/i.test(text)) return 'score';
   const k = key(text);
   if (!k || k.length > 70) return null;
   for (const { term, role } of TERM_INDEX) if (containsTerm(k, term)) return role;
@@ -118,6 +121,8 @@ LABEL_INDEX.sort((a, b) => b.term.length - a.term.length);
 export function infoField(label: string): InfoField {
   const k = key(label.replace(/\(.*?\)/g, ' '));
   if (!k) return 'other';
+  // A bare "NUMBER:" on a report card is the student's number; "phone number" and the like are not.
+  if (k === 'number' || k === 'no' || k === 'student no' || k === 'adm no' || k === 'id no') return 'id';
   for (const { term, field } of LABEL_INDEX) if (k === term) return field;
   // OCR often drops spaces ("Date ofBirth").
   const tight = k.replace(/ /g, '');

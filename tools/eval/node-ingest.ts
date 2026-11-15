@@ -7,12 +7,13 @@ import type { DocTokens, Token } from '../../src/core/types.ts';
 import { docxHtmlToDoc } from '../../src/ingest/docx.ts';
 import { modelUrls, OCR_MODELS, routeOcr, type OcrModelId, type OcrSegment } from '../../src/ingest/ocrModels.ts';
 import { segmentsToTokens } from '../../src/ingest/ocrTokens.ts';
+import { greyStretch, hasColouredInk } from '../../src/ingest/prepare.ts';
 import { estimateSkew, SKEW_WIDTH } from '../../src/ingest/deskew.ts';
 import { looksScanned, pdfItemsToTokens, type PdfTextItem } from '../../src/ingest/pdfText.ts';
 
 const HF_BASE = 'https://huggingface.co/snowfluke/ppu-paddle-ocr-models/resolve/main';
 const CACHE = path.resolve('tools/eval/.cache');
-const INGEST_VERSION = 'v7';
+const INGEST_VERSION = 'v10';
 
 interface OcrService {
   recognize(image: ArrayBuffer): Promise<{ lines: OcrSegment[][] }>;
@@ -43,7 +44,16 @@ async function skewOf(buf: Buffer): Promise<number> {
   return estimateSkew(new Uint8Array(data.buffer, data.byteOffset, data.length), info.width, info.height);
 }
 
-async function ocrImage(buf: Buffer, page: number, hint: OcrModelId | 'auto'): Promise<{ tokens: Token[]; model: OcrModelId }> {
+async function ocrImage(input: Buffer, page: number, hint: OcrModelId | 'auto'): Promise<{ tokens: Token[]; model: OcrModelId }> {
+  // Same preparation as the browser: greyscale with stretched contrast, only for pages with coloured ink.
+  const sharp = (await import('sharp')).default;
+  const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const px = new Uint8Array(data.buffer, data.byteOffset, data.length);
+  let buf = input;
+  if (hasColouredInk(px)) {
+    greyStretch(px);
+    buf = await sharp(Buffer.from(px), { raw: { width: info.width, height: info.height, channels: 4 } }).png().toBuffer();
+  }
   const ab = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
   const routed = await routeOcr(async (id) => (await (await service(id)).recognize(ab.slice(0))).lines, hint);
   return { tokens: segmentsToTokens(routed.lines, page), model: routed.model };
@@ -102,7 +112,10 @@ export async function ingestFile(file: string, useCache = true): Promise<DocToke
   if (useCache && existsSync(cached)) return JSON.parse(readFileSync(cached, 'utf8')) as DocTokens;
   const ext = path.extname(file).toLowerCase();
   const doc = ext === '.pdf' ? await ingestPdf(file) : ext === '.docx' ? await ingestDocx(file) : await ingestImage(file);
-  mkdirSync(CACHE, { recursive: true });
-  writeFileSync(cached, JSON.stringify(doc));
+  // Only the fictitious fixtures are cached. Anything else (a real record being debugged) is never written to disk.
+  if (useCache && path.resolve(file).startsWith(path.resolve('fixtures/fake'))) {
+    mkdirSync(CACHE, { recursive: true });
+    writeFileSync(cached, JSON.stringify(doc));
+  }
   return doc;
 }

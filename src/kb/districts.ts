@@ -1,6 +1,7 @@
 // District profiles. The seeded ones are STATE-MINIMUM TEMPLATES, not any district's actual rules:
 // local boards add requirements, so a counselor should copy a template and edit it for their district.
 import type { CatalogCourse, DistrictPolicy, DistrictProfile, Requirement, SourceInfo } from '../core/types.ts';
+import { jcps } from './jcps.ts';
 
 const YEAR = '2026-27';
 const ADDED = '2026-11-15';
@@ -89,6 +90,8 @@ function template(t: TemplateInput): DistrictProfile {
     creditsPerYearCourse: 1,
     hoursPerUnit: 120,
     typicalCreditsPerYear: t.typicalPerYear ?? 6,
+    // Most US high schools award half a credit per semester.
+    creditStep: 0.5,
     totalCredits: t.total,
     requirements: t.requirements,
     catalog: COMMON_CATALOG,
@@ -99,6 +102,7 @@ function template(t: TemplateInput): DistrictProfile {
 }
 
 export const districts: DistrictProfile[] = [
+  jcps,
   template({
     id: 'tx-foundation',
     name: 'Texas — Foundation High School Program (state minimum)',

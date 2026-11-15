@@ -74,6 +74,10 @@ export interface ExtractedCourse {
   academicYear?: string;
   /** Qualifier printed alongside (HL/SL, "GCSE", "Core"). */
   qualifier?: string;
+  /** The grade printed is for the whole year (an annual or cumulative column), even on a term report. */
+  wholeYear?: boolean;
+  /** What the document calls the part of the year `term` counts in, when it says ("semester", "quarter"). */
+  termUnit?: 'term' | 'semester' | 'trimester' | 'quarter';
 }
 
 export type FlagSeverity = 'info' | 'check' | 'important';
@@ -170,6 +174,58 @@ export interface SystemCourse {
   concept: string;
 }
 
+export interface Calendar {
+  /** What one part of the year is called on documents. */
+  unit: 'term' | 'semester';
+  /** How many parts make a school year (3 terms, 2 semesters). */
+  perYear: number;
+  note: string;
+  provenance: Provenance;
+}
+
+/** A topic in the shared vocabulary that links foreign syllabuses to US courses. */
+export interface Topic {
+  id: string;
+  label: string;
+}
+
+/** A US course with the topics it is defined by, on a ladder (Algebra I → Geometry → …). */
+export interface UsCourse {
+  id: string;
+  title: string;
+  /** The concept this course stands for in district catalogs. */
+  concept: string;
+  ladder: string;
+  rung: number;
+  /** US grade level at which an on-track student usually takes it. */
+  usualLevel: number;
+  topics: Topic[];
+  source: SourceInfo;
+}
+
+/** What a foreign system teaches in each year of one subject. */
+export interface Sequence {
+  /** Concept of the foreign course (e.g. math.general for "Mathematics"). */
+  concept: string;
+  ladder: string;
+  /** Topic ids completed before the first year this sequence lists (lower secondary). */
+  before: string[];
+  /** Topic ids taught in each US-equivalent grade level. */
+  byLevel: Record<string, string[]>;
+  source: SourceInfo;
+  /** 0–1: how firmly the sources support the year-by-year split. */
+  confidence: number;
+  /**
+   * 'spiral': every year revisits every strand (like the US integrated pathway), so year n of the sequence
+   * stands for the n-th US course after what lower secondary completed.
+   * 'targeted': the course is aimed at specific US courses; each year goes where its topics add most,
+   * never below `minRung`.
+   */
+  kind: 'spiral' | 'targeted';
+  minRung?: number;
+  note?: string;
+}
+
 export interface SystemProfile {
   id: string;
   name: string;
@@ -195,6 +251,10 @@ export interface SystemProfile {
     provenance: Provenance;
   };
   courses: SystemCourse[];
+  /** How the school year is divided. A report for one part covers that fraction of the year. */
+  calendar?: Calendar;
+  /** What each year of a subject covers, in the shared topic vocabulary (src/kb/usCourses.ts). */
+  sequences?: Sequence[];
   documentation: SourceInfo[];
   provenance: Provenance;
 }
@@ -218,6 +278,8 @@ export interface Requirement {
   areas: string[];
   /** Specific concepts that count (in addition to areas). */
   concepts?: string[];
+  /** Named courses this requirement must include (JCPS: Algebra I, Geometry, Algebra II). */
+  includes?: { label: string; concepts: string[]; note?: string }[];
   note?: string;
 }
 
@@ -230,6 +292,8 @@ export interface CatalogCourse {
   credits: number;
   /** Typical grade levels. */
   levels?: number[];
+  /** Words in a foreign course name that point to this catalog course among others of the same subject. */
+  keywords?: string[];
 }
 
 export interface DistrictPolicy {
@@ -252,6 +316,8 @@ export interface DistrictProfile {
   hoursPerUnit: number;
   /** Credits a full-time student normally earns in one year (used to flag over-awards). */
   typicalCreditsPerYear: number;
+  /** Smallest part of a full-year course the district awards, as a fraction of it (0.5 = one semester). */
+  creditStep?: number;
   totalCredits: number;
   requirements: Requirement[];
   catalog: CatalogCourse[];
@@ -297,6 +363,10 @@ export interface Suggestion {
   requirementLabel: string;
   /** Closest district catalog course, if any. */
   catalogTitle: string | null;
+  /** The US course this row's work counts toward (after sequencing), when one is identified. */
+  usCourse?: { id: string; title: string };
+  /** Fraction of a school year this row documents (1 = full year, 1/3 = one of three terms). */
+  share: number;
   credits: number;
   grade: GradeConversion;
   /** Overall 0–1. */
@@ -313,6 +383,8 @@ export interface RequirementProgress {
   earned: number;
   remaining: number;
   courseIds: string[];
+  /** Named courses within the requirement, and whether this record meets each. */
+  includes?: { label: string; met: boolean; partial?: boolean; note?: string; expected?: string }[];
 }
 
 export interface Evaluation {
@@ -323,4 +395,28 @@ export interface Evaluation {
   totalEarned: number;
   totalRequired: number;
   flags: VerifyFlag[];
+  /** Where the student stands on each US course sequence, and what to take next. */
+  placements: Placement[];
+}
+
+export interface LadderStep {
+  id: string;
+  title: string;
+  /** Fraction of this course's topics expected to be covered by now, 0–1. */
+  coverage: number;
+  covered: string[];
+  missing: string[];
+}
+
+export interface Placement {
+  ladder: string;
+  label: string;
+  /** Point in time this placement describes ("Grade 11, second term"). */
+  asOf: string;
+  steps: LadderStep[];
+  completed: string[];
+  /** Course in progress (partly covered) or the next one to take. */
+  continueIn: { title: string; catalogTitle: string | null; coverage: number } | null;
+  confidence: number;
+  reasons: Reason[];
 }

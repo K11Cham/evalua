@@ -24,7 +24,16 @@ More screenshots: [case list](docs/screenshots/cases.png), [report](docs/screens
 
 WAEC (WASSCE, NECO SSCE and school transcripts from The Gambia, Nigeria, Ghana, Sierra Leone, Liberia), GABECE/BECE, JAMB UTME, International Baccalaureate, UK GCSE and A level, India CBSE and CISCE, China, Mexico (SEP), France, Germany, Philippines K to 12, Brazil, South Korea, Vietnam, Russia, Egypt, plus generic rules for anything not profiled. Open **Reference** in the app to see each profile, its grading tables, and where every fact came from.
 
-District profiles ship as state-minimum templates for Texas, California, New York, Florida and Washington. A counselor copies one, edits the requirements, and adds the district's course catalog by pasting, uploading, or linking it.
+**Jefferson County Public Schools (Louisville, Kentucky)** ships as a full district profile: Kentucky's 22-credit minimum (704 KAR 3:305), JCPS's own rules (Algebra II, U.S. History and World History by name, the senior Defense of Learning, the civics test), half-credit steps, 120 hours per credit, a catalog of Kentucky state course codes, and JCPS's rules on international transcripts, all linked to their sources. State-minimum templates cover Texas, California, New York, Florida and Washington. A counselor copies a profile, edits the requirements, and adds the district's course catalog by pasting, uploading, or linking it.
+
+### How credit is worked out
+
+Credit follows the work a record documents, not the grades alone.
+
+1. **How much of a year each row covers.** Every system has a school calendar (three terms in The Gambia and Nigeria, two semesters in Mexico, China or Korea). A "Second Term" report documents one third of a year; term reports for the same course add up. If the school confirms the earlier terms were completed, the counselor can tick that, and a second-term report then counts as two thirds of the year.
+2. **Which US course the work is.** Mathematics sits on a ladder (Algebra I → Geometry → Algebra II → Pre-Calculus → Calculus), each US course defined by its topics. WAEC General Mathematics is a spiral course, like the US integrated pathway, so year *n* counts as the *n*-th US course; Further Mathematics is placed by its topics. A second year of the same science is further study in it, not a repeat of the same US course.
+3. **Rounded to the district's step.** The documented shares of each US course are added up and rounded down to the district's credit step (half a credit per semester at JCPS). One term of three (0.33) earns nothing yet; two terms (0.67) earn one semester (0.5).
+4. **Placement.** For each ladder, evalua shows which topics the student's own system is expected to have covered by the date of the record, which US courses that completes, and where to continue. Each step lists the topics covered and still to come.
 
 ## Privacy
 
@@ -61,16 +70,16 @@ To try the app, use the fictitious transcripts in [`fixtures/fake/`](fixtures/fa
 
 ## Accuracy
 
-`npm run eval` runs 33 files, rendered from 20 fictitious records, through the pipeline and compares against known answers. Full results, including every miss, are in [`docs/ACCURACY.md`](docs/ACCURACY.md).
+`npm run eval` runs 36 files, rendered from 21 fictitious records, through the pipeline and compares against known answers. Full results, including every miss, are in [`docs/ACCURACY.md`](docs/ACCURACY.md).
 
-| Measure | All 33 files |
+| Measure | All 36 files |
 |---|---|
-| Education system identified | 33/33 |
-| Courses found | 98.0% (640/653) |
-| Grade correct | 98.0% |
-| US grade level correct | 99.8% |
+| Education system identified | 36/36 |
+| Courses found | 98.1% (667/680) |
+| Grade correct | 98.1% |
+| US grade level correct | 99.9% |
 | Subject matched | 99.7% |
-| US letter grade correct | 98.1% |
+| US letter grade correct | 98.2% |
 
 Read these with care. The fakes and the parser were written by the same author, so layouts the generator does not produce are not measured. Text PDFs and Word files are close to perfect; the misses are almost all in scans and photos, where a watermark or glare hides a row or a digit is misread. Real documents will do worse.
 
@@ -116,7 +125,9 @@ The look comes from registrars' ledgers and transcript paper: deep ink on warm p
 - **It suggests; it does not decide.** US equivalents for grades are conventions, and credit is local policy. The district templates are state minimums, not any district's rules.
 - **OCR is imperfect.** Digits in Arabic-Indic and Devanagari numerals are misread more often than Western digits. Stamps and watermarks over a row can hide it. Vietnamese diacritics are often dropped in scans (matching still works; the displayed original loses accents). Handwriting is not supported.
 - **Dictionary translation.** English names come from profiles and dictionaries, not a translator. Unknown course names stay in the original language and are flagged.
-- **Credit suggestions are simple.** Hours convert at 120 per Carnegie unit when printed; otherwise a full-year course is one credit and a term is half. Systems that teach many subjects for few hours each will exceed a normal year, which evalua flags and can scale down in one click.
+- **Credit is still a model.** Hours convert at 120 per Carnegie unit when printed; otherwise a full year of a subject is one course. Systems that teach many subjects for few hours each will exceed a normal US year, which evalua flags and can scale down in one click.
+- **Curriculum sequences are thin.** Topic-by-year data exists only for WAEC mathematics. No Gambian or Nigerian year-by-year curriculum could be found online, so Ghana's official SHS curriculum (also taught to the WASSCE syllabus) is the reference; Gambian schools may order topics differently. The Further Mathematics year split is evalua's estimate from the syllabus order. Other systems fall back to the usual US grade-level sequence, marked as an assumption with low confidence. Sciences are not yet placed by topic.
+- **JCPS details.** The 2025-26 JCPS handbook is the newest found (no 2026-27 edition), so the profile shows as possibly outdated. No district-wide JCPS course catalog was found; the catalog uses Kentucky state course codes, and some (non-AP Pre-Calculus, English Learner, world-language levels) have no code. The "normal year" of 7 credits assumes a seven-period day.
 - **Requirements only US coursework can meet** (US history, state assessments, state-specific courses) are not checked.
 - **Cases live in one browser.** There are no accounts and no sync. Clearing site data deletes them.
 - **Not verified with real records.** All testing used fictitious documents.

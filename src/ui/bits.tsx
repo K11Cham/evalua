@@ -48,7 +48,8 @@ export function Freshness({ p }: { p: Provenance }) {
   const current = schoolYearOf();
   const ageMonths = (Date.now() - new Date(p.addedOn).getTime()) / (1000 * 60 * 60 * 24 * 30.4);
   const stale = p.schoolYear !== current || ageMonths > 12;
-  const added = new Date(p.addedOn).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  // A bare date is a calendar day, not midnight UTC: read it at local noon so it never shifts a day.
+  const added = new Date(`${p.addedOn.slice(0, 10)}T12:00:00`).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   return (
     <span className="source">
       <Source source={p.source} /> · school year {p.schoolYear} · added {added}{' '}
@@ -78,5 +79,7 @@ export function Icon({ name }: { name: keyof typeof paths }) {
   );
 }
 
-export const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+// Bare dates ("2026-11-15") are calendar days: read them at local noon so time zones never shift them.
+export const fmtDate = (iso: string) =>
+  new Date(/^\d{4}-\d{2}-\d{2}$/.test(iso) ? `${iso}T12:00:00` : iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 export const fmtDateTime = (iso: string) => new Date(iso).toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
