@@ -4,6 +4,7 @@ import { parseCatalog } from '../src/core/catalog.ts';
 import { chooseScale, convertGrade } from '../src/core/convert.ts';
 import { evaluate } from '../src/core/evaluate.ts';
 import { roundToStep } from '../src/core/coverage.ts';
+import { carryOver } from '../src/core/merge.ts';
 import { detectSystem } from '../src/core/extract.ts';
 import { academicYear, genericLevel, headerRole, infoField, isGradeLike, isPeriodLabel, isSummaryLabel, splitGrade, termOf } from '../src/core/lexicon.ts';
 import { buildMatcher, fixOcrNumerals } from '../src/core/match.ts';
@@ -358,6 +359,54 @@ describe('credit follows what was covered', () => {
     const mathCredit = ev.suggestions.filter((s) => s.conceptId === 'math.general').reduce((a, s) => a + s.credits, 0);
     expect(mathCredit).toBeCloseTo(1, 5);
     expect(ev.flags.some((f) => f.id === 'partial-year')).toBe(false);
+  });
+  it('adds documents to a case and keeps the counselor’s work', () => {
+    const page = (t: string) => docxHtmlToDoc(termReport(t, '11 S1', rows));
+    const first = page('Second Term');
+    const before = runExtraction(first, kb);
+    // The counselor's work on the case so far.
+    const edited = structuredClone(before);
+    edited.student.name = { value: 'Awa B. Sanneh', original: 'SANNEH, Awa Binta', confidence: 1, edited: true };
+    const physics = edited.courses.find((c) => c.name.original === 'PHYSICS')!;
+    physics.grade = { ...physics.grade, value: '92', edited: true };
+    const chem = edited.courses.find((c) => c.name.original === 'FURTHER MATHEMATICS')!;
+    edited.courses.push({ id: 'm-hand01', name: { value: 'Arabic', original: 'Arabic', confidence: 1, edited: true }, translation: 'same', grade: { value: '85', confidence: 1, edited: true }, period: { value: 'Second term', confidence: 1 }, level: 11 });
+    const overrides = { [chem.id]: { credits: 0.5, accepted: true }, 'm-hand01': { conceptId: 'wl.other' } };
+    const resolved = ['system-unsure', `grade-lowconf-${physics.id}`];
+
+    // A third-term report is added: its pages go after the earlier ones.
+    const added = page('Third Term');
+    const doc = { ...first, pages: [...first.pages, ...added.pages], tokens: [...first.tokens, ...added.tokens.map((t) => ({ ...t, page: t.page + first.pages.length }))] };
+    const after = runExtraction(doc, kb);
+    const r = carryOver(edited, after, overrides, resolved);
+
+    expect(r.kept).toBe(rows.length);
+    expect(r.added).toBe(rows.length);
+    expect(r.lost).toEqual([]);
+    expect(r.extraction.student.name.value).toBe('Awa B. Sanneh');
+    const physicsAfter = r.extraction.courses.filter((c) => c.name.original === 'PHYSICS');
+    // The corrected grade stays on the second-term row; the new third-term row is as read (letter A, mark 91%).
+    expect(physicsAfter.map((c) => [c.term, c.grade.value, c.score?.value])).toEqual([['2', '92', '91'], ['3', 'A', '91']]);
+    // Decisions follow their rows; the hand-added course stays.
+    const chemAfter = r.extraction.courses.find((c) => c.name.original === 'FURTHER MATHEMATICS' && c.term === '2')!;
+    expect(r.overrides[chemAfter.id]).toEqual({ credits: 0.5, accepted: true });
+    expect(r.extraction.courses.some((c) => c.id === 'm-hand01')).toBe(true);
+    expect(r.overrides['m-hand01']).toEqual({ conceptId: 'wl.other' });
+    const physicsId = physicsAfter.find((c) => c.term === '2')!.id;
+    expect(r.resolved).toEqual(['system-unsure', `grade-lowconf-${physicsId}`]);
+    // With the third term added, Mathematics has two of three terms: one semester of credit.
+    const ev = evaluate(r.extraction, kb, jcps, r.overrides);
+    expect(ev.suggestions.filter((s) => s.conceptId === 'math.general').reduce((a, s) => a + s.credits, 0)).toBe(0.5);
+  });
+  it('strips row numbers page by page when combined files number rows differently', () => {
+    const numbered = docxHtmlToDoc(termReport('Second Term', '11 S1', rows));
+    const plain = docxHtmlToDoc(
+      `<p>KOTU RIDGE SENIOR SECONDARY SCHOOL</p><p>Third Term</p><p>CLASS: 11 S1</p><table><tr><th>Subject</th><th>Mark(%)</th><th>Grade</th></tr>` +
+        rows.map(([s, m, g]) => `<tr><td>${s}</td><td>${m}</td><td>${g}</td></tr>`).join('') + '</table>',
+    );
+    const doc = { ...numbered, pages: [...numbered.pages, ...plain.pages], tokens: [...numbered.tokens, ...plain.tokens.map((t) => ({ ...t, page: t.page + 1 }))] };
+    const ex2 = runExtraction(doc, kb);
+    expect(ex2.courses.map((c) => c.name.original)).toEqual([...rows.map((r) => r[0]), ...rows.map((r) => r[0])]);
   });
   it('places mathematics on the US course sequence and suggests where to continue', () => {
     const ev = evaluate(ex, kb, jcps);

@@ -289,3 +289,7 @@ dialog::backdrop { background: rgba(27, 36, 46, 0.5); }
 .rules { margin: 0; display: grid; gap: 10px; }
 .rules dt { font-weight: 600; }
 .rules dd { margin: 2px 0 0; font-size: 0.92rem; color: var(--ink-2); }
+.drop-target { position: relative; }
+.drop-target.over .viewer { outline: 3px dashed var(--ledger); outline-offset: -3px; }
+.drop-hint { position: absolute; inset: 40px 12px auto; padding: 14px; text-align: center; background: var(--ledger-wash); color: var(--ledger); border: 1.5px solid var(--ledger); border-radius: var(--radius); font-weight: 600; pointer-events: none; }
+@media (min-width: 1081px) { .drop-target { position: sticky; top: 10px; align-self: start; } .drop-target .viewer { position: static; } }

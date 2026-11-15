@@ -1,5 +1,6 @@
 // The review workspace: original document on the left; what was read, what is suggested, and why, on the right.
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useMemo, useRef, useState } from 'react';
+import { ACCEPT } from '../ingest/browser.ts';
 import { activeProvider } from '../ai/provider.ts';
 import { evaluate } from '../core/evaluate.ts';
 import type { ExtractedCourse, Field, SourceRef, Suggestion, USLetter, VerifyFlag } from '../core/types.ts';
@@ -16,7 +17,9 @@ const LEVELS = [9, 10, 11, 12];
 export function CaseView({ id }: { id: string }) {
   const { kb, settings } = useApp();
   const who = settings.counselor || 'Counselor';
-  const { rec, doc, missing, reading, update, reread } = useCase(id, kb, who);
+  const { rec, doc, missing, reading, notice, clearNotice, update, reread, addFiles } = useCase(id, kb, who);
+  const addRef = useRef<HTMLInputElement>(null);
+  const [dropping, setDropping] = useState(false);
   const [highlight, setHighlight] = useState<SourceRef | null>(null);
   const [openWhy, setOpenWhy] = useState<string | null>(null);
   const [note, setNote] = useState('');
@@ -104,6 +107,27 @@ export function CaseView({ id }: { id: string }) {
             </button>
           </>
         )}
+        <button
+          className="btn"
+          disabled={locked || !!reading}
+          title={locked ? 'Reopen the case to add documents' : 'Add later term reports, other years or missing pages to this case'}
+          onClick={() => addRef.current?.click()}
+        >
+          <Icon name="plus" /> Add documents
+        </button>
+        <input
+          ref={addRef}
+          type="file"
+          accept={ACCEPT}
+          multiple
+          className="sr-only"
+          tabIndex={-1}
+          aria-label="Choose documents to add to this case"
+          onChange={(e) => {
+            addFiles([...(e.target.files ?? [])]);
+            e.target.value = '';
+          }}
+        />
       </div>
     </div>
   );
@@ -162,8 +186,36 @@ export function CaseView({ id }: { id: string }) {
   return (
     <>
       {header}
+      {notice && (
+        <div className={`notice ${notice.kind === 'ok' ? 'ok' : 'error'}`} role={notice.kind === 'ok' ? 'status' : 'alert'} style={{ marginBottom: 14, display: 'flex', gap: 12, alignItems: 'start' }}>
+          <span style={{ flex: 1 }}>{notice.text}</span>
+          <button className="btn small quiet" onClick={clearNotice}>
+            Dismiss
+          </button>
+        </div>
+      )}
       <div className="workspace">
-        {doc.tokens && <DocViewer doc={doc.tokens} previews={doc.previews} highlight={highlight} fileName={rec.fileName} />}
+        {doc.tokens && (
+          // Documents can also be dropped onto the original to add them to the case.
+          // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- drop target; the "Add documents" button is the keyboard path
+          <div
+            className={`drop-target ${dropping ? 'over' : ''}`}
+            onDragOver={(e) => {
+              if (locked) return;
+              e.preventDefault();
+              setDropping(true);
+            }}
+            onDragLeave={() => setDropping(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDropping(false);
+              if (!locked) addFiles([...e.dataTransfer.files]);
+            }}
+          >
+            <DocViewer doc={doc.tokens} previews={doc.previews} highlight={highlight} fileName={rec.fileName} />
+            {dropping && <div className="drop-hint" aria-hidden="true">Drop to add to this case</div>}
+          </div>
+        )}
         <div>
           <nav className="subnav no-print" aria-label="Sections of this case">
             <a href="#verify" onClick={(e) => jump(e, 'verify')}>To verify ({openFlags.length})</a>
@@ -271,8 +323,8 @@ export function CaseView({ id }: { id: string }) {
                   value={ex.systemId.value}
                   disabled={locked}
                   onChange={(e) => {
-                    const hasEdits = Object.keys(rec.overrides).length > 0 || ex.courses.some((c) => c.name.edited || c.grade.edited);
-                    if (!hasEdits || confirm('Changing the system re-reads the courses and discards your edits to this case. Continue?')) reread({ systemId: e.target.value, reuseTokens: true });
+                    // Re-read with the chosen system; corrections and decisions carry over.
+                    reread({ systemId: e.target.value, reuseTokens: true, keepWork: true });
                   }}
                 >
                   {kb.systems.map((s) => (

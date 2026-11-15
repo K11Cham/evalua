@@ -199,7 +199,14 @@ function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; doc
  * Report cards often number their rows ("1 MATHEMATICS", "2ENGLISH LANGUAGE"). When most names in the
  * table start with a run of increasing numbers, the numbers are a row index, not part of the name.
  */
-function stripRowNumbers(courses: RawCourse[]) {
+function stripRowNumbers(all: RawCourse[]) {
+  // Page by page: a record combined from several files can number rows on some pages and not others.
+  const pages = new Map<number, RawCourse[]>();
+  for (const c of all) pages.set(c.name.page, [...(pages.get(c.name.page) ?? []), c]);
+  for (const courses of pages.values()) stripPage(courses);
+}
+
+function stripPage(courses: RawCourse[]) {
   const nums = courses.map((c) => /^\s*\(?(\d{1,2})[.)]?\s*(?=\p{L})/u.exec(asciiDigits(c.name.text)));
   const hits = nums.filter(Boolean).length;
   if (hits < 3 || hits < courses.length * 0.6) return;

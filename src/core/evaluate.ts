@@ -374,7 +374,7 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
     flags.push({
       id: 'partial-year', severity: 'check',
       title: `This record covers part of a school year`,
-      detail: `Every course on it is for one ${sp.unit} (${sp.perYear} make a year), so each documents about ${r2(sp.share)} of a course. Credit is suggested only for documented work. Ask for the other ${sp.unit} reports, or confirm the earlier ${sp.unit}s were completed, and use the placement suggestions to continue the student in the right courses.`,
+      detail: `Courses on this record are reported by ${sp.unit} (${sp.perYear} make a year), and none has a full year on record: each has about ${r2(shareOfGroup.get(groupKey(partials[0])) ?? sp.share)} of a year. Credit is suggested only for documented work. Add the other ${sp.unit} reports with “Add documents”, or confirm the earlier ${sp.unit}s were completed, and use the placement suggestions to continue the student in the right courses.`,
     });
   }
 

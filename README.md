@@ -12,7 +12,7 @@ More screenshots: [case list](docs/screenshots/cases.png), [report](docs/screens
 
 ## What it does
 
-- **Reads** PDF (text or scanned), Word (.docx), and images (JPG, PNG, HEIC, including skewed phone photos). Several photos become the pages of one record.
+- **Reads** PDF (text or scanned), Word (.docx), and images (JPG, PNG, HEIC, including skewed phone photos). Several files chosen together (one per term, say) become the pages of one record, and **Add documents** on a case brings in later term reports or missing pages without losing corrections or decisions already made.
 - **Extracts** student, school, country and education system, and every course with its grade, credits or hours, year and term. The original text is kept beside an English name, and every field has a confidence score and a link to where it sits on the page.
 - **Converts** grades to a US letter, 4.0 points and percentage, naming the conversion table used, and converts hours to Carnegie units.
 - **Matches** each course to a subject, then to the district's requirement areas and closest catalog course, and shows what is covered and what is still needed to graduate.
