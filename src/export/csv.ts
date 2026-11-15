@@ -9,7 +9,7 @@ const cell = (v: unknown) => {
 export function evaluationCsv(ex: Extraction, ev: Evaluation, meta: { caseNo: string; district: string; status: string }): string {
   const head = [
     'Case', 'Student', 'Date of birth', 'Student ID', 'School', 'Country', 'System', 'District', 'Status',
-    'Period', 'US grade level', 'Course (original)', 'Course (English)', 'Grade (original)', 'Credits (original)', 'Hours (original)',
+    'Period', 'School year', 'US grade level', 'Course (original)', 'Course (English)', 'Grade (original)', 'Credits (original)', 'Hours (original)',
     'US subject', 'Counts toward', 'Closest catalog course', 'Suggested credits', 'US letter', 'US 4.0', 'US percent', 'Conversion table',
     'Confidence', 'Needs review', 'Reasoning',
   ];
@@ -17,7 +17,7 @@ export function evaluationCsv(ex: Extraction, ev: Evaluation, meta: { caseNo: st
     const s = ev.suggestions.find((x) => x.courseId === c.id);
     return [
       meta.caseNo, ex.student.name.value, ex.student.dob.value, ex.student.id.value, ex.school.name.value, ex.country.value, ex.docType, meta.district, meta.status,
-      c.period.value, c.level ?? '', c.name.original ?? '', c.name.value, c.grade.value, c.credits?.value ?? '', c.hours?.value ?? '',
+      c.period.value, c.academicYear ?? '', c.level ?? '', c.name.original ?? '', c.name.value, c.grade.value, c.credits?.value ?? '', c.hours?.value ?? '',
       s?.conceptLabel ?? '(excluded)', s?.requirementLabel ?? '', s?.catalogTitle ?? '', s?.credits ?? '', s?.grade.letter ?? '', s?.grade.gpa ?? '', s?.grade.percent ?? '', s?.grade.table ?? '',
       s ? Math.round(s.confidence * 100) + '%' : '', s ? (s.needsReview ? 'yes' : 'no') : '', s?.reasons.map((r) => r.text).join(' | ') ?? '',
     ];

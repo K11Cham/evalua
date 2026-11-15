@@ -72,6 +72,8 @@ export interface ExtractedCourse {
   period: Field<string>;
   /** US grade-level equivalent (9–12), when it can be determined. */
   level: number | null;
+  /** The counselor set the grade level by hand, so reading the file again keeps it. */
+  levelByHand?: boolean;
   term?: string;
   academicYear?: string;
   /** Qualifier printed alongside (HL/SL, "GCSE", "Core"). */
@@ -112,6 +114,8 @@ export interface Extraction {
   flags: VerifyFlag[];
   /** How the structure was produced. */
   method: 'rules' | 'rules+model';
+  /** Version of the reading rules that produced this (see READER_VERSION). Missing on cases read before versions were kept. */
+  reader?: number;
 }
 
 // ───────────── Knowledge base ─────────────

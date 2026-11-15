@@ -3,6 +3,9 @@ import { Fragment, useMemo, useRef, useState } from 'react';
 import { ACCEPT } from '../ingest/browser.ts';
 import { activeProvider } from '../ai/provider.ts';
 import { evaluate } from '../core/evaluate.ts';
+import { READER_VERSION } from '../core/pipeline.ts';
+import { groupByPeriod, periodKey } from '../core/periods.ts';
+import { caseFlags } from '../core/verify.ts';
 import type { ExtractedCourse, Field, SourceRef, Suggestion, USLetter, VerifyFlag } from '../core/types.ts';
 import { download, evaluationCsv } from '../export/csv.ts';
 import { caseLabel, deleteCase, now, STATUS_LABEL, STATUS_ORDER, uid, type CaseRecord } from '../store/db.ts';
@@ -168,14 +171,9 @@ export function CaseView({ id }: { id: string }) {
   }
 
   const sugOf = (cid: string) => evaluation?.suggestions.find((s) => s.courseId === cid);
-  const flags: VerifyFlag[] = [...ex.flags, ...(evaluation?.flags ?? [])];
+  const flags: VerifyFlag[] = caseFlags(ex, evaluation?.flags);
   const openFlags = flags.filter((f) => !rec.resolved.includes(f.id));
-  const periods: { label: string; courses: ExtractedCourse[] }[] = [];
-  for (const c of ex.courses) {
-    const g = periods.find((p) => p.label === c.period.value);
-    if (g) g.courses.push(c);
-    else periods.push({ label: c.period.value, courses: [c] });
-  }
+  const periods = groupByPeriod(ex.courses).map((g) => ({ key: g.key, label: g.label, courses: g.items }));
   const pending = (evaluation?.suggestions ?? []).filter((s) => s.needsReview).length;
   const untranslated = ex.courses.filter((c) => c.translation === 'none' && c.name.original);
   // Years where the record shows a later term but not the earlier ones.
@@ -191,6 +189,16 @@ export function CaseView({ id }: { id: string }) {
           <span style={{ flex: 1 }}>{notice.text}</span>
           <button className="btn small quiet" onClick={clearNotice}>
             Dismiss
+          </button>
+        </div>
+      )}
+      {!locked && doc.tokens && (ex.reader ?? 1) < READER_VERSION && (
+        <div className="notice check" role="status" style={{ marginBottom: 14, display: 'flex', gap: 12, alignItems: 'center' }}>
+          <span style={{ flex: 1 }}>
+            This case was read by an earlier version of evalua. Reading has improved since: when a record is made of several reports, each report's grade level, school year and term are now read on their own. Read it again to update the courses. Your corrections, decisions and notes are kept.
+          </span>
+          <button className="btn small primary" onClick={() => reread({ reuseTokens: true, keepWork: true, action: 'Read again with the updated reader' })}>
+            Read again
           </button>
         </div>
       )}
@@ -444,8 +452,8 @@ export function CaseView({ id }: { id: string }) {
                       <th>Confidence · decision</th>
                     </tr>
                   </thead>
-                  {periods.map((p, pi) => (
-                    <tbody key={pi}>
+                  {periods.map((p) => (
+                    <tbody key={p.key}>
                       <tr>
                         <th className="period" colSpan={6} scope="rowgroup" aria-label={`Year or term: ${p.label || 'not printed'}`}>
                           <div className="row">
@@ -464,7 +472,7 @@ export function CaseView({ id }: { id: string }) {
                                 disabled={locked}
                                 onChange={(e) => {
                                   const lv = e.target.value ? +e.target.value : null;
-                                  update((c) => c.extraction!.courses.filter((x) => x.period.value === p.label).forEach((x) => void (x.level = lv)), { action: 'Changed grade level', detail: `${p.label || 'document'} → ${lv ?? 'not set'}` });
+                                  update((c) => c.extraction!.courses.filter((x) => periodKey(x) === p.key).forEach((x) => void ((x.level = lv), (x.levelByHand = true))), { action: 'Changed grade level', detail: `${p.label || 'document'} → ${lv ?? 'not set'}` });
                                 }}
                               >
                                 <option value="">Not set</option>

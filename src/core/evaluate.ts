@@ -8,6 +8,8 @@
 import { convertGrade, type SectionContext } from './convert.ts';
 import { planLadders, roundToStep, spans, type CoverageOptions } from './coverage.ts';
 import { buildMatcher } from './match.ts';
+import { periodKey } from './periods.ts';
+import { courseFlags } from './verify.ts';
 import { usCourses } from '../kb/usCourses.ts';
 import type {
   CatalogCourse, Concept, DistrictProfile, Evaluation, Extraction, GradeConversion, KnowledgeBase, Reason, Requirement, RequirementProgress, Suggestion, SystemProfile, USLetter, VerifyFlag,
@@ -116,12 +118,13 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
   // Section context for scale selection: all grades that share a period label.
   const sections = new Map<string, SectionContext>();
   for (const c of ex.courses) {
-    const s = sections.get(c.period.value) ?? { grades: [], hintText: c.period.value };
+    const s = sections.get(periodKey(c)) ?? { grades: [], hintText: c.period.value };
     s.grades.push(c.grade.value);
-    sections.set(c.period.value, s);
+    sections.set(periodKey(c), s);
   }
 
   const included = ex.courses.filter((c) => !overrides[c.id]?.exclude);
+  flags.push(...courseFlags({ ...ex, courses: included }));
   const span = spans(included, profile, opts);
   const conceptOf = new Map<string, string>();
   const looks = new Map<string, ReturnType<typeof match>>();
@@ -160,7 +163,7 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
     else if (req && req.id !== 'elective') reasons.push({ text: `${concept.label} counts toward “${req.label}” in ${district.name} (${district.schoolYear}).`, source: district.provenance.source });
     else reasons.push({ text: `No graduation requirement in ${district.name} names this subject; it counts as an elective.`, source: district.provenance.source });
 
-    const grade = convertGrade(c, profile, generic, sections.get(c.period.value)!);
+    const grade = convertGrade(c, profile, generic, sections.get(periodKey(c))!);
     if (ov.letter) {
       grade.letter = ov.letter;
       grade.gpa = { A: 4, B: 3, C: 2, D: 1, F: 0, P: null, NC: null }[ov.letter];

@@ -27,7 +27,7 @@ export interface CaseState {
    * Read the document again. `keepWork` carries the counselor's corrections and decisions over
    * (used when only the system changes); without it the case starts clean.
    */
-  reread(opts?: { systemId?: string; hint?: OcrModelId | 'auto'; reuseTokens?: boolean; keepWork?: boolean }): void;
+  reread(opts?: { systemId?: string; hint?: OcrModelId | 'auto'; reuseTokens?: boolean; keepWork?: boolean; action?: string }): void;
   /** Add documents (later term reports, missing pages) to this case, keeping the work already done. */
   addFiles(files: File[]): void;
 }
@@ -89,7 +89,7 @@ export function useCase(id: string, kb: KnowledgeBase, who: string): CaseState {
   );
 
   const process = useCallback(
-    async (r: CaseRecord, d: CaseDoc, opts: { systemId?: string; hint?: OcrModelId | 'auto'; reuseTokens?: boolean; keepWork?: boolean } = {}) => {
+    async (r: CaseRecord, d: CaseDoc, opts: { systemId?: string; hint?: OcrModelId | 'auto'; reuseTokens?: boolean; keepWork?: boolean; action?: string } = {}) => {
       if (busy.current) return;
       busy.current = true;
       try {
@@ -107,7 +107,7 @@ export function useCase(id: string, kb: KnowledgeBase, who: string): CaseState {
         await finish(r, tokens, {
           systemId: opts.systemId,
           keepWork: !!opts.keepWork,
-          action: opts.keepWork ? 'Changed the education system' : r.extraction ? 'Read again' : 'Read',
+          action: opts.action ?? (opts.keepWork ? 'Changed the education system' : r.extraction ? 'Read again' : 'Read'),
           detail: (added, kept, lost) => `${kept} courses kept with your changes${added ? `, ${added} new` : ''}${lost.length ? `; not found again: ${lost.join(', ')}` : ''}`,
         });
       } catch (e) {

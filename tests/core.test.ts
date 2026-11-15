@@ -8,7 +8,9 @@ import { carryOver } from '../src/core/merge.ts';
 import { detectSystem } from '../src/core/extract.ts';
 import { academicYear, detectTerm, genericLevel, headerRole, infoField, isGradeLike, isPeriodLabel, isSummaryLabel, splitGrade, termOf } from '../src/core/lexicon.ts';
 import { buildMatcher, fixOcrNumerals } from '../src/core/match.ts';
+import { groupByPeriod } from '../src/core/periods.ts';
 import { runExtraction } from '../src/core/pipeline.ts';
+import { caseFlags } from '../src/core/verify.ts';
 import { asciiDigits, displayName, key, parseDate, parseNumber, sameName, similarity } from '../src/core/text.ts';
 import type { ExtractedCourse, USLetter } from '../src/core/types.ts';
 import { docxHtmlToDoc } from '../src/ingest/docx.ts';
@@ -378,7 +380,12 @@ describe('credit follows what was covered', () => {
     const added = page('Third Term');
     const doc = { ...first, pages: [...first.pages, ...added.pages], tokens: [...first.tokens, ...added.tokens.map((t) => ({ ...t, page: t.page + first.pages.length }))] };
     const after = runExtraction(doc, kb);
+    // A grade level the counselor set stays; one an earlier reader got wrong is read again.
+    edited.courses.find((c) => c.name.original === 'MATHEMATICS')!.level = 12;
+    Object.assign(edited.courses.find((c) => c.name.original === 'ENGLISH LANGUAGE')!, { level: 9, levelByHand: true });
     const r = carryOver(edited, after, overrides, resolved);
+    expect(r.extraction.courses.find((c) => c.name.original === 'MATHEMATICS' && c.term === '2')!.level).toBe(11);
+    expect(r.extraction.courses.find((c) => c.name.original === 'ENGLISH LANGUAGE' && c.term === '2')!.level).toBe(9);
 
     expect(r.kept).toBe(rows.length);
     expect(r.added).toBe(rows.length);
@@ -506,6 +513,26 @@ describe('years and terms across systems', () => {
       `<table><tr><th>Môn học</th><th>Điểm</th></tr><tr><td>Toán</td><td>8,5</td></tr><tr><td>Ngữ văn</td><td>7,0</td></tr></table>`;
     const ex3 = combine(vn('Học kỳ I', '10', '2023-2024'), vn('Học kỳ II', '10', '2023-2024'), vn('Học kỳ I', '11', '2024-2025'));
     expect(ex3.courses.filter((c) => c.name.original === 'Toán').map((c) => [c.level, c.term, c.academicYear])).toEqual([[10, '1', '2023-2024'], [10, '2', '2023-2024'], [11, '1', '2024-2025']]);
+  });
+  it('treats the same term of different years as different periods: groups, duplicates and printed totals', () => {
+    const gm = (term: string, cls: string, year: string, maths: string, total: string) =>
+      `<p>BAKAU UPPER BASIC AND SENIOR SECONDARY SCHOOL</p><p>${term} REPORT</p><p>NAME: KEBBEH Fatou</p><p>CLASS: ${cls}</p><p>YEAR: ${year}</p>` +
+      `<table><tr><th>Subject</th><th>Total %</th></tr><tr><td>English Language</td><td>70</td></tr><tr><td>Mathematics</td><td>${maths}</td></tr><tr><td>Biology</td><td>60</td></tr><tr><td>Total</td><td>${total}</td></tr></table>`;
+    const ex6 = combine(gm('FIRST TERM', 'GRADE 10', '2024-2025', '80', '210'), gm('SECOND TERM', 'GRADE 10', '2024-2025', '80', '210'), gm('FIRST TERM', 'GRADE 11', '2025-2026', '80', '219'));
+    const groups = groupByPeriod(ex6.courses);
+    expect(groups.map((g) => [g.items[0].level, g.items[0].term, g.items.length])).toEqual([[10, '1', 3], [10, '2', 3], [11, '1', 3]]);
+    expect(groups[0].label).toContain('2024-2025');
+    const ev6 = evaluate(ex6, kb, kb.districts[0]);
+    const all = caseFlags(ex6, ev6.flags);
+    expect(all.filter((f) => f.id.startsWith('dup-'))).toEqual([]);
+    // Only the third report's total is off (70 + 80 + 60 = 210, printed 219).
+    const totals = all.filter((f) => f.id.startsWith('total-mismatch'));
+    expect(totals).toHaveLength(1);
+    expect(totals[0].source?.page).toBe(2);
+    // A course really listed twice in one report is still caught, and an old stored copy of the check is ignored.
+    const twice = { ...ex6, courses: [...ex6.courses, { ...ex6.courses[0], id: 'again' }], flags: [...ex6.flags, { id: 'dup-old', severity: 'check' as const, title: 'Listed twice: stale', detail: '' }] };
+    const flags = caseFlags(twice, evaluate(twice, kb, kb.districts[0]).flags);
+    expect(flags.filter((f) => f.id.startsWith('dup-')).map((f) => f.id)).toEqual(['dup-again']);
   });
   it('never lets one file’s grade level leak into the next, and ignores “class on leaving”', () => {
     const ng = (period: string) =>

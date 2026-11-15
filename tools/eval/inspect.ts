@@ -3,6 +3,7 @@
 // Nothing is cached or written: safe to point at a file that must not be copied.
 import { rowText } from '../../src/core/layout.ts';
 import { extract } from '../../src/core/extract.ts';
+import { caseFlags } from '../../src/core/verify.ts';
 import { evaluate, runExtraction } from '../../src/core/pipeline.ts';
 import { seedKb } from '../../src/kb/index.ts';
 import { closeOcr, ingestFile } from './node-ingest.ts';
@@ -27,7 +28,7 @@ for (const c of ex.courses) {
   console.log(`  [${c.period.value || '—'} | L${c.level ?? '?'}${c.term ? ` T${c.term}` : ''}] ${c.name.original} => ${c.grade.value}${c.score ? ` (score ${c.score.value})` : ''}  →  ${s?.conceptLabel}${s?.usCourse ? ` [${s.usCourse.title}]` : ""} / ${s?.requirementLabel} / ${s?.credits} cr / ${s?.grade.letter ?? '—'} (${s?.grade.table})`);
 }
 console.log('free rows:', tables.freeRows.slice(0, 16).map(rowText).join(' ⏎ '));
-for (const f of [...ex.flags, ...ev.flags]) console.log(`  flag [${f.severity}] ${f.title}`);
+for (const f of caseFlags(ex, ev.flags)) console.log(`  flag [${f.severity}] ${f.title}`);
 console.log(`total ${ev.totalEarned}/${ev.totalRequired} in ${district.name}`);
 await closeOcr();
 for (const p of ev.placements) console.log(`placement ${p.label} as of ${p.asOf}: done ${p.completed.join(', ') || '—'} · continue in ${p.continueIn?.title} (${Math.round((p.continueIn?.coverage ?? 0) * 100)}%) · conf ${p.confidence}`);

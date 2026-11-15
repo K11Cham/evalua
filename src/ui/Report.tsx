@@ -2,6 +2,8 @@
 // it handles every script with the device's own fonts and keeps the text selectable.
 import { useEffect, useMemo, useState } from 'react';
 import { evaluate } from '../core/evaluate.ts';
+import { groupByPeriod } from '../core/periods.ts';
+import { caseFlags } from '../core/verify.ts';
 import type { SourceInfo } from '../core/types.ts';
 import { caseLabel, getCase, STATUS_LABEL, type CaseRecord } from '../store/db.ts';
 import { fmtDate, Icon } from './bits.tsx';
@@ -31,14 +33,8 @@ export function Report({ id }: { id: string }) {
   }
   const ex = rec.extraction;
   const system = kb.systems.find((s) => s.id === ex.systemId.value);
-  const openFlags = [...ex.flags, ...ev.flags].filter((f) => !rec.resolved.includes(f.id));
-  const periods: { label: string; ids: string[] }[] = [];
-  for (const c of ex.courses) {
-    if (rec.overrides[c.id]?.exclude) continue;
-    const g = periods.find((p) => p.label === c.period.value);
-    if (g) g.ids.push(c.id);
-    else periods.push({ label: c.period.value, ids: [c.id] });
-  }
+  const openFlags = caseFlags(ex, ev.flags).filter((f) => !rec.resolved.includes(f.id));
+  const periods = groupByPeriod(ex.courses.filter((c) => !rec.overrides[c.id]?.exclude)).map((g) => ({ label: g.label, ids: g.items.map((c) => c.id) }));
   const tables = new Map<string, SourceInfo | undefined>();
   for (const s of ev.suggestions) if (s.grade.letter) tables.set(s.grade.table, s.grade.reasons[0]?.source);
   const draft = rec.status !== 'finalised';

@@ -66,8 +66,8 @@ export function carryOver(before: Extraction, after: Extraction, overrides: Reco
     const c = next.courses.find((x) => x.id === id)!;
     if (old.name.edited) ((c.name = structuredClone(old.name)), (c.translation = old.translation));
     if (old.grade.edited) c.grade = structuredClone(old.grade);
-    // Grade levels may have been set by hand; the earlier pages are unchanged, so the earlier level stands.
-    if (old.level != null) c.level = old.level;
+    // A grade level the counselor set stands; one the reader set is read again.
+    if (old.levelByHand) ((c.level = old.level), (c.levelByHand = true));
   }
   // Courses added by hand keep their own ids (they cannot collide with read ones, which are c1, c2, …).
   next.courses.push(...handAdded);
