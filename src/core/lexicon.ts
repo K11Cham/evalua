@@ -38,7 +38,7 @@ const ROLE_TERMS: Record<Role, string[]> = {
   min: ['minimum', 'min marks', 'minimum marks', 'pass marks', 'pass mark', 'النهاية الصغرى', 'الدرجة الصغرى', 'न्यूनतम'],
   words: ['in words', 'total in words', 'letra', 'en letra', 'con letra', 'por extenso', 'en toutes lettres', 'in worten'],
   code: ['code', 'sub code', 'subject code', 'course code', 'clave', 'código', 'no', 's n', 'sn', 'sl no', '序号', '编号', '번호', 'stt', 'م', 'п п', 'nr'],
-  qualifier: ['level', 'niveau', 'qualification', 'type', 'indicate if subject is core applied or specialized', 'category', 'nivel', 'kursart', 'track', '구분'],
+  qualifier: ['level', 'niveau', 'qualification', 'type', 'indicate if subject is core applied or specialized', 'indicate if subject is', 'core applied or specialized', 'core applied', 'category', 'nivel', 'kursart', 'track', '구분'],
   area: ['교과', 'area', 'área', 'campo disciplinar', 'domaine', 'aufgabenfeld', '领域', 'learning area group', 'subject group', 'group'],
   rank: ['rank', 'position', '석차등급', '석차', 'positional grade', 'class rank', 'xếp hạng', '名次', 'rang', 'classement', 'percentile'],
   remark: [

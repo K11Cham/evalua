@@ -29,7 +29,9 @@ export function stripDiacritics(s: string): string {
 export function key(s: string): string {
   return stripDiacritics(asciiDigits(s))
     .toLowerCase()
-    .replace(/[ـ‌-‏]/g, '') // tatweel, bidi marks
+    .replace(/[ـ‌-‏ً-ْ]/g, '') // tatweel, bidi marks, Arabic vowel marks
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
     .replace(/[^\p{L}\p{N}\p{M}]+/gu, ' ')
     .trim();
 }

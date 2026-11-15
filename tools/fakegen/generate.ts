@@ -63,7 +63,7 @@ async function pagePngs(browser: Browser, spec: FakeSpec): Promise<Buffer[]> {
   return out;
 }
 
-async function degradeScan(png: Buffer, rand: () => number): Promise<sharp.Sharp> {
+async function degradeScan(png: Buffer, rand: () => number): Promise<ReturnType<typeof sharp>> {
   const angle = (rand() - 0.5) * 2.4;
   const rotated = await sharp(png).grayscale().rotate(angle, { background: '#ffffff' }).blur(0.55).toBuffer();
   const meta = await sharp(rotated).metadata();

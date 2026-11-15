@@ -21,3 +21,4 @@ tools/ocr-bench/out
 tools/ocr-bench/*probe.mjs
 tools/ocr-bench/hybrid.mjs
 *.traineddata
+tools/eval/.cache

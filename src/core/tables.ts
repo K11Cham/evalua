@@ -46,7 +46,7 @@ const GRADE_ROLES: ColRole[] = ['final', 'grade', 'score', 'component', 'period'
 const PRIORITY: Record<string, number> = { final: 4, grade: 3, period: 3, score: 2, component: 1 };
 
 const letters = (s: string) => (s.match(/\p{L}/gu) ?? []).length;
-const isBlank = (c?: Cell) => !c || /^[\s\-–—_.·*]*$/.test(c.text);
+const isBlank = (c?: Cell) => !c || /^[\s\-–—_.·*一ー―]*$/.test(c.text);
 const short = (c: Cell) => c.text.length <= 64;
 
 function isHeaderCandidate(row: Row): boolean {
@@ -63,6 +63,8 @@ function isHeaderCandidate(row: Row): boolean {
     } else if (isPeriodLabel(c.text)) periods++;
   }
   if (hasName && (roles >= 2 || periods >= 2)) return true;
+  // A matrix header whose subject heading was misread: several period labels in a row.
+  if (periods >= 3 && periods >= row.cells.length - 2) return true;
   // Sub-header rows ("Score % | Grade | Score % | Grade") and headers whose subject column was not recognised.
   const dataLike = row.cells.some((c) => isGradeLike(c.text) && !headerRole(c.text));
   return roles >= 2 && !dataLike && roles >= row.cells.length - 1;
@@ -114,14 +116,23 @@ function buildColumns(bandRows: Row[]): HCol[] {
   }
   cols.sort((a, b) => a.x0 - b.x0);
   if (parents.length) {
-    const firstParentLeft = Math.min(...parents.map((p) => p.x));
-    for (const col of cols) {
-      const cx = (col.x0 + col.x1) / 2;
-      if (col.x1 < firstParentLeft - 4 || col.role === 'name') continue;
-      let best = parents[0];
-      for (const p of parents) if (Math.abs(p.x + p.w / 2 - cx) < Math.abs(best.x + best.w / 2 - cx)) best = p;
-      col.group = best.text;
-      col.groupCell = best;
+    parents.sort((a, b) => a.x - b.x);
+    const subs = cols.filter((c) => c.role && ['final', 'grade', 'score', 'component', 'credits', 'hours', 'max', 'rank'].includes(c.role));
+    if (subs.length && subs.length % parents.length === 0) {
+      // Same number of sub-columns under every period: assign in reading order.
+      const per = subs.length / parents.length;
+      subs.forEach((col, i) => {
+        col.group = parents[Math.floor(i / per)].text;
+        col.groupCell = parents[Math.floor(i / per)];
+      });
+    } else {
+      for (const col of subs) {
+        const cx = (col.x0 + col.x1) / 2;
+        let best = parents[0];
+        for (const p of parents) if (Math.abs(p.x + p.w / 2 - cx) < Math.abs(best.x + best.w / 2 - cx)) best = p;
+        col.group = best.text;
+        col.groupCell = best;
+      }
     }
   }
   return cols;
@@ -150,6 +161,10 @@ function findBands(rows: Row[]): Band[] {
           c.text.length <= 40 && !/[:：]/.test(c.text) && !isPeriodLabel(c.text) && !/\d{3,}/.test(c.text) &&
           anchor.some((a) => overlap(a.x, a.x + a.w, c.x, c.x + c.w) > 0.3 * Math.min(a.w, c.w)),
       );
+    // Lines closer together than one line height belong to the same multi-line header cell row.
+    const tight = (r: Row, ref: Row) => r.page === ref.page && Math.abs(r.y - ref.y) < Math.min(r.h, ref.h) * 0.8 && r.cells.every((c) => c.text.length <= 60 && !/[:：]\s*\S/.test(c.text));
+    for (let k = 0; k < 3 && start - 1 >= 0 && tight(rows[start - 1], rows[start]); k++) start--;
+    for (let k = 0; k < 3 && end + 1 < rows.length && tight(rows[end + 1], rows[end]); k++) end++;
     for (let k = 0; k < 2 && start - 1 >= 0 && !cand[start - 1] && fits(rows[start - 1], rows[start]); k++) start--;
     for (let k = 0; k < 2 && end + 1 < rows.length && !cand[end + 1] && fits(rows[end + 1], rows[end]); k++) end++;
     bands.push({ start, end, cols: buildColumns(rows.slice(start, end + 1)) });

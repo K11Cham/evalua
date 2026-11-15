@@ -23,18 +23,22 @@
     "heic-to": "^1.6.7",
     "idb": "^8.0.4",
     "mammoth": "^1.13.0",
+    "onnxruntime-web": "^1.31.1",
     "pdfjs-dist": "^6.5.438",
+    "ppu-paddle-ocr": "^6.7.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261115.1",
+    "@napi-rs/canvas": "^1.1.1",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
     "docx": "^9.15.4",
+    "onnxruntime-node": "^1.31.1",
     "oxlint": "^1.93.0",
     "playwright": "^1.65.1",
     "sharp": "^0.35.5",
@@ -47,6 +51,7 @@
   "allowScripts": {
     "esbuild@0.28.2": true,
     "workerd@1.20261113.1": true,
-    "tesseract.js": false
+    "tesseract.js": false,
+    "onnxruntime-node@1.31.1": true
   }
 }

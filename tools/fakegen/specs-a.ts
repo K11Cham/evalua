@@ -9,7 +9,9 @@ const c = (n: string, en: string, g: string, k: string, us: string, extra: Parti
 const waecWord: Record<string, string> = {
   A1: 'EXCELLENT', B2: 'VERY GOOD', B3: 'GOOD', C4: 'CREDIT', C5: 'CREDIT', C6: 'CREDIT', D7: 'PASS', E8: 'PASS', F9: 'FAIL',
 };
-const w = (n: string, g: string, k: string, us: string): FakeCourse => c(n, titleCase(n), g, k, us, { x: { word: waecWord[g] } });
+const WAEC_US: Record<string, string> = { A1: 'A', B2: 'A', B3: 'B', C4: 'B', C5: 'C', C6: 'C', D7: 'D', E8: 'D', F9: 'F' };
+// Expected US letters follow the cited Scholaro tables (see src/kb/systems.ts); the 4th argument is ignored.
+const w = (n: string, g: string, k: string, _us?: string): FakeCourse => c(n, titleCase(n), g, k, WAEC_US[g], { x: { word: waecWord[g] } });
 
 function titleCase(s: string): string {
   return s.toLowerCase().replace(/(^|[\s(/-])([a-z])/g, (_m, a: string, b: string) => a + b.toUpperCase());
@@ -67,8 +69,7 @@ export const gmWassce: FakeSpec = {
 
 const ng = (n: string, pct: number, k: string): FakeCourse => {
   const g = pct >= 75 ? 'A1' : pct >= 70 ? 'B2' : pct >= 65 ? 'B3' : pct >= 60 ? 'C4' : pct >= 55 ? 'C5' : pct >= 50 ? 'C6' : pct >= 45 ? 'D7' : pct >= 40 ? 'E8' : 'F9';
-  const us = pct >= 75 ? 'A' : pct >= 65 ? 'B' : pct >= 50 ? 'C' : pct >= 40 ? 'D' : 'F';
-  return c(n, n, g, k, us, { x: { pct: String(pct) } });
+  return c(n, n, g, k, WAEC_US[g], { x: { pct: String(pct) } });
 };
 
 export const ngSss: FakeSpec = {
@@ -134,8 +135,7 @@ export const ngSss: FakeSpec = {
 };
 
 const gh = (n: string, g: string, k: string): FakeCourse => {
-  const us = ({ A1: 'A', B2: 'B', B3: 'B', C4: 'C', C5: 'C', C6: 'C', D7: 'D', E8: 'D', F9: 'F' } as Record<string, string>)[g];
-  return c(n, n, g, k, us);
+  return c(n, n, g, k, WAEC_US[g]);
 };
 
 export const ghShs: FakeSpec = {
@@ -246,8 +246,8 @@ export const ibDp: FakeSpec = {
   specimen: 'SPECIMEN — FICTITIOUS RECORD FOR SOFTWARE TESTING',
 };
 
-const gcseUs = (g: string) => ({ '9': 'A', '8': 'A', '7': 'A', '6': 'B', '5': 'B', '4': 'C', '3': 'D', '2': 'D', '1': 'D', U: 'F' } as Record<string, string>)[g];
-const alUs = (g: string) => ({ 'A*': 'A', A: 'A', B: 'B', C: 'C', D: 'D', E: 'D', U: 'F' } as Record<string, string>)[g];
+const gcseUs = (g: string) => ({ '9': 'A', '8': 'A', '7': 'A', '6': 'B', '5': 'C', '4': 'C', '3': 'D', '2': 'D', '1': 'D', U: 'F' } as Record<string, string>)[g];
+const alUs = (g: string) => ({ 'A*': 'A', A: 'A', B: 'B', C: 'B', D: 'C', E: 'C', U: 'F' } as Record<string, string>)[g];
 const gcse = (n: string, g: string, k: string): FakeCourse => c(n, n, g, k, gcseUs(g), { x: { q: 'GCSE' } });
 const alev = (n: string, g: string, k: string): FakeCourse => c(n, n, g, k, alUs(g), { x: { q: 'GCE A Level' } });
 
@@ -288,7 +288,7 @@ export const ukGcse: FakeSpec = {
     },
     {
       label: 'Summer 2025 — Year 13', level: 12, academicYear: '2024-2025',
-      courses: [alev('Mathematics', 'A', 'math.advanced'), alev('Physics', 'B', 'sci.physics'), alev('Computer Science', 'A*', 'cs')],
+      courses: [alev('Mathematics', 'A', 'math.general'), alev('Physics', 'B', 'sci.physics'), alev('Computer Science', 'A*', 'cs')],
     },
   ],
   notes: [
@@ -299,7 +299,7 @@ export const ukGcse: FakeSpec = {
   specimen: 'SPECIMEN — FICTITIOUS RECORD FOR SOFTWARE TESTING',
 };
 
-const cbseUs = (t: number) => (t >= 60 ? 'A' : t >= 50 ? 'B' : t >= 33 ? 'C' : 'F');
+const cbseUs = (t: number) => (t >= 81 ? 'A' : t >= 61 ? 'B' : t >= 41 ? 'C' : t >= 33 ? 'D' : 'F');
 const words = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'];
 const inWords = (t: number) => String(t).padStart(3, '0').split('').map((d) => words[+d]).join(' ');
 const cbse = (code: string, n: string, th: number, pr: number, pos: string, k: string): FakeCourse => {
@@ -357,7 +357,7 @@ export const inCbse: FakeSpec = {
   specimen: 'SPECIMEN — FICTITIOUS RECORD FOR SOFTWARE TESTING',
 };
 
-const phUs = (g: number) => (g >= 90 ? 'A' : g >= 85 ? 'B' : g >= 80 ? 'C' : g >= 75 ? 'D' : 'F');
+const phUs = (g: number) => (g >= 95 ? 'A' : g >= 85 ? 'B' : g >= 75 ? 'C' : 'F');
 const ph = (n: string, en: string, type: string, q1: number, q2: number, k: string): FakeCourse => {
   const fin = Math.round((q1 + q2) / 2);
   return c(n, en, String(fin), k, phUs(fin), { x: { type, q1: String(q1), q2: String(q2), act: fin >= 75 ? 'PASSED' : 'FAILED' } });
@@ -431,7 +431,7 @@ export const phSf10: FakeSpec = {
 const gabWord: Record<string, string> = {
   '1': 'EXCELLENT', '2': 'VERY GOOD', '3': 'GOOD', '4': 'CREDIT', '5': 'CREDIT', '6': 'CREDIT', '7': 'PASS', '8': 'PASS', '9': 'FAIL',
 };
-const gabUs: Record<string, string> = { '1': 'A', '2': 'B', '3': 'B', '4': 'C', '5': 'C', '6': 'C', '7': 'D', '8': 'D', '9': 'F' };
+const gabUs: Record<string, string> = { '1': 'A', '2': 'A', '3': 'B', '4': 'B', '5': 'C', '6': 'C', '7': 'D', '8': 'D', '9': 'F' };
 const gab = (n: string, g: string, k: string): FakeCourse => c(n, titleCase(n), g, k, gabUs[g], { x: { word: gabWord[g] } });
 
 export const gmGabece: FakeSpec = {

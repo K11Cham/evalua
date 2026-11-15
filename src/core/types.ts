@@ -15,6 +15,8 @@ export interface Token {
 export interface PageInfo {
   width: number;
   height: number;
+  /** Row slope (dy/dx) measured from the page image, for scans and photos. */
+  skew?: number;
 }
 
 export type DocKind = 'pdf-text' | 'docx' | 'ocr';

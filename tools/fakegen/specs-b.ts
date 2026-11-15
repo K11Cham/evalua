@@ -8,7 +8,7 @@ const c = (n: string, en: string, g: string, k: string, us: string, extra: Parti
 const SPEC = 'SPECIMEN — FICTITIOUS RECORD FOR SOFTWARE TESTING';
 
 // ───────────────────────── China ─────────────────────────
-const cnUs = (s: number) => (s >= 85 ? 'A' : s >= 75 ? 'B' : s >= 60 ? 'C' : 'F');
+const cnUs = (s: number) => (s >= 90 ? 'A' : s >= 80 ? 'B' : s >= 70 ? 'C' : s >= 60 ? 'D' : 'F');
 const cnSubjects: [string, string, string][] = [
   ['语文', 'Chinese Language and Literature', 'wl.native'],
   ['数学', 'Mathematics', 'math.general'],
@@ -83,7 +83,7 @@ export const cnGaozhong: FakeSpec = {
 
 // ───────────────────────── Mexico ─────────────────────────
 const mxWords = ['CERO', 'UNO', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE', 'DIEZ'];
-const mxUs = (g: number) => (g >= 9 ? 'A' : g >= 8 ? 'B' : g >= 7 ? 'C' : g >= 6 ? 'D' : 'F');
+const mxUs = (g: number) => (g >= 9 ? 'A' : g >= 8 ? 'B' : g >= 6 ? 'C' : 'F');
 const mx = (n: string, en: string, g: number, cr: number, k: string): FakeCourse =>
   c(n, en, String(g), k, mxUs(g), { cr, x: { letra: mxWords[g] } });
 
@@ -193,7 +193,7 @@ export const mxSep: FakeSpec = {
 };
 
 // ───────────────────────── France ─────────────────────────
-const frUs = (g: number) => (g >= 14 ? 'A' : g >= 10 ? 'B' : g >= 8 ? 'C' : 'F');
+const frUs = (g: number) => (g >= 14 ? 'A' : g >= 12 ? 'B' : g >= 10 ? 'C' : 'F');
 const fr = (n: string, en: string, g: number, cls: number, app: string, k: string): FakeCourse =>
   c(n, en, g.toFixed(1).replace('.', ','), k, frUs(g), { x: { cls: cls.toFixed(1).replace('.', ','), app } });
 
@@ -274,9 +274,9 @@ export const frLycee: FakeSpec = {
 };
 
 // ───────────────────────── Germany ─────────────────────────
-const deWordUs: Record<string, string> = { 'sehr gut': 'A', gut: 'B', befriedigend: 'B', ausreichend: 'C', mangelhaft: 'F', 'ungenügend': 'F' };
+const deWordUs: Record<string, string> = { 'sehr gut': 'A', gut: 'A', befriedigend: 'B', ausreichend: 'C', mangelhaft: 'D', 'ungenügend': 'F' };
 const deW = (n: string, en: string, g: string, k: string): FakeCourse => c(n, en, g, k, deWordUs[g]);
-const dePtUs = (p: number) => (p >= 13 ? 'A' : p >= 7 ? 'B' : p >= 4 ? 'C' : 'F');
+const dePtUs = (p: number) => (p >= 10 ? 'A' : p >= 7 ? 'B' : p >= 4 ? 'C' : p >= 1 ? 'D' : 'F');
 const deP = (n: string, en: string, p: number, k: string): FakeCourse => c(n, en, String(p).padStart(2, '0'), k, dePtUs(p));
 
 export const deAbitur: FakeSpec = {
@@ -347,7 +347,7 @@ export const deAbitur: FakeSpec = {
 };
 
 // ───────────────────────── Brazil ─────────────────────────
-const brUs = (g: number) => (g >= 9 ? 'A' : g >= 7 ? 'B' : g >= 5 ? 'C' : 'F');
+const brUs = (g: number) => (g >= 9 ? 'A' : g >= 7 ? 'B' : g >= 6 ? 'C' : g >= 5 ? 'D' : 'F');
 const br = (n: string, en: string, g: number, h: number, k: string): FakeCourse =>
   c(n, en, g.toFixed(1).replace('.', ','), k, brUs(g), { h });
 const brRows: [string, string, string, number[], number[]][] = [
@@ -408,7 +408,7 @@ export const brHistorico: FakeSpec = {
 };
 
 // ───────────────────────── South Korea ─────────────────────────
-const krUs: Record<string, string> = { A: 'A', B: 'B', C: 'C', D: 'D', E: 'F' };
+const krUs: Record<string, string> = { A: 'A', B: 'A', C: 'B', D: 'C', E: 'D' };
 const kr = (area: string, n: string, en: string, cr: number, raw: string, ach: string, rank: string, k: string): FakeCourse =>
   c(n, en, ach, k, krUs[ach], { cr, x: { area, raw, ach: `${ach}(287)`, rank } });
 
@@ -488,7 +488,7 @@ export const krRecord: FakeSpec = {
 };
 
 // ───────────────────────── Vietnam ─────────────────────────
-const vnUs = (g: number) => (g >= 8 ? 'A' : g >= 6.5 ? 'B' : g >= 5 ? 'C' : g >= 3.5 ? 'D' : 'F');
+const vnUs = (g: number) => (g >= 8 ? 'A' : g >= 6 ? 'B' : g >= 5 ? 'C' : 'F');
 const vn = (n: string, en: string, h1: number, h2: number, k: string): FakeCourse => {
   const cn = Math.round(((h1 + 2 * h2) / 3) * 10) / 10;
   const f = (v: number) => v.toFixed(1).replace('.', ',');
@@ -562,15 +562,16 @@ export const vnHocba: FakeSpec = {
   specimen: SPEC,
 };
 
-// ───────────────────────── Egypt (Arabic, unprofiled system) ─────────────────────────
+// ───────────────────────── Egypt (Arabic) ─────────────────────────
 const arDigits = (s: string) => s.replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[+d]);
 const genericUs = (pct: number) => (pct >= 90 ? 'A' : pct >= 80 ? 'B' : pct >= 70 ? 'C' : pct >= 60 ? 'D' : 'F');
+const egUs = (pct: number) => (pct >= 90 ? 'A' : pct >= 65 ? 'B' : pct >= 50 ? 'C' : 'F');
 const eg = (n: string, en: string, mark: number, max: number, k: string): FakeCourse =>
-  c(n, en, String(mark), k, genericUs((mark / max) * 100), { x: { gp: arDigits(String(mark)), max: arDigits(String(max)), min: arDigits(String(max / 2)) } });
+  c(n, en, String(mark), k, egUs((mark / max) * 100), { x: { gp: arDigits(String(mark)), max: arDigits(String(max)), min: arDigits(String(max / 2)) } });
 
 export const egThanaweya: FakeSpec = {
   id: 'eg-thanaweya',
-  system: 'generic',
+  system: 'eg',
   country: 'Egypt',
   lang: 'ar',
   rtl: true,
@@ -614,14 +615,14 @@ export const egThanaweya: FakeSpec = {
   specimen: SPEC,
 };
 
-// ───────────────────────── Russia (Cyrillic, unprofiled system) ─────────────────────────
+// ───────────────────────── Russia (Cyrillic) ─────────────────────────
 const ruWord: Record<string, string> = { '5': 'отлично', '4': 'хорошо', '3': 'удовлетворительно' };
 const ruUs: Record<string, string> = { '5': 'A', '4': 'B', '3': 'C', '2': 'F' };
 const ru = (n: string, en: string, g: string, k: string): FakeCourse => c(n, en, g, k, ruUs[g], { x: { gp: `${g} (${ruWord[g]})` } });
 
 export const ruAttestat: FakeSpec = {
   id: 'ru-attestat',
-  system: 'generic',
+  system: 'ru',
   country: 'Russia',
   lang: 'ru',
   formats: ['pdf', 'photo-jpg'],

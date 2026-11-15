@@ -32,7 +32,7 @@
     "year": "WASSCE 2025",
     "level": 12,
     "concept": "math.general",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "BIOLOGY",
@@ -41,7 +41,7 @@
     "year": "WASSCE 2025",
     "level": 12,
     "concept": "sci.biology",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "CHEMISTRY",
@@ -95,7 +95,7 @@
     "year": "WASSCE 2025",
     "level": 12,
     "concept": "ss.religion",
-    "us": "B"
+    "us": "A"
    }
   ]
  },
@@ -132,7 +132,7 @@
     "year": "WASSCE 2025",
     "level": 12,
     "concept": "math.general",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "BIOLOGY",
@@ -141,7 +141,7 @@
     "year": "WASSCE 2025",
     "level": 12,
     "concept": "sci.biology",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "CHEMISTRY",
@@ -195,7 +195,7 @@
     "year": "WASSCE 2025",
     "level": 12,
     "concept": "ss.religion",
-    "us": "B"
+    "us": "A"
    }
   ]
  },
@@ -232,7 +232,7 @@
     "year": "GABECE 2022",
     "level": 9,
     "concept": "math.general",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "SCIENCE",
@@ -241,7 +241,7 @@
     "year": "GABECE 2022",
     "level": 9,
     "concept": "sci.integrated",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "SOCIAL AND ENVIRONMENTAL STUDIES",
@@ -268,7 +268,7 @@
     "year": "GABECE 2022",
     "level": 9,
     "concept": "wl.other",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "ISLAMIC RELIGIOUS KNOWLEDGE",
@@ -332,7 +332,7 @@
     "year": "GABECE 2022",
     "level": 9,
     "concept": "math.general",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "SCIENCE",
@@ -341,7 +341,7 @@
     "year": "GABECE 2022",
     "level": 9,
     "concept": "sci.integrated",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "SOCIAL AND ENVIRONMENTAL STUDIES",
@@ -368,7 +368,7 @@
     "year": "GABECE 2022",
     "level": 9,
     "concept": "wl.other",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "ISLAMIC RELIGIOUS KNOWLEDGE",
@@ -433,7 +433,7 @@
     "year": "SS 1 (2021/2022)",
     "level": 10,
     "concept": "math.general",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Civic Education",
@@ -469,7 +469,7 @@
     "year": "SS 1 (2021/2022)",
     "level": 10,
     "concept": "sci.physics",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Further Mathematics",
@@ -487,7 +487,7 @@
     "year": "SS 1 (2021/2022)",
     "level": 10,
     "concept": "ss.geography",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Economics",
@@ -496,7 +496,7 @@
     "year": "SS 1 (2021/2022)",
     "level": 10,
     "concept": "ss.economics",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Computer Studies",
@@ -523,7 +523,7 @@
     "year": "SS 2 (2022/2023)",
     "level": 11,
     "concept": "ela.english",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Mathematics",
@@ -559,7 +559,7 @@
     "year": "SS 2 (2022/2023)",
     "level": 11,
     "concept": "sci.chemistry",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Physics",
@@ -586,7 +586,7 @@
     "year": "SS 2 (2022/2023)",
     "level": 11,
     "concept": "ss.geography",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Economics",
@@ -649,7 +649,7 @@
     "year": "SS 3 (2023/2024)",
     "level": 12,
     "concept": "sci.biology",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Chemistry",
@@ -658,7 +658,7 @@
     "year": "SS 3 (2023/2024)",
     "level": 12,
     "concept": "sci.chemistry",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Physics",
@@ -667,7 +667,7 @@
     "year": "SS 3 (2023/2024)",
     "level": 12,
     "concept": "sci.physics",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Further Mathematics",
@@ -694,7 +694,7 @@
     "year": "SS 3 (2023/2024)",
     "level": 12,
     "concept": "ss.economics",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Computer Studies",
@@ -851,7 +851,7 @@
     "year": "SSCE 2024",
     "level": 12,
     "concept": "ela.english",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "GENERAL MATHEMATICS",
@@ -878,7 +878,7 @@
     "year": "SSCE 2024",
     "level": 12,
     "concept": "sci.biology",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "CHEMISTRY",
@@ -970,7 +970,7 @@
     "year": "SHS 1 — 2022/2023 Academic Year",
     "level": 10,
     "concept": "math.general",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Integrated Science",
@@ -997,7 +997,7 @@
     "year": "SHS 1 — 2022/2023 Academic Year",
     "level": 10,
     "concept": "math.advanced",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Physics",
@@ -1024,7 +1024,7 @@
     "year": "SHS 1 — 2022/2023 Academic Year",
     "level": 10,
     "concept": "sci.biology",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Information and Communication Technology",
@@ -1042,7 +1042,7 @@
     "year": "SHS 1 — 2022/2023 Academic Year",
     "level": 10,
     "concept": "pe",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "English Language",
@@ -1051,7 +1051,7 @@
     "year": "SHS 2 — 2023/2024 Academic Year",
     "level": 11,
     "concept": "ela.english",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Core Mathematics",
@@ -1069,7 +1069,7 @@
     "year": "SHS 2 — 2023/2024 Academic Year",
     "level": 11,
     "concept": "sci.integrated",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Social Studies",
@@ -1096,7 +1096,7 @@
     "year": "SHS 2 — 2023/2024 Academic Year",
     "level": 11,
     "concept": "sci.physics",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Chemistry",
@@ -1105,7 +1105,7 @@
     "year": "SHS 2 — 2023/2024 Academic Year",
     "level": 11,
     "concept": "sci.chemistry",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Biology",
@@ -1123,7 +1123,7 @@
     "year": "SHS 2 — 2023/2024 Academic Year",
     "level": 11,
     "concept": "cs",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Physical Education",
@@ -1150,7 +1150,7 @@
     "year": "SHS 3 — 2024/2025 Academic Year",
     "level": 12,
     "concept": "math.general",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Integrated Science",
@@ -1168,7 +1168,7 @@
     "year": "SHS 3 — 2024/2025 Academic Year",
     "level": 12,
     "concept": "ss.social",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Elective Mathematics",
@@ -1204,7 +1204,7 @@
     "year": "SHS 3 — 2024/2025 Academic Year",
     "level": 12,
     "concept": "sci.biology",
-    "us": "B"
+    "us": "A"
    }
   ]
  },
@@ -1379,7 +1379,7 @@
     "year": "Summer 2023 — Year 11",
     "level": 10,
     "concept": "ss.geography",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "French",
@@ -1406,7 +1406,7 @@
     "year": "Summer 2023 — Year 11",
     "level": 10,
     "concept": "ss.religion",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "Mathematics",
@@ -1414,7 +1414,7 @@
     "grade": "A",
     "year": "Summer 2025 — Year 13",
     "level": 12,
-    "concept": "math.advanced",
+    "concept": "math.general",
     "us": "A"
    },
    {
@@ -1480,7 +1480,7 @@
     "year": "Class XII",
     "level": 12,
     "concept": "sci.physics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "CHEMISTRY",
@@ -1554,7 +1554,7 @@
     "year": "Class XII",
     "level": 12,
     "concept": "sci.physics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "CHEMISTRY",
@@ -1620,7 +1620,7 @@
     "level": 11,
     "term": "1",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "General Mathematics",
@@ -1650,7 +1650,7 @@
     "level": 11,
     "term": "1",
     "concept": "ss.social",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "Physical Education and Health",
@@ -1690,7 +1690,7 @@
     "level": 11,
     "term": "2",
     "concept": "ela.english",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "Pagbasa at Pagsusuri ng Iba’t Ibang Teksto Tungo sa Pananaliksik",
@@ -1700,7 +1700,7 @@
     "level": 11,
     "term": "2",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "Statistics and Probability",
@@ -1720,7 +1720,7 @@
     "level": 11,
     "term": "2",
     "concept": "health",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "Empowerment Technologies",
@@ -1730,7 +1730,7 @@
     "level": 11,
     "term": "2",
     "concept": "cs",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "Basic Calculus",
@@ -1740,7 +1740,7 @@
     "level": 11,
     "term": "2",
     "concept": "math.calculus",
-    "us": "D"
+    "us": "C"
    },
    {
     "name": "General Chemistry 1",
@@ -1799,7 +1799,7 @@
     "level": 11,
     "term": "1",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "General Mathematics",
@@ -1829,7 +1829,7 @@
     "level": 11,
     "term": "1",
     "concept": "ss.social",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "Physical Education and Health",
@@ -1869,7 +1869,7 @@
     "level": 11,
     "term": "2",
     "concept": "ela.english",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "Pagbasa at Pagsusuri ng Iba’t Ibang Teksto Tungo sa Pananaliksik",
@@ -1879,7 +1879,7 @@
     "level": 11,
     "term": "2",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "Statistics and Probability",
@@ -1899,7 +1899,7 @@
     "level": 11,
     "term": "2",
     "concept": "health",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "Empowerment Technologies",
@@ -1909,7 +1909,7 @@
     "level": 11,
     "term": "2",
     "concept": "cs",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "Basic Calculus",
@@ -1919,7 +1919,7 @@
     "level": 11,
     "term": "2",
     "concept": "math.calculus",
-    "us": "D"
+    "us": "C"
    },
    {
     "name": "General Chemistry 1",
@@ -1969,7 +1969,7 @@
     "level": 10,
     "term": "1",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "数学",
@@ -1989,7 +1989,7 @@
     "level": 10,
     "term": "1",
     "concept": "ela.efl",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "物理",
@@ -1999,7 +1999,7 @@
     "level": 10,
     "term": "1",
     "concept": "sci.physics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "化学",
@@ -2009,7 +2009,7 @@
     "level": 10,
     "term": "1",
     "concept": "sci.chemistry",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "生物",
@@ -2049,7 +2049,7 @@
     "level": 10,
     "term": "1",
     "concept": "ss.geography",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "信息技术",
@@ -2069,7 +2069,7 @@
     "level": 10,
     "term": "1",
     "concept": "pe",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "音乐",
@@ -2139,7 +2139,7 @@
     "level": 10,
     "term": "2",
     "concept": "sci.biology",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "思想政治",
@@ -2149,7 +2149,7 @@
     "level": 10,
     "term": "2",
     "concept": "ss.civics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "历史",
@@ -2159,7 +2159,7 @@
     "level": 10,
     "term": "2",
     "concept": "ss.history.world",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "地理",
@@ -2209,7 +2209,7 @@
     "level": 11,
     "term": "1",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "数学",
@@ -2219,7 +2219,7 @@
     "level": 11,
     "term": "1",
     "concept": "math.general",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "英语",
@@ -2239,7 +2239,7 @@
     "level": 11,
     "term": "1",
     "concept": "sci.physics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "化学",
@@ -2249,7 +2249,7 @@
     "level": 11,
     "term": "1",
     "concept": "sci.chemistry",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "生物",
@@ -2279,7 +2279,7 @@
     "level": 11,
     "term": "1",
     "concept": "ss.history.world",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "地理",
@@ -2289,7 +2289,7 @@
     "level": 11,
     "term": "1",
     "concept": "ss.geography",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "体育与健康",
@@ -2299,7 +2299,7 @@
     "level": 11,
     "term": "1",
     "concept": "pe",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "语文",
@@ -2309,7 +2309,7 @@
     "level": 11,
     "term": "2",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "数学",
@@ -2359,7 +2359,7 @@
     "level": 11,
     "term": "2",
     "concept": "sci.biology",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "思想政治",
@@ -2389,7 +2389,7 @@
     "level": 11,
     "term": "2",
     "concept": "ss.geography",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "体育与健康",
@@ -2439,7 +2439,7 @@
     "level": 12,
     "term": "1",
     "concept": "sci.physics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "化学",
@@ -2459,7 +2459,7 @@
     "level": 12,
     "term": "1",
     "concept": "pe",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "语文",
@@ -2469,7 +2469,7 @@
     "level": 12,
     "term": "2",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "数学",
@@ -2489,7 +2489,7 @@
     "level": 12,
     "term": "2",
     "concept": "ela.efl",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "物理",
@@ -2499,7 +2499,7 @@
     "level": 12,
     "term": "2",
     "concept": "sci.physics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "化学",
@@ -2549,7 +2549,7 @@
     "level": 10,
     "term": "1",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "数学",
@@ -2569,7 +2569,7 @@
     "level": 10,
     "term": "1",
     "concept": "ela.efl",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "物理",
@@ -2579,7 +2579,7 @@
     "level": 10,
     "term": "1",
     "concept": "sci.physics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "化学",
@@ -2589,7 +2589,7 @@
     "level": 10,
     "term": "1",
     "concept": "sci.chemistry",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "生物",
@@ -2629,7 +2629,7 @@
     "level": 10,
     "term": "1",
     "concept": "ss.geography",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "信息技术",
@@ -2649,7 +2649,7 @@
     "level": 10,
     "term": "1",
     "concept": "pe",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "音乐",
@@ -2719,7 +2719,7 @@
     "level": 10,
     "term": "2",
     "concept": "sci.biology",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "思想政治",
@@ -2729,7 +2729,7 @@
     "level": 10,
     "term": "2",
     "concept": "ss.civics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "历史",
@@ -2739,7 +2739,7 @@
     "level": 10,
     "term": "2",
     "concept": "ss.history.world",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "地理",
@@ -2789,7 +2789,7 @@
     "level": 11,
     "term": "1",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "数学",
@@ -2799,7 +2799,7 @@
     "level": 11,
     "term": "1",
     "concept": "math.general",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "英语",
@@ -2819,7 +2819,7 @@
     "level": 11,
     "term": "1",
     "concept": "sci.physics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "化学",
@@ -2829,7 +2829,7 @@
     "level": 11,
     "term": "1",
     "concept": "sci.chemistry",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "生物",
@@ -2859,7 +2859,7 @@
     "level": 11,
     "term": "1",
     "concept": "ss.history.world",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "地理",
@@ -2869,7 +2869,7 @@
     "level": 11,
     "term": "1",
     "concept": "ss.geography",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "体育与健康",
@@ -2879,7 +2879,7 @@
     "level": 11,
     "term": "1",
     "concept": "pe",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "语文",
@@ -2889,7 +2889,7 @@
     "level": 11,
     "term": "2",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "数学",
@@ -2939,7 +2939,7 @@
     "level": 11,
     "term": "2",
     "concept": "sci.biology",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "思想政治",
@@ -2969,7 +2969,7 @@
     "level": 11,
     "term": "2",
     "concept": "ss.geography",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "体育与健康",
@@ -3019,7 +3019,7 @@
     "level": 12,
     "term": "1",
     "concept": "sci.physics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "化学",
@@ -3039,7 +3039,7 @@
     "level": 12,
     "term": "1",
     "concept": "pe",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "语文",
@@ -3049,7 +3049,7 @@
     "level": 12,
     "term": "2",
     "concept": "wl.native",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "数学",
@@ -3069,7 +3069,7 @@
     "level": 12,
     "term": "2",
     "concept": "ela.efl",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "物理",
@@ -3079,7 +3079,7 @@
     "level": 12,
     "term": "2",
     "concept": "sci.physics",
-    "us": "A"
+    "us": "B"
    },
    {
     "name": "化学",
@@ -3284,7 +3284,7 @@
     "level": 11,
     "term": "1",
     "concept": "math.algebra2",
-    "us": "D"
+    "us": "C"
    },
    {
     "name": "Biología I",
@@ -3372,7 +3372,7 @@
     "level": 11,
     "term": "2",
     "concept": "sci.physics",
-    "us": "D"
+    "us": "C"
    },
    {
     "name": "Historia de México II",
@@ -3504,7 +3504,7 @@
     "level": 12,
     "term": "2",
     "concept": "math.calculus",
-    "us": "D"
+    "us": "C"
    },
    {
     "name": "Probabilidad y Estadística II",
@@ -3700,7 +3700,7 @@
     "level": 11,
     "term": "1",
     "concept": "math.algebra2",
-    "us": "D"
+    "us": "C"
    },
    {
     "name": "Biología I",
@@ -3788,7 +3788,7 @@
     "level": 11,
     "term": "2",
     "concept": "sci.physics",
-    "us": "D"
+    "us": "C"
    },
    {
     "name": "Historia de México II",
@@ -3920,7 +3920,7 @@
     "level": 12,
     "term": "2",
     "concept": "math.calculus",
-    "us": "D"
+    "us": "C"
    },
    {
     "name": "Probabilidad y Estadística II",
@@ -3978,7 +3978,7 @@
     "year": "Classe de Seconde générale et technologique — Année scolaire 2022-2023",
     "level": 10,
     "concept": "math.general",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "Physique-Chimie",
@@ -4095,7 +4095,7 @@
     "year": "Classe de Première générale — Année scolaire 2023-2024",
     "level": 11,
     "concept": "wl.other",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "Éducation physique et sportive",
@@ -4122,7 +4122,7 @@
     "year": "Classe de Première générale — Année scolaire 2023-2024",
     "level": 11,
     "concept": "math.advanced",
-    "us": "C"
+    "us": "F"
    },
    {
     "name": "Spécialité Physique-Chimie",
@@ -4131,7 +4131,7 @@
     "year": "Classe de Première générale — Année scolaire 2023-2024",
     "level": 11,
     "concept": "sci.physical",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "Spécialité Sciences de la vie et de la Terre",
@@ -4149,7 +4149,7 @@
     "year": "Classe de Terminale générale — Année scolaire 2024-2025",
     "level": 12,
     "concept": "ss.philosophy",
-    "us": "B"
+    "us": "C"
    },
    {
     "name": "Histoire-Géographie",
@@ -4240,7 +4240,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "wl.native",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Englisch",
@@ -4276,7 +4276,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "sci.biology",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Chemie",
@@ -4303,7 +4303,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "ss.history.world",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Erdkunde",
@@ -4312,7 +4312,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "ss.geography",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Politik und Wirtschaft",
@@ -4330,7 +4330,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "arts.visual",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Sport",
@@ -4348,7 +4348,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "ss.philosophy",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Deutsch",
@@ -4357,7 +4357,7 @@
     "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
     "level": 11,
     "concept": "wl.native",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Englisch (Leistungskurs)",
@@ -4384,7 +4384,7 @@
     "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
     "level": 11,
     "concept": "sci.biology",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Chemie",
@@ -4402,7 +4402,7 @@
     "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
     "level": 11,
     "concept": "ss.history.world",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Politik und Wirtschaft",
@@ -4457,7 +4457,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "wl.native",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Englisch",
@@ -4493,7 +4493,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "sci.biology",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Chemie",
@@ -4520,7 +4520,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "ss.history.world",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Erdkunde",
@@ -4529,7 +4529,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "ss.geography",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Politik und Wirtschaft",
@@ -4547,7 +4547,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "arts.visual",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Sport",
@@ -4565,7 +4565,7 @@
     "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "ss.philosophy",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Deutsch",
@@ -4574,7 +4574,7 @@
     "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
     "level": 11,
     "concept": "wl.native",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Englisch (Leistungskurs)",
@@ -4601,7 +4601,7 @@
     "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
     "level": 11,
     "concept": "sci.biology",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Chemie",
@@ -4619,7 +4619,7 @@
     "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
     "level": 11,
     "concept": "ss.history.world",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "Politik und Wirtschaft",
@@ -4706,7 +4706,7 @@
     "year": "1ª Série — 2022",
     "level": 10,
     "concept": "sci.physics",
-    "us": "C"
+    "us": "D"
    },
    {
     "name": "Química",
@@ -5076,7 +5076,7 @@
     "year": "1ª Série — 2022",
     "level": 10,
     "concept": "sci.physics",
-    "us": "C"
+    "us": "D"
    },
    {
     "name": "Química",
@@ -5416,7 +5416,7 @@
     "level": 10,
     "term": "1",
     "concept": "wl.native",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "수학",
@@ -5449,7 +5449,7 @@
     "level": 10,
     "term": "1",
     "concept": "ss.history.national",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "통합사회",
@@ -5460,7 +5460,7 @@
     "level": 10,
     "term": "1",
     "concept": "ss.social",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "통합과학",
@@ -5504,7 +5504,7 @@
     "level": 10,
     "term": "2",
     "concept": "wl.native",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "수학",
@@ -5537,7 +5537,7 @@
     "level": 10,
     "term": "2",
     "concept": "ss.history.national",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "통합사회",
@@ -5548,7 +5548,7 @@
     "level": 10,
     "term": "2",
     "concept": "ss.social",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "통합과학",
@@ -5592,7 +5592,7 @@
     "level": 10,
     "term": "2",
     "concept": "arts.visual",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "문학",
@@ -5603,7 +5603,7 @@
     "level": 11,
     "term": "1",
     "concept": "wl.native",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "수학Ⅰ",
@@ -5614,7 +5614,7 @@
     "level": 11,
     "term": "1",
     "concept": "math.algebra2",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "영어Ⅰ",
@@ -5636,7 +5636,7 @@
     "level": 11,
     "term": "1",
     "concept": "ss.geography",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "물리학Ⅰ",
@@ -5658,7 +5658,7 @@
     "level": 11,
     "term": "1",
     "concept": "sci.chemistry",
-    "us": "D"
+    "us": "C"
    },
    {
     "name": "생명과학Ⅰ",
@@ -5721,7 +5721,7 @@
     "level": 10,
     "term": "1",
     "concept": "wl.native",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "수학",
@@ -5754,7 +5754,7 @@
     "level": 10,
     "term": "1",
     "concept": "ss.history.national",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "통합사회",
@@ -5765,7 +5765,7 @@
     "level": 10,
     "term": "1",
     "concept": "ss.social",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "통합과학",
@@ -5809,7 +5809,7 @@
     "level": 10,
     "term": "2",
     "concept": "wl.native",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "수학",
@@ -5842,7 +5842,7 @@
     "level": 10,
     "term": "2",
     "concept": "ss.history.national",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "통합사회",
@@ -5853,7 +5853,7 @@
     "level": 10,
     "term": "2",
     "concept": "ss.social",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "통합과학",
@@ -5897,7 +5897,7 @@
     "level": 10,
     "term": "2",
     "concept": "arts.visual",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "문학",
@@ -5908,7 +5908,7 @@
     "level": 11,
     "term": "1",
     "concept": "wl.native",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "수학Ⅰ",
@@ -5919,7 +5919,7 @@
     "level": 11,
     "term": "1",
     "concept": "math.algebra2",
-    "us": "B"
+    "us": "A"
    },
    {
     "name": "영어Ⅰ",
@@ -5941,7 +5941,7 @@
     "level": 11,
     "term": "1",
     "concept": "ss.geography",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "물리학Ⅰ",
@@ -5963,7 +5963,7 @@
     "level": 11,
     "term": "1",
     "concept": "sci.chemistry",
-    "us": "D"
+    "us": "C"
    },
    {
     "name": "생명과학Ⅰ",
@@ -6060,7 +6060,7 @@
     "year": "Lớp 10 — Năm học 2023 - 2024",
     "level": 10,
     "concept": "sci.chemistry",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Sinh học",
@@ -6159,7 +6159,7 @@
     "year": "Lớp 11 — Năm học 2024 - 2025",
     "level": 11,
     "concept": "sci.physics",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Hóa học",
@@ -6168,7 +6168,7 @@
     "year": "Lớp 11 — Năm học 2024 - 2025",
     "level": 11,
     "concept": "sci.chemistry",
-    "us": "D"
+    "us": "F"
    },
    {
     "name": "Sinh học",
@@ -6286,7 +6286,7 @@
     "year": "Lớp 10 — Năm học 2023 - 2024",
     "level": 10,
     "concept": "sci.chemistry",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Sinh học",
@@ -6385,7 +6385,7 @@
     "year": "Lớp 11 — Năm học 2024 - 2025",
     "level": 11,
     "concept": "sci.physics",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "Hóa học",
@@ -6394,7 +6394,7 @@
     "year": "Lớp 11 — Năm học 2024 - 2025",
     "level": 11,
     "concept": "sci.chemistry",
-    "us": "D"
+    "us": "F"
    },
    {
     "name": "Sinh học",
@@ -6456,7 +6456,7 @@
   "id": "eg-thanaweya",
   "file": "eg-thanaweya.pdf",
   "format": "pdf",
-  "system": "generic",
+  "system": "eg",
   "country": "Egypt",
   "lang": "ar",
   "pages": 1,
@@ -6503,7 +6503,7 @@
     "year": "الصف الثالث الثانوي",
     "level": 12,
     "concept": "sci.chemistry",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "الفيزياء",
@@ -6512,7 +6512,7 @@
     "year": "الصف الثالث الثانوي",
     "level": 12,
     "concept": "sci.physics",
-    "us": "D"
+    "us": "B"
    },
    {
     "name": "الأحياء",
@@ -6538,7 +6538,7 @@
   "id": "eg-thanaweya",
   "file": "eg-thanaweya.scan.png",
   "format": "scan-png",
-  "system": "generic",
+  "system": "eg",
   "country": "Egypt",
   "lang": "ar",
   "pages": 1,
@@ -6585,7 +6585,7 @@
     "year": "الصف الثالث الثانوي",
     "level": 12,
     "concept": "sci.chemistry",
-    "us": "C"
+    "us": "B"
    },
    {
     "name": "الفيزياء",
@@ -6594,7 +6594,7 @@
     "year": "الصف الثالث الثانوي",
     "level": 12,
     "concept": "sci.physics",
-    "us": "D"
+    "us": "B"
    },
    {
     "name": "الأحياء",
@@ -6620,7 +6620,7 @@
   "id": "ru-attestat",
   "file": "ru-attestat.pdf",
   "format": "pdf",
-  "system": "generic",
+  "system": "ru",
   "country": "Russia",
   "lang": "ru",
   "pages": 1,
@@ -6764,7 +6764,7 @@
   "id": "ru-attestat",
   "file": "ru-attestat.photo.jpg",
   "format": "photo-jpg",
-  "system": "generic",
+  "system": "ru",
   "country": "Russia",
   "lang": "ru",
   "pages": 1,
