@@ -6,6 +6,10 @@ Helps US school counselors and registrars evaluate transcripts from internationa
 
 A counselor opens a transcript in any format and language. evalua reads it, structures it, maps each course to the receiving district's graduation requirements, and suggests credit. Every suggestion shows what it matched, why, how confident it is, and the source it relied on, so the counselor can confirm or change it. Credit for coursework done abroad is local policy, so evalua suggests and a person decides.
 
+![The review workspace: the original document beside the extracted courses, with the reasoning for one suggestion open](docs/screenshots/review.png)
+
+More screenshots: [case list](docs/screenshots/cases.png), [report](docs/screenshots/report.png). All data shown is fictitious.
+
 ## What it does
 
 - **Reads** PDF (text or scanned), Word (.docx), and images (JPG, PNG, HEIC, including skewed phone photos). Several photos become the pages of one record.

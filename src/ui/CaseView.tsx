@@ -1,5 +1,6 @@
 // The review workspace: original document on the left; what was read, what is suggested, and why, on the right.
 import { Fragment, useMemo, useState } from 'react';
+import { activeProvider } from '../ai/provider.ts';
 import { evaluate } from '../core/evaluate.ts';
 import type { ExtractedCourse, Field, SourceRef, Suggestion, USLetter, VerifyFlag } from '../core/types.ts';
 import { download, evaluationCsv } from '../export/csv.ts';
@@ -19,6 +20,8 @@ export function CaseView({ id }: { id: string }) {
   const [highlight, setHighlight] = useState<SourceRef | null>(null);
   const [openWhy, setOpenWhy] = useState<string | null>(null);
   const [note, setNote] = useState('');
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   const district = useMemo(() => kb.districts.find((d) => d.id === rec?.districtId) ?? kb.districts.find((d) => d.id === 'generic-22')!, [kb, rec?.districtId]);
   const evaluation = useMemo(() => (rec?.extraction ? evaluate(rec.extraction, kb, district, rec.overrides) : null), [rec?.extraction, rec?.overrides, kb, district]);
@@ -150,6 +153,8 @@ export function CaseView({ id }: { id: string }) {
     else periods.push({ label: c.period.value, courses: [c] });
   }
   const pending = (evaluation?.suggestions ?? []).filter((s) => s.needsReview).length;
+  const untranslated = ex.courses.filter((c) => c.translation === 'none' && c.name.original);
+  const provider = activeProvider(settings);
   const system = kb.systems.find((s) => s.id === ex.systemId.value);
 
   return (
@@ -329,7 +334,43 @@ export function CaseView({ id }: { id: string }) {
               >
                 <Icon name="plus" /> Add a course
               </button>
+              {provider && untranslated.length > 0 && (
+                <button
+                  className="btn small"
+                  disabled={locked || aiBusy}
+                  title={`Sends ${untranslated.length} course names to ${provider.label}`}
+                  onClick={async () => {
+                    setAiBusy(true);
+                    setAiError('');
+                    try {
+                      const out = await provider.translateCourses(untranslated.map((c) => c.name.original ?? ''), ex.language, ex.docType);
+                      const got = out.filter((t) => t.english);
+                      update((c) => {
+                        for (const t of got) {
+                          for (const x of c.extraction!.courses) {
+                            if (x.translation === 'none' && x.name.original === t.original) {
+                              x.name.value = t.english;
+                              x.translation = 'model';
+                            }
+                          }
+                        }
+                      }, { action: 'Translated course names with a model', detail: `${got.length} of ${untranslated.length} names, using ${provider.label}` });
+                    } catch (e) {
+                      setAiError(e instanceof Error ? e.message : String(e));
+                    } finally {
+                      setAiBusy(false);
+                    }
+                  }}
+                >
+                  {aiBusy ? 'Translating…' : `Translate ${untranslated.length} names with the local model`}
+                </button>
+              )}
             </div>
+            {aiError && (
+              <div className="notice error" role="alert" style={{ marginBottom: 10 }}>
+                The local model could not translate: {aiError}
+              </div>
+            )}
             {ex.courses.length === 0 ? (
               <div className="notice check">
                 <h3>No courses were found</h3>
