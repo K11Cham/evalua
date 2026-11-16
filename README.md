@@ -14,7 +14,7 @@ More screenshots: [case list](docs/screenshots/cases.png), [report](docs/screens
 
 ## What it does
 
-- **Reads** PDF (text or scanned), Word (.docx), and images (JPG, PNG, HEIC, including skewed phone photos). Several files chosen together (one per term, say) become the pages of one record, and **Add documents** on a case brings in later term reports or missing pages without losing corrections or decisions already made.
+- **Reads** PDF (text or scanned), Word (.docx), images (JPG, PNG, HEIC, including skewed phone photos), and .txt or .csv lists of subjects and grades. A record that cannot be read at all (handwritten, a faint carbon copy, paper only) can be **typed as a table** instead: it becomes a document of the case and is read like any other. Several files chosen together (one per term, say) become the pages of one record, and **Add documents** on a case brings in later term reports or missing pages without losing corrections or decisions already made.
 - **Extracts** student, school, country and education system, and every course with its grade, credits or hours, year and term. The original text is kept beside an English name, and every field has a confidence score and a link to where it sits on the page.
 - **Converts** grades to a US letter, 4.0 points and percentage, naming the conversion table used, and converts hours to Carnegie units.
 - **Matches** each course to a subject, then to the district's requirement areas and closest catalog course, and shows what is covered and what is still needed to graduate.
@@ -80,24 +80,24 @@ To try the app, use the fictitious transcripts in [`fixtures/fake/`](fixtures/fa
 | Measure | All 36 files |
 |---|---|
 | Education system identified | 36/36 |
-| Courses found | 98.1% (667/680) |
-| Grade correct | 99.3% |
-| US grade level correct | 99.9% |
+| Courses found | 99.1% (674/680) |
+| Grade correct | 99.7% |
+| US grade level correct | 100% |
 | Subject matched | 99.7% |
-| US letter grade correct | 99.3% |
+| US letter grade correct | 99.1% |
 
 **Records made of several files.** A counselor often has one report per term or per year. `npm run eval:split` splits every multi-year fake (11 records, 11 systems) into one file per period, in two styles (the period as a heading over each table, or printed once in the page header), recombines them, and checks every course: 100% of courses found, and 100% of grade levels, terms and school years right in both styles ([`docs/ACCURACY_COMBINED.md`](docs/ACCURACY_COMBINED.md)). Each file's grade, year and term are read from that file only, and terms are recognised in every supported language ("Second Term", "2e trimestre", "PRIMER SEMESTRE", "Học kỳ II", "2학기", "第二学期", "2 четверть", "الفصل الدراسي الثاني").
 
 **The optional local model.** A model in Ollama only suggests English names for courses the dictionaries cannot translate; reading, grades, credits and subjects are the same with or without it. On the golden set only 4 real course names (all damaged by OCR) were left for it, so “English name close to the reference” moves from 96.1% to 96.3%. Head to head on all 276 non-English course names, the model named the right US subject for 85% (qwen2.5-coder:7b) and 89% (:14b, about 6× slower), against 99% for evalua's rules, and its mistakes are confident ones. So it is a fallback for names the dictionaries do not know, and it never chooses the subject or the credit ([`docs/ACCURACY_MODEL.md`](docs/ACCURACY_MODEL.md)).
 
-Read these with care. The fakes and the parser were written by the same author, so layouts the generator does not produce are not measured. Text PDFs and Word files are close to perfect; the misses are almost all in scans and photos, where a watermark or glare hides a row or a digit is misread. Real documents will do worse.
+Read these with care. The fakes and the parser were written by the same author, so layouts the generator does not produce are not measured. Text PDFs and Word files are close to perfect; the misses are almost all in scans and photos, where glare hides a row or a digit is misread (most often Arabic-Indic digits on the Egyptian scan). Real documents will do worse.
 
 ## How it works
 
 ```
 Browser (React + Vite + TypeScript, on Cloudflare Pages)
   src/ingest   file → positioned text tokens
-               PDF text layer (pdf.js) · Word (mammoth) · scans, photos, HEIC → OCR in a Web Worker
+               PDF text layer (pdf.js) · Word (mammoth) · typed tables, .txt, .csv · scans, photos, HEIC → OCR in a Web Worker
   src/core     pure TypeScript, no DOM, unit-tested
                layout    tokens → rows and cells (skew-aware)
                tables    header bands, columns, side-by-side and matrix tables → raw courses
@@ -132,7 +132,7 @@ The look comes from registrars' ledgers and transcript paper: deep ink on warm p
 ## Limitations
 
 - **It suggests; it does not decide.** US equivalents for grades are conventions, and credit is local policy. The district templates are state minimums, not any district's rules.
-- **OCR is imperfect.** Digits in Arabic-Indic and Devanagari numerals are misread more often than Western digits. Stamps and watermarks over a row can hide it. Vietnamese diacritics are often dropped in scans (matching still works; the displayed original loses accents). Handwriting is not supported.
+- **OCR is imperfect.** Digits in Arabic-Indic and Devanagari numerals are misread more often than Western digits. A pale watermark, seal or background pattern over the rows is handled (the text detector also finds those shapes, and evalua drops boxes with no ink contrast or that hold other lines); a dark stamp printed across a mark can still hide it. Vietnamese diacritics are often dropped in scans (matching still works; the displayed original loses accents). Handwriting is not supported: type the table instead.
 - **Dictionary translation.** English names come from profiles and dictionaries, not a translator. Unknown course names stay in the original language and are flagged.
 - **Credit is still a model.** Hours convert at 120 per Carnegie unit when printed; otherwise a full year of a subject is one course. Systems that teach many subjects for few hours each will exceed a normal US year, which evalua flags and can scale down in one click.
 - **Curriculum sequences are thin.** Topic-by-year data exists only for WAEC mathematics. No Gambian or Nigerian year-by-year curriculum could be found online, so Ghana's official SHS curriculum (also taught to the WASSCE syllabus) is the reference; Gambian schools may order topics differently. The Further Mathematics year split is evalua's estimate from the syllabus order. Other systems fall back to the usual US grade-level sequence, marked as an assumption with low confidence. Sciences are not yet placed by topic.
