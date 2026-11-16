@@ -66,7 +66,12 @@ for (const t of targets) {
   } catch {
     // fall through to the count check
   }
+  // Long records open with later years folded: open them all, then count the rows drawn, and check the "All" count agrees.
+  const openAll = page.locator('button:has-text("Open all years")');
+  if (await openAll.count()) await openAll.click();
   const rows = await page.locator('table.courses input.name-en').count();
+  const all = Number((await page.locator('.filters button').first().locator('.n').textContent().catch(() => '')) || rows);
+  if (all !== rows) console.log(`     the “All” filter says ${all} but ${rows} rows are drawn`);
   const student = (await page.locator('.case-head h1').textContent()) ?? '';
   const ok = rows >= Math.floor(t.courses.length * 0.85);
   if (!ok) failed++;
