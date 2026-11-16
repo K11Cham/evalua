@@ -36,9 +36,11 @@ describe('items to verify', () => {
     const ex = base();
     ex.student.name = { value: 'Oluwasen Bolane DEEm', confidence: 0.9 };
     expect(ids(ex)).toContain('name-unsure');
+    ex.student.name = { value: 'BENMANSouR Inès', confidence: 0.95 };
+    expect(ids(ex)).toContain('name-unsure');
     ex.student.name = { value: 'Oluwaseun Bolanle Adeyemi', confidence: 1, edited: true };
     expect(ids(ex)).not.toContain('name-unsure');
-    for (const ok of ['Awa B. Sanneh', 'Ian McDonald', 'DeShawn Ortiz', 'يوسف أحمد']) {
+    for (const ok of ['Awa B. Sanneh', 'Ian McDonald', 'DeShawn Ortiz', 'BENMANSOUR Inès', 'Touray M.L Amie', 'يوسف أحمد']) {
       ex.student.name = { value: ok, confidence: 0.95 };
       expect([ok, ids(ex).includes('name-unsure')]).toEqual([ok, false]);
     }

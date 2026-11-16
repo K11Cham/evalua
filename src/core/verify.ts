@@ -131,7 +131,8 @@ export function courseFlags(ex: Extraction): VerifyFlag[] {
   // ("DEEm" for "ADEYEMI"), is shown but marked for checking. Editing the name clears it.
   const name = ex.student.name;
   if (name.value && !name.edited) {
-    const odd = name.value.split(/\s+/).find((w) => /^\p{Lu}{2,}\p{Ll}+$/u.test(w) || /\p{Ll}\p{Lu}{2,}/u.test(w));
+    // "DEEm", "BENMANSouR", "adeYEMI": capitals, then lower case, then capitals again, or the reverse.
+    const odd = name.value.split(/\s+/).find((w) => /^\p{Lu}{2,}\p{Ll}+$/u.test(w) || /\p{Lu}{2,}\p{Ll}+\p{Lu}/u.test(w) || /\p{Ll}\p{Lu}{2,}/u.test(w));
     if (name.confidence < 0.8 || odd) {
       add({
         id: 'name-unsure',
