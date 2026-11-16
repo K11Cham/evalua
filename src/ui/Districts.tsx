@@ -203,7 +203,8 @@ export function DistrictEditor({ id }: { id: string }) {
     setBusy('Fetching the linked document…');
     setMsg('');
     try {
-      const res = await fetch(`/api/fetch?url=${encodeURIComponent(link)}`);
+      // The page sends no Referer anywhere else; this one same-site call names the page so the server knows it is evalua.
+      const res = await fetch(`/api/fetch?url=${encodeURIComponent(link)}`, { referrerPolicy: 'same-origin' });
       if (!res.ok) throw new Error((await res.json().catch(() => ({ error: `HTTP ${res.status}` }))).error);
       const blob = await res.blob();
       const name = decodeURIComponent(link.split('/').pop()?.split('?')[0] || 'catalog') + (blob.type.includes('pdf') && !/\.pdf$/i.test(link) ? '.pdf' : blob.type.includes('html') ? '.txt' : '');
