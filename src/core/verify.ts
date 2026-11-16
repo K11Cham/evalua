@@ -145,7 +145,7 @@ export function courseFlags(ex: Extraction): VerifyFlag[] {
   }
   const untranslated = ex.courses.filter((c) => c.translation === 'none');
   if (untranslated.length) {
-    add({ id: 'untranslated', severity: 'check', title: `${untranslated.length} course name${untranslated.length > 1 ? 's' : ''} without an English translation`, detail: `No dictionary entry was found for: ${untranslated.slice(0, 6).map((c) => c.name.original).join('; ')}${untranslated.length > 6 ? '…' : ''}. Add a translation, or connect a local model.` });
+    add({ id: 'untranslated', severity: 'check', courseIds: untranslated.map((c) => c.id), title: `${untranslated.length} course name${untranslated.length > 1 ? 's' : ''} without an English translation`, detail: `No dictionary entry was found for: ${untranslated.slice(0, 6).map((c) => c.name.original).join('; ')}${untranslated.length > 6 ? '…' : ''}. Add a translation, or connect a local model.` });
   }
 
   // Years: gaps and ordering.

@@ -4,18 +4,17 @@ import { ACCEPT } from '../ingest/browser.ts';
 import { activeProvider } from '../ai/provider.ts';
 import { evaluate } from '../core/evaluate.ts';
 import { READER_VERSION } from '../core/pipeline.ts';
-import { groupByPeriod, periodKey } from '../core/periods.ts';
+import { periodKey } from '../core/periods.ts';
 import { caseFlags } from '../core/verify.ts';
-import type { ExtractedCourse, Field, SourceRef, Suggestion, USLetter, VerifyFlag } from '../core/types.ts';
+import type { ExtractedCourse, Field, SourceRef, VerifyFlag } from '../core/types.ts';
 import { download, evaluationCsv } from '../export/csv.ts';
 import { caseLabel, DEFAULT_DISTRICT, deleteCase, now, STATUS_LABEL, STATUS_ORDER, uid, type CaseRecord } from '../store/db.ts';
 import { Confidence, fmtDateTime, Icon, Source, Stamp } from './bits.tsx';
+import { CourseTable } from './CourseTable.tsx';
 import { DocViewer } from './DocViewer.tsx';
+import { FlagList } from './FlagList.tsx';
 import { go, useApp } from './state.tsx';
 import { useCase } from './useCase.ts';
-
-const LETTERS: USLetter[] = ['A', 'B', 'C', 'D', 'F', 'P', 'NC'];
-const LEVELS = [9, 10, 11, 12];
 
 export function CaseView({ id }: { id: string }) {
   const { kb, settings } = useApp();
@@ -24,10 +23,11 @@ export function CaseView({ id }: { id: string }) {
   const addRef = useRef<HTMLInputElement>(null);
   const [dropping, setDropping] = useState(false);
   const [highlight, setHighlight] = useState<SourceRef | null>(null);
-  const [openWhy, setOpenWhy] = useState<string | null>(null);
+  const [reveal, setReveal] = useState<{ id: string; n: number } | null>(null);
   const [note, setNote] = useState('');
   const [aiBusy, setAiBusy] = useState(false);
   const [aiError, setAiError] = useState('');
+  const [aiDone, setAiDone] = useState('');
 
   const district = useMemo(() => kb.districts.find((d) => d.id === rec?.districtId) ?? (kb.districts.find((d) => d.id === DEFAULT_DISTRICT) ?? kb.districts[0]), [kb, rec?.districtId]);
   const evaluation = useMemo(() => (rec?.extraction ? evaluate(rec.extraction, kb, district, rec.overrides, rec.assume) : null), [rec?.extraction, rec?.overrides, rec?.assume, kb, district]);
@@ -55,12 +55,12 @@ export function CaseView({ id }: { id: string }) {
   const ex = rec.extraction;
   const locked = rec.status === 'finalised';
   const show = (s?: SourceRef) => s && setHighlight({ ...s });
-  // From an item that lists several courses: bring that row into view, put the cursor in its grade and show it on the original.
+  // From an item to verify: open the course's year and term, bring the row into view, put the cursor in its grade
+  // and show it on the original.
   const goToCourse = (courseId: string) => {
-    const row = document.getElementById(`course-${courseId}`);
-    row?.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    row?.querySelector<HTMLInputElement>('input.grade')?.focus({ preventScroll: true });
-    show(ex?.courses.find((c) => c.id === courseId)?.grade.source);
+    setReveal((r) => ({ id: courseId, n: (r?.n ?? 0) + 1 }));
+    const c = ex?.courses.find((x) => x.id === courseId);
+    show(c?.grade.source ?? c?.name.source);
   };
 
   // ── edits ──
@@ -178,10 +178,8 @@ export function CaseView({ id }: { id: string }) {
     );
   }
 
-  const sugOf = (cid: string) => evaluation?.suggestions.find((s) => s.courseId === cid);
   const flags: VerifyFlag[] = caseFlags(ex, evaluation?.flags);
   const openFlags = flags.filter((f) => !rec.resolved.includes(f.id));
-  const periods = groupByPeriod(ex.courses).map((g) => ({ key: g.key, label: g.label, courses: g.items }));
   const pending = (evaluation?.suggestions ?? []).filter((s) => s.needsReview).length;
   const untranslated = ex.courses.filter((c) => c.translation === 'none' && c.name.original);
   // Years where the record shows a later term but not the earlier ones.
@@ -236,7 +234,7 @@ export function CaseView({ id }: { id: string }) {
           <nav className="subnav no-print" aria-label="Sections of this case">
             <a href="#verify" onClick={(e) => jump(e, 'verify')}>To verify ({openFlags.length})</a>
             <a href="#student" onClick={(e) => jump(e, 'student')}>Student</a>
-            <a href="#courses" onClick={(e) => jump(e, 'courses')}>Courses ({ex.courses.length})</a>
+            <a href="#courses" onClick={(e) => jump(e, 'courses')}>Courses ({pending ? `${pending} to decide` : ex.courses.length})</a>
             <a href="#placement" onClick={(e) => jump(e, 'placement')}>Placement</a>
             <a href="#requirements" onClick={(e) => jump(e, 'requirements')}>Requirements</a>
             <a href="#notes" onClick={(e) => jump(e, 'notes')}>Notes and changes</a>
@@ -270,67 +268,38 @@ export function CaseView({ id }: { id: string }) {
             <h2 id="verify-h">
               Items to verify <span className="count">{openFlags.length} open · {flags.length - openFlags.length} checked</span>
             </h2>
-            {flags.length === 0 ? (
-              <p className="muted" style={{ margin: 0 }}>Nothing was flagged. Still compare the record with the original before finalising.</p>
-            ) : (
-              <ul className="flags">
-                {flags.map((f) => {
-                  const done = rec.resolved.includes(f.id);
-                  return (
-                    <li key={f.id} className={done ? 'done' : ''}>
-                      <span className={`tag ${f.severity === 'important' ? 'important' : f.severity === 'check' ? 'check' : ''}`}>{f.severity === 'important' ? 'Important' : f.severity === 'check' ? 'Check' : 'Note'}</span>
-                      <div>
-                        <strong>{f.title}</strong>
-                        <span className="small">{f.detail}</span>
-                        {f.courseIds && (
-                          <span className="course-links">
-                            {f.courseIds.map((cid) => {
-                              const c = ex.courses.find((x) => x.id === cid);
-                              return c ? (
-                                <button key={cid} className="btn small quiet" onClick={() => goToCourse(cid)} aria-label={`Go to ${c.name.original || c.name.value} in the course table`}>
-                                  {c.name.original || c.name.value}
-                                </button>
-                              ) : null;
-                            })}
-                          </span>
-                        )}
-                      </div>
-                      <div className="rowbtns">
-                        {f.source && (
-                          <button className="locate" onClick={() => show(f.source)} aria-label={`Show on the document: ${f.title}`} title="Show on the document">
-                            <Icon name="locate" />
-                          </button>
-                        )}
-                        {f.id.startsWith('load-') && evaluation && (
-                          <button
-                            className="btn small"
-                            disabled={locked}
-                            title={`Reduce each course in this year in proportion, so the year totals about ${district.typicalCreditsPerYear} credits`}
-                            onClick={() => {
-                              const lv = Number(f.id.replace('load-grade ', ''));
-                              const rows = evaluation.suggestions.filter((x) => ex.courses.find((c) => c.id === x.courseId)?.level === lv && x.credits > 0);
-                              const total = rows.reduce((a, x) => a + x.credits, 0);
-                              const factor = district.typicalCreditsPerYear / total;
-                              update((c) => rows.forEach((x) => void (c.overrides[x.courseId] = { ...c.overrides[x.courseId], credits: Math.max(0.25, Math.round(x.credits * factor * 4) / 4) })), { action: 'Scaled credits for a year', detail: `grade ${lv}: ${total} → about ${district.typicalCreditsPerYear}` });
-                            }}
-                          >
-                            Scale to {district.typicalCreditsPerYear}
-                          </button>
-                        )}
-                        <button
-                          className="btn small"
-                          disabled={locked}
-                          aria-pressed={done}
-                          onClick={() => update((c) => void (c.resolved = done ? c.resolved.filter((x) => x !== f.id) : [...c.resolved, f.id]), { action: done ? 'Reopened an item to verify' : 'Checked an item to verify', detail: f.title })}
-                        >
-                          {done ? 'Checked' : 'Mark checked'}
-                        </button>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+            <FlagList
+              flags={flags}
+              resolved={rec.resolved}
+              courses={ex.courses}
+              locked={locked}
+              onShow={show}
+              onCourse={goToCourse}
+              onCheck={(ids, done, what) =>
+                update((c) => void (c.resolved = done ? [...new Set([...c.resolved, ...ids])] : c.resolved.filter((x) => !ids.includes(x))), {
+                  action: done ? (ids.length > 1 ? `Checked ${ids.length} items to verify` : 'Checked an item to verify') : ids.length > 1 ? `Reopened ${ids.length} items to verify` : 'Reopened an item to verify',
+                  detail: what,
+                })
+              }
+              renderExtra={(f) =>
+                f.id.startsWith('load-') && evaluation ? (
+                  <button
+                    className="btn small"
+                    disabled={locked}
+                    title={`Reduce each course in this year in proportion, so the year totals about ${district.typicalCreditsPerYear} credits`}
+                    onClick={() => {
+                      const lv = Number(f.id.replace('load-grade ', ''));
+                      const rows = evaluation.suggestions.filter((x) => ex.courses.find((c) => c.id === x.courseId)?.level === lv && x.credits > 0);
+                      const total = rows.reduce((a, x) => a + x.credits, 0);
+                      const factor = district.typicalCreditsPerYear / total;
+                      update((c) => rows.forEach((x) => void (c.overrides[x.courseId] = { ...c.overrides[x.courseId], credits: Math.max(0.25, Math.round(x.credits * factor * 4) / 4) })), { action: 'Scaled credits for a year', detail: `grade ${lv}: ${total} → about ${district.typicalCreditsPerYear}` });
+                    }}
+                  >
+                    Scale to {district.typicalCreditsPerYear}
+                  </button>
+                ) : null
+              }
+            />
           </section>
 
           {/* ── student ── */}
@@ -390,7 +359,33 @@ export function CaseView({ id }: { id: string }) {
             <p className="small muted">
               Suggestions follow <a href={`#/districts/${encodeURIComponent(district.id)}`}>{district.name}</a>. Credit is a local decision: change anything, then accept. A coloured edge marks rows that still need you.
             </p>
-            <div className="row no-print" style={{ marginBottom: 10 }}>
+            {aiError && (
+              <div className="notice error" role="alert" style={{ marginBottom: 10 }}>
+                The local model could not translate: {aiError}
+              </div>
+            )}
+            {aiDone && (
+              <div className="notice ok" role="status" style={{ marginBottom: 10, display: 'flex', gap: 12, alignItems: 'start' }}>
+                <span style={{ flex: 1 }}>{aiDone}</span>
+                <button className="btn small quiet" onClick={() => setAiDone('')}>Dismiss</button>
+              </div>
+            )}
+            <CourseTable
+              ex={ex}
+              rec={rec}
+              evaluation={evaluation}
+              kb={kb}
+              district={district}
+              locked={locked}
+              reveal={reveal}
+              onShow={show}
+              override={override}
+              editCourse={editCourse}
+              setLevel={(key, label, lv) =>
+                update((c) => c.extraction!.courses.filter((x) => periodKey(x) === key).forEach((x) => void ((x.level = lv), (x.levelByHand = true))), { action: 'Changed grade level', detail: `${label || 'document'} → ${lv ?? 'not set'}` })
+              }
+              toolbar={
+                <>
               <button
                 className="btn small"
                 disabled={locked || !evaluation}
@@ -425,6 +420,7 @@ export function CaseView({ id }: { id: string }) {
                   onClick={async () => {
                     setAiBusy(true);
                     setAiError('');
+                    setAiDone('');
                     try {
                       const out = await provider.translateCourses(untranslated.map((c) => c.name.original ?? ''), ex.language, ex.docType);
                       const got = out.filter((t) => t.english);
@@ -438,6 +434,11 @@ export function CaseView({ id }: { id: string }) {
                           }
                         }
                       }, { action: 'Translated course names with a model', detail: `${got.length} of ${untranslated.length} names, using ${provider.label}` });
+                      setAiDone(
+                        got.length
+                          ? `The model suggested ${got.length} of ${untranslated.length} English names. Each is marked “English name from the model”; choose “From the model” above the table to check them one after another.${got.length < untranslated.length ? ' The rest it could not name: enter those by hand.' : ''}`
+                          : 'The model could not name any of these courses. Enter them by hand.',
+                      );
                     } catch (e) {
                       setAiError(e instanceof Error ? e.message : String(e));
                     } finally {
@@ -448,186 +449,9 @@ export function CaseView({ id }: { id: string }) {
                   {aiBusy ? 'Translating…' : `Translate ${untranslated.length} names with the local model`}
                 </button>
               )}
-            </div>
-            {aiError && (
-              <div className="notice error" role="alert" style={{ marginBottom: 10 }}>
-                The local model could not translate: {aiError}
-              </div>
-            )}
-            {ex.courses.length === 0 ? (
-              <div className="notice check">
-                <h3>No courses were found</h3>
-                <p className="small">Try a clearer scan, choose the writing system when uploading, or add the courses by hand with “Add a course”.</p>
-              </div>
-            ) : (
-              <div className="table-wrap">
-                <table className="ledger courses">
-                  <thead>
-                    <tr>
-                      <th>Course</th>
-                      <th>Grade</th>
-                      <th>US subject · counts toward</th>
-                      <th className="num">Credits</th>
-                      <th>US grade</th>
-                      <th>Confidence · decision</th>
-                    </tr>
-                  </thead>
-                  {periods.map((p) => (
-                    <tbody key={p.key}>
-                      <tr>
-                        <th className="period" colSpan={6} scope="rowgroup" aria-label={`Year or term: ${p.label || 'not printed'}`}>
-                          <div className="row">
-                            <span lang={ex.language}>
-                              {p.label || 'No year or term printed'}{' '}
-                              {p.courses[0].period.source && (
-                                <button className="locate" style={{ color: '#d9d3c6' }} onClick={() => show(p.courses[0].period.source)} aria-label="Show this heading on the document">
-                                  <Icon name="locate" />
-                                </button>
-                              )}
-                            </span>
-                            <label className="row small" style={{ gap: 6, fontWeight: 400 }}>
-                              US grade level
-                              <select
-                                value={p.courses[0].level ?? ''}
-                                disabled={locked}
-                                onChange={(e) => {
-                                  const lv = e.target.value ? +e.target.value : null;
-                                  update((c) => c.extraction!.courses.filter((x) => periodKey(x) === p.key).forEach((x) => void ((x.level = lv), (x.levelByHand = true))), { action: 'Changed grade level', detail: `${p.label || 'document'} → ${lv ?? 'not set'}` });
-                                }}
-                              >
-                                <option value="">Not set</option>
-                                {LEVELS.map((l) => (
-                                  <option key={l} value={l}>
-                                    Grade {l}
-                                  </option>
-                                ))}
-                                {p.courses[0].level != null && !LEVELS.includes(p.courses[0].level) && <option value={p.courses[0].level}>Grade {p.courses[0].level}</option>}
-                              </select>
-                            </label>
-                          </div>
-                        </th>
-                      </tr>
-                      {p.courses.map((c) => {
-                        const s = sugOf(c.id);
-                        const ov = rec.overrides[c.id] ?? {};
-                        const cls = ov.exclude ? 'excluded' : s?.needsReview ? 'review' : 'accepted';
-                        return (
-                          <Fragment key={c.id}>
-                            <tr className={cls} id={`course-${c.id}`}>
-                              <td style={{ minWidth: 210 }}>
-                                <input
-                                  className={`name-en ${c.name.edited ? 'edited' : ''}`}
-                                  aria-label="Course name in English"
-                                  defaultValue={c.name.value}
-                                  key={c.name.value}
-                                  disabled={locked}
-                                  placeholder="English name"
-                                  onBlur={(e) => e.target.value !== c.name.value && editCourse(c.id, 'course name', (x) => { x.name.value = e.target.value; x.name.edited = true; if (!x.name.original) x.name.original = e.target.value; if (x.translation === 'none') x.translation = 'model'; }, `“${c.name.value}” → “${e.target.value}”`)}
-                                />
-                                <span className="orig" lang={ex.language}>
-                                  {c.name.original && c.name.original !== c.name.value ? c.name.original : ''}
-                                  {c.qualifier ? ` · ${c.qualifier}` : ''}
-                                  {c.translation === 'none' && <span className="tag check" style={{ marginLeft: 6 }}>no translation</span>}
-                                  {c.name.source && (
-                                    <button className="locate" onClick={() => show(c.name.source)} aria-label={`Show “${c.name.original}” on the document`} title="Show on the document" style={{ verticalAlign: 'middle' }}>
-                                      <Icon name="locate" />
-                                    </button>
-                                  )}
-                                </span>
-                              </td>
-                              <td>
-                                <div className="row" style={{ gap: 2, flexWrap: 'nowrap' }}>
-                                  <input
-                                    className={`grade ${c.grade.edited ? 'edited' : !c.grade.value || c.grade.confidence < 0.72 || (c.gradeWords && !c.gradeWords.agrees) ? 'doubt' : ''}`}
-                                    title={c.grade.edited ? undefined : !c.grade.value ? 'Not readable: enter it from the original' : c.gradeWords && !c.gradeWords.agrees ? `The words beside it read “${c.gradeWords.text}” (${c.gradeWords.value})` : c.grade.confidence < 0.72 ? `May be misread (${Math.round(c.grade.confidence * 100)}% confidence): compare with the original` : undefined}
-                                    aria-label={`Grade for ${c.name.value || 'course'}`}
-                                    defaultValue={c.grade.value}
-                                    key={c.grade.value}
-                                    disabled={locked}
-                                    onBlur={(e) => e.target.value !== c.grade.value && editCourse(c.id, 'grade', (x) => { x.grade.value = e.target.value; x.grade.edited = true; x.grade.confidence = 1; }, `${c.name.value}: “${c.grade.value}” → “${e.target.value}”`)}
-                                  />
-                                  {c.grade.source && (
-                                    <button className="locate" onClick={() => show(c.grade.source)} aria-label={`Show the grade for ${c.name.value} on the document`} title="Show on the document">
-                                      <Icon name="locate" />
-                                    </button>
-                                  )}
-                                </div>
-                                {c.gradeWords && !c.grade.edited && (
-                                  <span className={`orig ${c.gradeWords.agrees ? '' : 'conflict'}`} lang={ex.language}>
-                                    {c.gradeWords.agrees ? `matches “${c.gradeWords.text}”` : `words say “${c.gradeWords.text}” (${c.gradeWords.value})`}
-                                  </span>
-                                )}
-                                {(c.credits || c.hours) && (
-                                  <span className="orig mono">
-                                    {c.credits ? `${c.credits.value} cr` : ''} {c.hours ? `${c.hours.value} h` : ''}
-                                  </span>
-                                )}
-                              </td>
-                              <td style={{ minWidth: 150 }}>
-                                <select aria-label="US subject" value={s?.conceptId ?? ''} disabled={locked || ov.exclude} onChange={(e) => override(c.id, { conceptId: e.target.value, requirementId: undefined }, 'Changed US subject', `${c.name.value} → ${kb.concepts.find((k) => k.id === e.target.value)?.label}`)}>
-                                  {kb.concepts.map((k) => (
-                                    <option key={k.id} value={k.id}>
-                                      {k.label}
-                                    </option>
-                                  ))}
-                                </select>
-                                <select aria-label="Counts toward" style={{ marginTop: 4 }} value={s?.requirementId ?? ''} disabled={locked || ov.exclude} onChange={(e) => override(c.id, { requirementId: e.target.value }, 'Changed requirement area', `${c.name.value} → ${district.requirements.find((r) => r.id === e.target.value)?.label}`)}>
-                                  {district.requirements.map((r) => (
-                                    <option key={r.id} value={r.id}>
-                                      {r.label}
-                                    </option>
-                                  ))}
-                                </select>
-                                {s?.usCourse && <span className="orig"><strong>counts as {s.usCourse.title}</strong></span>}
-                                {s?.catalogTitle && <span className="orig">closest catalog course: {s.catalogTitle}</span>}
-                              </td>
-                              <td className="num">
-                                <input className="cr" type="number" min={0} max={20} step={0.25} aria-label="Suggested credits" value={s?.credits ?? 0} disabled={locked || ov.exclude} onChange={(e) => override(c.id, { credits: Math.max(0, +e.target.value) }, 'Changed credits', `${c.name.value} → ${e.target.value}`)} />
-                                {s && s.share < 1 && <span className="orig mono" title="Fraction of a school year this row documents">{s.share} of a year</span>}
-                              </td>
-                              <td>
-                                <select className="letter" aria-label="US letter grade" value={s?.grade.letter ?? ''} disabled={locked || ov.exclude} onChange={(e) => override(c.id, { letter: (e.target.value || undefined) as USLetter | undefined }, 'Changed US grade', `${c.name.value} → ${e.target.value || 'table value'}`)}>
-                                  <option value="">—</option>
-                                  {LETTERS.map((l) => (
-                                    <option key={l} value={l}>
-                                      {l}
-                                    </option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td style={{ minWidth: 190 }}>
-                                {s && <Confidence value={s.confidence} />}
-                                <div className="rowbtns" style={{ marginTop: 4 }}>
-                                  <button className="btn small" aria-expanded={openWhy === c.id} onClick={() => setOpenWhy(openWhy === c.id ? null : c.id)}>
-                                    Why
-                                  </button>
-                                  {!ov.exclude && s?.needsReview && (
-                                    <button className="btn small primary" disabled={locked} onClick={() => override(c.id, { accepted: true }, 'Accepted suggestion', c.name.value)} aria-label={`Accept the suggestion for ${c.name.value}`}>
-                                      Accept
-                                    </button>
-                                  )}
-                                  {!ov.exclude && s && !s.needsReview && <span className="tag ok" title={ov.accepted ? 'Accepted by a counselor' : 'High confidence'}>{ov.accepted ? 'Accepted' : 'OK'}</span>}
-                                  <button className="btn small quiet" disabled={locked} onClick={() => override(c.id, { exclude: !ov.exclude }, ov.exclude ? 'Restored a course' : 'Excluded a course', c.name.value)} aria-label={ov.exclude ? `Restore ${c.name.value}` : `Leave out ${c.name.value}`}>
-                                    {ov.exclude ? 'Restore' : 'Leave out'}
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                            {openWhy === c.id && s && (
-                              <tr className="why">
-                                <td colSpan={6}>
-                                  <WhyPanel s={s} />
-                                </td>
-                              </tr>
-                            )}
-                          </Fragment>
-                        );
-                      })}
-                    </tbody>
-                  ))}
-                </table>
-              </div>
-            )}
+                </>
+              }
+            />
           </section>
 
           {/* ── placement ── */}
@@ -821,7 +645,7 @@ function FieldRow({ label, f, onChange, onShow, locked, type = 'text' }: { label
         {f.original && f.original !== f.value && <span className="orig">as printed: {f.original}</span>}
       </dd>
       <dd className="row" style={{ gap: 4, flexWrap: 'nowrap' }}>
-        {f.edited ? <span className="tag ok">edited</span> : f.value ? <Confidence value={f.confidence} /> : <span className="tag check">not found</span>}
+        {f.edited ? <span className="tag ok">edited</span> : f.value ? <Confidence value={f.confidence} quiet /> : <span className="tag check">not found</span>}
         {f.source && (
           <button className="locate" onClick={() => onShow(f.source)} aria-label={`Show ${label} on the document`} title="Show on the document">
             <Icon name="locate" />
@@ -832,22 +656,3 @@ function FieldRow({ label, f, onChange, onShow, locked, type = 'text' }: { label
   );
 }
 
-function WhyPanel({ s }: { s: Suggestion }) {
-  return (
-    <div>
-      <div className="row small" style={{ marginBottom: 6 }}>
-        <strong>Why this suggestion</strong>
-        <Confidence value={s.confidence} label="Overall confidence" />
-        {s.grade.letter && <span className="tag">grade table: {s.grade.table}</span>}
-      </div>
-      <ol className="why-list">
-        {s.reasons.map((r, i) => (
-          <li key={i}>
-            {r.text} {r.source && <Source source={r.source} />}
-          </li>
-        ))}
-      </ol>
-      {s.confidence < 0.7 && <p className="small" style={{ margin: '8px 0 0' }}><span className="tag check">Low confidence</span> Check this row against the original before accepting.</p>}
-    </div>
-  );
-}

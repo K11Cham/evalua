@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { evaluate } from '../src/core/evaluate.ts';
-import { groupByPeriod, periodKey, periodLabel } from '../src/core/periods.ts';
+import { groupByPeriod, groupByYear, periodKey, periodLabel } from '../src/core/periods.ts';
 import { caseFlags } from '../src/core/verify.ts';
 import { combine, kb } from './helpers.ts';
 
@@ -42,6 +42,18 @@ describe('period keys, labels and order', () => {
   it('puts periods in school order when each says where it falls', () => {
     const g = groupByPeriod([c('First term', 11, '2025-2026', '1'), c('Second term', 10, '2024-2025', '2'), c('First term', 10, '2024-2025', '1'), c('First term', 11, '2025-2026', '1')]);
     expect(g.map((x) => [x.items[0].level, x.items[0].term, x.items.length])).toEqual([[10, '1', 1], [10, '2', 1], [11, '1', 2]]);
+  });
+  it('gathers the terms of one school year so the year opens and closes as one', () => {
+    const y = groupByYear(groupByPeriod([c('First term', 10, '2024-2025', '1'), c('Second term', 10, '2024-2025', '2'), c('Third term', 10, '2024-2025', '3'), c('First term', 11, '2025-2026', '1')]));
+    expect(y.map((x) => [x.label, x.periods.map((p) => p.termLabel)])).toEqual([
+      ['Grade 10 · 2024-2025', ['First term', 'Second term', 'Third term']],
+      ['Grade 11 · 2025-2026', ['First term']],
+    ]);
+  });
+  it('keeps a period that states no grade or year as a year of its own, under its own label', () => {
+    const y = groupByYear(groupByPeriod([c('Año 1', null), c('Año 2', null), c('', null)]));
+    expect(y.map((x) => [x.label, x.periods.length])).toEqual([['Año 1', 1], ['Año 2', 1], ['No year or term printed', 1]]);
+    expect(new Set(y.map((x) => x.key)).size).toBe(3);
   });
   it('keeps the document’s order when a period does not say where it falls', () => {
     const g = groupByPeriod([c('Año 2', null), c('Año 1', null)]);

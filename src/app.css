@@ -120,16 +120,21 @@ label.field input, label.field select { font-weight: 400; color: var(--ink); fon
 .stamp.flat { transform: none; }
 
 /* ── confidence ── */
-.conf { display: inline-flex; align-items: center; gap: 6px; font: 0.78rem var(--mono); color: var(--ink-2); white-space: nowrap; }
-.conf-bar { display: inline-flex; gap: 2px; }
-.conf-bar i { width: 5px; height: 12px; border: 1px solid var(--ink-2); background: transparent; }
-.conf-bar i.on { background: var(--ink-2); }
-.conf.low { color: var(--stamp); font-weight: 700; }
-.conf.low .conf-bar i { border-color: var(--stamp); }
-.conf.low .conf-bar i.on { background: repeating-linear-gradient(135deg, var(--stamp) 0 2px, transparent 2px 4px); }
-.conf.mid { color: var(--ochre); }
-.conf.mid .conf-bar i { border-color: var(--ochre); }
-.conf.mid .conf-bar i.on { background: var(--ochre); }
+/* A word first, the number after it, and a dot whose fill says the same thing without colour. */
+.conf { display: inline-flex; align-items: center; gap: 5px; font: 600 0.76rem/1 var(--sans); color: var(--ledger); white-space: nowrap; padding: 3px 8px 3px 6px; border-radius: 999px; background: var(--ledger-wash); }
+.conf::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+.conf .conf-pct { font: 0.72rem var(--mono); }
+.conf.mid { color: var(--ochre); background: var(--ochre-wash); }
+.conf.mid::before { background: linear-gradient(90deg, currentColor 50%, transparent 50%); box-shadow: inset 0 0 0 1.5px currentColor; }
+.conf.low { color: var(--stamp); background: var(--stamp-wash); }
+.conf.low::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+
+/* Why a row is uncertain, in words. */
+.doubts { display: flex; flex-wrap: wrap; gap: 4px; }
+.doubt-chip { display: inline-flex; align-items: center; gap: 5px; font: 600 0.74rem/1.2 var(--sans); padding: 3px 7px; border-radius: 999px; color: var(--ochre); background: var(--ochre-wash); }
+.doubt-chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px currentColor; background: linear-gradient(90deg, currentColor 50%, transparent 50%); flex: none; }
+.doubt-chip.low { color: var(--stamp); background: var(--stamp-wash); }
+.doubt-chip.low::before { background: transparent; }
 
 /* ── panels & notices ── */
 .panel { background: var(--paper-raised); border: 1px solid var(--rule); border-radius: var(--radius); padding: 16px 18px; }
@@ -189,11 +194,40 @@ label.field input, label.field select { font-weight: 400; color: var(--ink); fon
 .locate:hover { color: var(--stamp); background: var(--paper-sunk); }
 .locate svg { width: 16px; height: 16px; display: block; }
 
-.courses th.period { background: var(--ink); color: var(--paper); font: 600 0.86rem var(--sans); letter-spacing: 0; text-transform: none; padding: 4px 10px; border-bottom: none; white-space: normal; vertical-align: middle; }
-.courses th.period .row { justify-content: space-between; }
-.courses th.period select { background: #2c3946; color: var(--paper); border-color: #56626e; min-height: 26px; padding: 1px 6px; font-size: 0.82rem; width: auto; }
-.courses th.period .locate { vertical-align: middle; }
+/* Year and term headings: a year is a dark band, a term inside it a lighter band, so the two never look alike. */
+.courses { table-layout: auto; }
+.courses th.group { font: 600 0.9rem var(--sans); letter-spacing: 0; text-transform: none; white-space: normal; vertical-align: middle; padding: 0; border-bottom: none; }
+.courses th.group .group-row { display: flex; align-items: center; gap: 6px 12px; flex-wrap: wrap; padding: 5px 10px 5px 4px; }
+.courses th.year { background: var(--ink); color: var(--paper); }
+.courses th.term { background: var(--paper-sunk); color: var(--ink); border-top: 1px solid var(--rule-strong); }
+.courses th.term .group-row { padding-left: 22px; }
+.courses tbody.year-start th.year { border-top: 10px solid var(--paper-raised); }
+.toggle { display: inline-flex; align-items: center; gap: 8px; border: none; background: none; color: inherit; font: inherit; cursor: pointer; padding: 4px 6px; border-radius: var(--radius); text-align: left; }
+.toggle:hover { background: rgba(127, 127, 127, 0.18); }
+.toggle .chev { width: 14px; height: 14px; transition: transform 0.15s; flex: none; }
+.toggle[aria-expanded='false'] .chev { transform: rotate(-90deg); }
+.group-sum { font: 0.78rem var(--mono); display: flex; gap: 4px 12px; flex-wrap: wrap; }
+.group-sum .todo { font-weight: 700; }
+th.year .group-sum .todo { color: #f3d38a; }
+th.term .group-sum .todo { color: var(--ochre); }
+.group-level { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font: 400 0.82rem var(--sans); }
+.courses th.year select { background: #2c3946; color: var(--paper); border-color: #56626e; min-height: 26px; padding: 1px 6px; font-size: 0.82rem; width: auto; }
+.courses th.term select { min-height: 26px; padding: 1px 6px; font-size: 0.82rem; width: auto; }
+.courses th.year .locate { color: #d9d3c6; }
 .courses td { padding: 6px 8px; }
+.courses td:last-child .rowbtns { flex-wrap: nowrap; }
+.courses td:nth-child(3) { max-width: 240px; }
+.btn.icon-only { padding-left: 6px; padding-right: 6px; }
+.btn.icon-only svg { width: 16px; height: 16px; }
+.course-tools { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 10px; }
+.filters { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule-strong); border-radius: var(--radius); overflow: hidden; }
+.filters button { border: none; border-right: 1px solid var(--rule); background: var(--paper); font: 600 0.82rem var(--sans); padding: 5px 10px; cursor: pointer; color: var(--ink-2); min-height: 32px; }
+.filters button:last-child { border-right: none; }
+.filters button[aria-pressed='true'] { background: var(--ink); color: var(--paper); }
+.filters button .n { font: 0.76rem var(--mono); margin-left: 4px; }
+.course-tools .spacer { flex: 1; }
+.flash { animation: flash 1.4s ease-out; }
+@keyframes flash { from { background: var(--ochre-wash); } to { background: transparent; } }
 .courses input, .courses select { min-height: 30px; padding: 3px 6px; font-size: 0.9rem; width: 100%; }
 .courses .name-en { font-weight: 600; }
 .courses input.grade, .courses input.cr { width: 62px; text-align: right; font-family: var(--mono); }
@@ -216,6 +250,17 @@ label.field input, label.field select { font-weight: 400; color: var(--ink); fon
 .flags li.done { opacity: 0.6; }
 .flags li.done strong { text-decoration: line-through; }
 .flags strong { display: block; }
+.flags li.important { border-left: 4px solid var(--stamp); }
+.flags li.check { border-left: 4px solid var(--ochre); }
+.flag-items { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; border-top: 1px solid var(--rule); }
+.flag-items li { display: flex; align-items: center; gap: 6px; padding: 3px 0; border: none; border-bottom: 1px dotted var(--rule); background: none; border-radius: 0; font-size: 0.88rem; }
+.flag-items li:last-child { border-bottom: none; }
+.flag-items .item-name { flex: 1; min-width: 0; text-align: left; }
+.flag-items li.done .item-name { text-decoration: line-through; opacity: 0.6; }
+.linkish { border: none; background: none; padding: 2px 0; font: inherit; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.linkish:hover { text-decoration-thickness: 2px; }
+.checked-flags { margin-top: 10px; }
+.checked-flags summary { cursor: pointer; font-size: 0.88rem; font-weight: 600; color: var(--ink-2); padding: 4px 0; }
 
 .req { display: grid; grid-template-columns: minmax(150px, 1.2fr) minmax(120px, 2fr) auto; gap: 6px 12px; align-items: center; font-size: 0.92rem; }
 .bar { height: 14px; border: 1px solid var(--ink-2); background: repeating-linear-gradient(90deg, transparent 0 9px, var(--rule) 9px 10px); position: relative; }

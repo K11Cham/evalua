@@ -69,6 +69,16 @@ for (const width of [1440, 820]) {
   await page.locator('a:has-text("Report")').first().click();
   await page.waitForSelector('article.report');
   await check(page, 'report', width);
+  // A record of several years and terms: year and term headings, folded years, filters.
+  await page.goto(`${BASE}/#/`);
+  await page.waitForSelector('input[type=file]', { state: 'attached' });
+  await page.setInputFiles('input[type=file]', path.resolve('fixtures/fake/mx-sep.pdf'));
+  await page.waitForURL(/#\/case\//);
+  await page.waitForSelector('#courses-h', { timeout: 180_000 });
+  await check(page, 'case with several years', width);
+  await page.locator('button:has-text("Next to decide")').click();
+  await page.locator('.filters button:has-text("To decide")').click();
+  await check(page, 'case filtered to decide', width);
   for (const [route, name] of [['#/', 'cases (one case)'], ['#/districts', 'districts'], ['#/districts/ky-jcps', 'district: JCPS'], ['#/reference', 'reference'], ['#/reference/waec', 'reference: WAEC'], ['#/settings', 'settings'], ['#/privacy', 'privacy']]) {
     await page.goto(`${BASE}/${route}`);
     await page.waitForSelector('main h1, main h2');

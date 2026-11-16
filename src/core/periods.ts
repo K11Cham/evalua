@@ -44,3 +44,32 @@ export function groupByPeriod<T extends Pick<ExtractedCourse, 'level' | 'academi
   }
   return groups.map(({ key, label, items }) => ({ key, label, items }));
 }
+
+export interface YearGroup<T> {
+  key: string;
+  /** "Grade 10 · 2024-2025", "Grade 10", "2024-2025", or the period's own label when neither is known. */
+  label: string;
+  /** The terms or semesters of this year, in order. One entry when the year is not divided. */
+  periods: (PeriodGroup<T> & { termLabel: string })[];
+}
+
+/**
+ * Periods gathered into school years, so a year can be opened and closed as one: consecutive periods with the same
+ * grade level and school year belong together. A period that states neither stays a year of its own.
+ */
+export function groupByYear<T extends Pick<ExtractedCourse, 'level' | 'academicYear' | 'period' | 'term'>>(periods: PeriodGroup<T>[]): YearGroup<T>[] {
+  const years: YearGroup<T>[] = [];
+  for (const p of periods) {
+    const { level, academicYear } = p.items[0];
+    const known = level != null || !!academicYear;
+    const key = known ? `y|${level ?? ''}|${academicYear ?? ''}` : `p|${p.key}`;
+    const termLabel = p.items[0].period.value || (known ? 'No term printed' : 'No year or term printed');
+    const last = years[years.length - 1];
+    if (last && last.key === key) last.periods.push({ ...p, termLabel });
+    else {
+      const label = known ? [level != null ? `Grade ${level}` : '', academicYear ?? ''].filter(Boolean).join(' · ') : p.label || 'No year or term printed';
+      years.push({ key: years.some((y) => y.key === key) ? `${key}|${years.length}` : key, label, periods: [{ ...p, termLabel }] });
+    }
+  }
+  return years;
+}

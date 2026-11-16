@@ -7,21 +7,19 @@ export function Stamp({ status }: { status: CaseStatus }) {
   return <span className={`stamp ${status}`}>{STATUS_LABEL[status]}</span>;
 }
 
-export function Confidence({ value, label }: { value: number; label?: string }) {
+/**
+ * Confidence as a word first and a number second. `quiet` shows nothing when confidence is high, for places where
+ * a meter on every line would bury the few that matter.
+ */
+export function Confidence({ value, label, quiet }: { value: number; label?: string; quiet?: boolean }) {
   const pct = Math.round(value * 100);
   const level = value >= 0.8 ? 'high' : value >= 0.6 ? 'mid' : 'low';
-  const word = level === 'high' ? 'high' : level === 'mid' ? 'medium' : 'low';
-  const on = Math.max(value > 0 ? 1 : 0, Math.round(value * 5));
+  if (quiet && level === 'high') return null;
+  const word = level === 'high' ? 'High' : level === 'mid' ? 'Medium' : 'Low';
   return (
-    <span className={`conf ${level}`} title={`${label ?? 'Confidence'}: ${pct}% (${word})`}>
-      <span className="conf-bar" aria-hidden="true">
-        {[0, 1, 2, 3, 4].map((i) => (
-          <i key={i} className={i < on ? 'on' : ''} />
-        ))}
-      </span>
-      <span>
-        {pct}%<span className="sr-only"> {label ?? 'confidence'}, {word}</span>
-      </span>
+    <span className={`conf ${level}`} title={`${label ?? 'Confidence'}: ${pct}%`}>
+      <span className="sr-only">{label ?? 'Confidence'}: </span>
+      {word} <span className="conf-pct">{pct}%</span>
     </span>
   );
 }
@@ -69,6 +67,7 @@ const paths: Record<string, string> = {
   back: 'M10 6 4 12l6 6M4 12h16',
   redo: 'M19 8a8 8 0 1 0 1.5 7M19 3v5h-5',
   info: 'M12 11v6M12 7.5v.5M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z',
+  out: 'M5.6 5.6l12.8 12.8M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z',
 };
 
 export function Icon({ name }: { name: keyof typeof paths }) {
