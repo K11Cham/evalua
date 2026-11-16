@@ -8,7 +8,7 @@ import { groupByPeriod, periodKey } from '../core/periods.ts';
 import { caseFlags } from '../core/verify.ts';
 import type { ExtractedCourse, Field, SourceRef, Suggestion, USLetter, VerifyFlag } from '../core/types.ts';
 import { download, evaluationCsv } from '../export/csv.ts';
-import { caseLabel, deleteCase, now, STATUS_LABEL, STATUS_ORDER, uid, type CaseRecord } from '../store/db.ts';
+import { caseLabel, DEFAULT_DISTRICT, deleteCase, now, STATUS_LABEL, STATUS_ORDER, uid, type CaseRecord } from '../store/db.ts';
 import { Confidence, fmtDateTime, Icon, Source, Stamp } from './bits.tsx';
 import { DocViewer } from './DocViewer.tsx';
 import { go, useApp } from './state.tsx';
@@ -29,7 +29,7 @@ export function CaseView({ id }: { id: string }) {
   const [aiBusy, setAiBusy] = useState(false);
   const [aiError, setAiError] = useState('');
 
-  const district = useMemo(() => kb.districts.find((d) => d.id === rec?.districtId) ?? kb.districts.find((d) => d.id === 'generic-22')!, [kb, rec?.districtId]);
+  const district = useMemo(() => kb.districts.find((d) => d.id === rec?.districtId) ?? (kb.districts.find((d) => d.id === DEFAULT_DISTRICT) ?? kb.districts[0]), [kb, rec?.districtId]);
   const evaluation = useMemo(() => (rec?.extraction ? evaluate(rec.extraction, kb, district, rec.overrides, rec.assume) : null), [rec?.extraction, rec?.overrides, rec?.assume, kb, district]);
 
   if (missing) {

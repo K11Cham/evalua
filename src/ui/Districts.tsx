@@ -41,7 +41,7 @@ export function Districts() {
         <div className="empty" style={{ marginBottom: 24 }}>
           <h2>No district set up yet</h2>
           <br />
-          <p>Copy a template below, then edit its requirements and add your course catalog. Until then, evaluations use a template.</p>
+          <p>Copy a district or template below, then edit its requirements and add your course catalog. Until then, new cases use the default district (Jefferson County Public Schools, unless you choose another below).</p>
         </div>
       ) : (
         <div className="table-wrap" style={{ marginBottom: 24 }}>

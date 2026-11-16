@@ -66,7 +66,9 @@ export interface Settings {
   aiEnabled: boolean;
 }
 
-export const DEFAULT_SETTINGS: Settings = { counselor: '', districtId: 'generic-22', ollamaUrl: 'http://localhost:11434', ollamaModel: '', aiEnabled: false };
+// Jefferson County Public Schools is the one full district profile, so new installs start with it.
+export const DEFAULT_DISTRICT = 'ky-jcps';
+export const DEFAULT_SETTINGS: Settings = { counselor: '', districtId: DEFAULT_DISTRICT, ollamaUrl: 'http://localhost:11434', ollamaModel: '', aiEnabled: false };
 
 interface Schema extends DBSchema {
   cases: { key: string; value: CaseRecord; indexes: { updatedAt: string } };

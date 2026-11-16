@@ -5,7 +5,7 @@ import { evaluate } from '../core/evaluate.ts';
 import { groupByPeriod } from '../core/periods.ts';
 import { caseFlags } from '../core/verify.ts';
 import type { SourceInfo } from '../core/types.ts';
-import { caseLabel, getCase, STATUS_LABEL, type CaseRecord } from '../store/db.ts';
+import { caseLabel, DEFAULT_DISTRICT, getCase, STATUS_LABEL, type CaseRecord } from '../store/db.ts';
 import { fmtDate, Icon } from './bits.tsx';
 import { useApp } from './state.tsx';
 
@@ -13,7 +13,7 @@ export function Report({ id }: { id: string }) {
   const { kb, settings } = useApp();
   const [rec, setRec] = useState<CaseRecord | null | undefined>(undefined);
   useEffect(() => void getCase(id).then((r) => setRec(r ?? null)), [id]);
-  const district = useMemo(() => kb.districts.find((d) => d.id === rec?.districtId) ?? kb.districts.find((d) => d.id === 'generic-22')!, [kb, rec?.districtId]);
+  const district = useMemo(() => kb.districts.find((d) => d.id === rec?.districtId) ?? (kb.districts.find((d) => d.id === DEFAULT_DISTRICT) ?? kb.districts[0]), [kb, rec?.districtId]);
   const ev = useMemo(() => (rec?.extraction ? evaluate(rec.extraction, kb, district, rec.overrides, rec.assume) : null), [rec, kb, district]);
 
   useEffect(() => {
