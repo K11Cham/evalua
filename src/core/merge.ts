@@ -23,7 +23,7 @@ const strict = (c: ExtractedCourse) => `${c.name.source?.page ?? '-'}|${norm(c.n
 const loose = (c: ExtractedCourse) => `${c.name.source?.page ?? '-'}|${norm(c.name.original)}`;
 
 /** Course-specific "items to verify" carry the course id at the end of their own id. */
-const COURSE_FLAG = /^(grade-missing|grade-lowconf|name-lowconf|dup|fail)-(.+)$/;
+const COURSE_FLAG = /^(grade-missing|grade-lowconf|name-lowconf|grade-words|dup|fail)-(.+)$/;
 
 export function carryOver(before: Extraction, after: Extraction, overrides: Record<string, Override>, resolved: string[]): CarryResult {
   const next: Extraction = structuredClone(after);

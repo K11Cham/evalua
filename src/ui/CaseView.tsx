@@ -55,6 +55,13 @@ export function CaseView({ id }: { id: string }) {
   const ex = rec.extraction;
   const locked = rec.status === 'finalised';
   const show = (s?: SourceRef) => s && setHighlight({ ...s });
+  // From an item that lists several courses: bring that row into view, put the cursor in its grade and show it on the original.
+  const goToCourse = (id: string) => {
+    const row = document.getElementById(`course-${id}`);
+    row?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    row?.querySelector<HTMLInputElement>('input.grade')?.focus({ preventScroll: true });
+    show(ex?.courses.find((c) => c.id === id)?.grade.source);
+  };
 
   // ── edits ──
   const editField = (label: string, get: (c: CaseRecord) => Field<string>, value: string) => {
@@ -274,6 +281,18 @@ export function CaseView({ id }: { id: string }) {
                       <div>
                         <strong>{f.title}</strong>
                         <span className="small">{f.detail}</span>
+                        {f.courseIds && (
+                          <span className="course-links">
+                            {f.courseIds.map((cid) => {
+                              const c = ex.courses.find((x) => x.id === cid);
+                              return c ? (
+                                <button key={cid} className="btn small quiet" onClick={() => goToCourse(cid)} aria-label={`Go to ${c.name.original || c.name.value} in the course table`}>
+                                  {c.name.original || c.name.value}
+                                </button>
+                              ) : null;
+                            })}
+                          </span>
+                        )}
                       </div>
                       <div className="rowbtns">
                         {f.source && (
@@ -493,7 +512,7 @@ export function CaseView({ id }: { id: string }) {
                         const cls = ov.exclude ? 'excluded' : s?.needsReview ? 'review' : 'accepted';
                         return (
                           <Fragment key={c.id}>
-                            <tr className={cls}>
+                            <tr className={cls} id={`course-${c.id}`}>
                               <td style={{ minWidth: 210 }}>
                                 <input
                                   className={`name-en ${c.name.edited ? 'edited' : ''}`}
@@ -518,7 +537,8 @@ export function CaseView({ id }: { id: string }) {
                               <td>
                                 <div className="row" style={{ gap: 2, flexWrap: 'nowrap' }}>
                                   <input
-                                    className={`grade ${c.grade.edited ? 'edited' : ''}`}
+                                    className={`grade ${c.grade.edited ? 'edited' : !c.grade.value || c.grade.confidence < 0.72 || (c.gradeWords && !c.gradeWords.agrees) ? 'doubt' : ''}`}
+                                    title={c.grade.edited ? undefined : !c.grade.value ? 'Not readable: enter it from the original' : c.gradeWords && !c.gradeWords.agrees ? `The words beside it read “${c.gradeWords.text}” (${c.gradeWords.value})` : c.grade.confidence < 0.72 ? `May be misread (${Math.round(c.grade.confidence * 100)}% confidence): compare with the original` : undefined}
                                     aria-label={`Grade for ${c.name.value || 'course'}`}
                                     defaultValue={c.grade.value}
                                     key={c.grade.value}
@@ -531,6 +551,11 @@ export function CaseView({ id }: { id: string }) {
                                     </button>
                                   )}
                                 </div>
+                                {c.gradeWords && !c.grade.edited && (
+                                  <span className={`orig ${c.gradeWords.agrees ? '' : 'conflict'}`} lang={ex.language}>
+                                    {c.gradeWords.agrees ? `matches “${c.gradeWords.text}”` : `words say “${c.gradeWords.text}” (${c.gradeWords.value})`}
+                                  </span>
+                                )}
                                 {(c.credits || c.hours) && (
                                   <span className="orig mono">
                                     {c.credits ? `${c.credits.value} cr` : ''} {c.hours ? `${c.hours.value} h` : ''}

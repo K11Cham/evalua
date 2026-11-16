@@ -343,6 +343,45 @@ export function isGradeLike(text: string): boolean {
 }
 
 /** Splits "5 (отлично)" / "A(287)" / "9 NUEVE" into the grade and its trailing descriptor. */
+// Grades written out in words beside the number: "8 OCHO" (Mexico), "5 (отлично)" (Russia),
+// "EIGHT SEVEN" digit by digit (Indian boards' "total in words").
+const NUMBER_WORDS: Record<string, number> = {};
+const addWords = (n: number, ...ws: string[]) => ws.forEach((w) => (NUMBER_WORDS[key(w)] = n));
+addWords(0, 'zero', 'cero', 'zéro', 'null', 'ноль', 'nil');
+addWords(1, 'one', 'uno', 'un', 'une', 'um', 'uma', 'eins', 'один', 'единица');
+addWords(2, 'two', 'dos', 'deux', 'dois', 'duas', 'zwei', 'два', 'неудовлетворительно', 'неуд');
+addWords(3, 'three', 'tres', 'trois', 'três', 'drei', 'три', 'удовлетворительно', 'удовл');
+addWords(4, 'four', 'cuatro', 'quatre', 'quatro', 'vier', 'четыре', 'хорошо', 'хор');
+addWords(5, 'five', 'cinco', 'cinq', 'fünf', 'пять', 'отлично', 'отл');
+addWords(6, 'six', 'seis', 'sechs', 'шесть');
+addWords(7, 'seven', 'siete', 'sept', 'sete', 'sieben', 'семь');
+addWords(8, 'eight', 'ocho', 'huit', 'oito', 'acht', 'восемь');
+addWords(9, 'nine', 'nueve', 'neuf', 'nove', 'neun', 'девять');
+addWords(10, 'ten', 'diez', 'dix', 'dez', 'zehn', 'десять');
+const WORD_KEYS = Object.keys(NUMBER_WORDS);
+
+/** One word as a number, tolerating an OCR slip in words of five letters or more. */
+function wordNumber(w: string): number | undefined {
+  const k = key(w);
+  if (k in NUMBER_WORDS) return NUMBER_WORDS[k];
+  if (k.length < 5) return undefined;
+  const near = WORD_KEYS.filter((x) => x.length >= 5 && Math.abs(x.length - k.length) <= 1 && similarity(x, k) >= 0.8);
+  const values = new Set(near.map((x) => NUMBER_WORDS[x]));
+  return values.size === 1 ? [...values][0] : undefined;
+}
+
+/** The value of a grade written in words, or null when the words are not a number evalua knows. */
+export function gradeFromWords(text: string): number | null {
+  const words = text.replace(/[()（）.,;:]/g, ' ').trim().split(/[\s\-–]+/).filter(Boolean);
+  if (!words.length || words.length > 4) return null;
+  const values = words.map(wordNumber);
+  if (values.some((v) => v == null)) return null;
+  if (values.length === 1) return values[0]!;
+  // Several words: digit by digit ("ZERO EIGHT SEVEN" = 87), each word a single digit.
+  if (values.every((v) => v! <= 9)) return Number(values.join(''));
+  return null;
+}
+
 export function splitGrade(text: string): { grade: string; rest: string } {
   const s = asciiDigits(text).trim();
   const m = /^(\d{1,3}(?:[.,]\d{1,2})?|[A-F][1-9]?[+\-*]?)\s*[(（]\s*(.*?)\s*[)）]?$/.exec(s);

@@ -81,7 +81,7 @@ export function verify(ex: Extraction, doc: DocTokens, tables: TableResult): Ver
 
 // Ids of the checks below. They are worked out again on every view, so a case read by an
 // earlier version, or a course the counselor has since edited, never shows a stale one.
-export const LIVE_FLAG = /^(grade-missing-|grade-lowconf-|name-lowconf-|untranslated$|gap-|level-unknown$|year-order-|age-|dup-)/;
+export const LIVE_FLAG = /^(grade-missing(-|$)|grade-lowconf(-|$)|name-lowconf(-|$)|grade-words-|untranslated$|gap-|level-unknown$|year-order-|age-|dup-)/;
 
 /** Checks on the courses and student as they stand now, edits included. Run with each evaluation. */
 export function courseFlags(ex: Extraction): VerifyFlag[] {
@@ -89,16 +89,43 @@ export function courseFlags(ex: Extraction): VerifyFlag[] {
   const add = (f: VerifyFlag) => {
     if (!flags.some((x) => x.id === f.id)) flags.push(f);
   };
-  // Unreadable or low-confidence fields.
-  for (const c of ex.courses) {
-    if (!c.grade.value) {
-      add({ id: `grade-missing-${c.id}`, severity: 'important', courseId: c.id, title: `Grade not readable: ${c.name.original}`, detail: 'A subject was read on this row but no grade. Check the original document.', source: c.name.source });
-    } else if (c.grade.confidence < 0.72) {
-      add({ id: `grade-lowconf-${c.id}`, severity: 'check', courseId: c.id, title: `Grade may be misread: ${c.name.original}`, detail: `The grade was read as “${c.grade.value}” with low confidence (${Math.round(c.grade.confidence * 100)}%). Compare with the original.`, source: c.grade.source });
-    }
-    if (c.name.confidence < 0.72) {
-      add({ id: `name-lowconf-${c.id}`, severity: 'check', courseId: c.id, title: `Course name may be misread: ${c.name.original}`, detail: `Read with low confidence (${Math.round(c.name.confidence * 100)}%). Compare with the original.`, source: c.name.source });
-    }
+  // Unreadable or low-confidence fields. One course gets its own item; several of the same kind
+  // become one item that lists them (the rows themselves stay marked in the table).
+  const nameOf = (c: (typeof ex.courses)[number]) => c.name.original || c.name.value;
+  const list = (cs: typeof ex.courses) => `${cs.slice(0, 8).map(nameOf).join('; ')}${cs.length > 8 ? `; and ${cs.length - 8} more` : ''}`;
+  const pct = (v: number) => `${Math.round(v * 100)}%`;
+  const missing = ex.courses.filter((c) => !c.grade.value);
+  const conflict = ex.courses.filter((c) => c.grade.value && c.gradeWords && !c.gradeWords.agrees);
+  const doubtful = ex.courses.filter((c) => c.grade.value && c.grade.confidence < 0.72 && !conflict.includes(c));
+  const badNames = ex.courses.filter((c) => c.name.confidence < 0.72);
+  if (missing.length === 1) {
+    const c = missing[0];
+    add({ id: `grade-missing-${c.id}`, severity: 'important', courseId: c.id, title: `Grade not readable: ${nameOf(c)}`, detail: 'A subject was read on this row but no grade. Check the original document.', source: c.name.source });
+  } else if (missing.length > 1) {
+    add({ id: 'grade-missing', severity: 'important', courseIds: missing.map((c) => c.id), title: `${missing.length} grades could not be read`, detail: `Subjects were read but no grade for: ${list(missing)}. Enter each from the original document.`, source: missing[0].name.source });
+  }
+  for (const c of conflict) {
+    const w = c.gradeWords!;
+    add({ id: `grade-words-${c.id}`, severity: 'important', courseId: c.id, title: `The grade and its words disagree: ${nameOf(c)}`, detail: `The number reads “${c.grade.value}” but the words beside it read “${w.text}” (${w.value}). One of the two was misread; check the original.`, source: w.source ?? c.grade.source });
+  }
+  if (doubtful.length === 1) {
+    const c = doubtful[0];
+    add({ id: `grade-lowconf-${c.id}`, severity: 'check', courseId: c.id, title: `Grade may be misread: ${nameOf(c)}`, detail: `The grade was read as “${c.grade.value}” with low confidence (${pct(c.grade.confidence)}). Compare with the original.`, source: c.grade.source });
+  } else if (doubtful.length > 1) {
+    add({
+      id: 'grade-lowconf',
+      severity: 'check',
+      courseIds: doubtful.map((c) => c.id),
+      title: `${doubtful.length} grades may be misread`,
+      detail: `Read with low confidence (${pct(Math.min(...doubtful.map((c) => c.grade.confidence)))} to ${pct(Math.max(...doubtful.map((c) => c.grade.confidence)))}): ${list(doubtful)}. Compare these with the original; they are marked in the table.`,
+      source: doubtful[0].grade.source,
+    });
+  }
+  if (badNames.length === 1) {
+    const c = badNames[0];
+    add({ id: `name-lowconf-${c.id}`, severity: 'check', courseId: c.id, title: `Course name may be misread: ${nameOf(c)}`, detail: `Read with low confidence (${pct(c.name.confidence)}). Compare with the original.`, source: c.name.source });
+  } else if (badNames.length > 1) {
+    add({ id: 'name-lowconf', severity: 'check', courseIds: badNames.map((c) => c.id), title: `${badNames.length} course names may be misread`, detail: `Read with low confidence: ${list(badNames)}. Compare these with the original.`, source: badNames[0].name.source });
   }
   const untranslated = ex.courses.filter((c) => c.translation === 'none');
   if (untranslated.length) {

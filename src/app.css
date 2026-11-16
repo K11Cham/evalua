@@ -196,6 +196,9 @@ label.field input, label.field select { font-weight: 400; color: var(--ink); fon
 .courses input, .courses select { min-height: 30px; padding: 3px 6px; font-size: 0.9rem; width: 100%; }
 .courses .name-en { font-weight: 600; }
 .courses input.grade, .courses input.cr { width: 62px; text-align: right; font-family: var(--mono); }
+.courses input.grade.doubt { border-color: var(--ochre); box-shadow: inset 0 -3px 0 var(--ochre); }
+.courses .orig.conflict { color: var(--stamp); font-weight: 600; }
+.course-links { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
 .courses select.letter { width: 62px; }
 .courses tr.review td:first-child { box-shadow: inset 4px 0 0 var(--ochre); }
 .courses tr.accepted td:first-child { box-shadow: inset 4px 0 0 var(--ledger); }

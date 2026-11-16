@@ -1,7 +1,7 @@
 // Table understanding: finds header bands, builds columns (including two-level "matrix" headers and
 // side-by-side tables), assigns body cells to columns and turns rows into raw course records.
 import { buildRows, rowText, type Cell, type Row } from './layout.ts';
-import { headerRole, isGradeLike, isPeriodLabel, isSummaryLabel, STUDENT_CLASS, type Role } from './lexicon.ts';
+import { gradeFromWords, headerRole, isGradeLike, isPeriodLabel, isSummaryLabel, splitGrade, STUDENT_CLASS, type Role } from './lexicon.ts';
 import { key } from './text.ts';
 import type { DocTokens } from './types.ts';
 
@@ -28,6 +28,8 @@ export interface RawCourse {
   credits?: Cell;
   hours?: Cell;
   qualifier?: Cell;
+  /** The grade written out in words, from its own column ("LETRA", "in words"). */
+  words?: Cell;
   /** Period label text (heading above the table, or matrix column group). */
   period: string;
   periodCell?: Cell;
@@ -252,6 +254,56 @@ export function dataColumns(body: Row[]): { x0: number; x1: number }[] {
   return runs;
 }
 
+/** The roles a heading names, in order: "CALIF.LETRA CRÉDITOS" → grade, words, credits. */
+function headingRoles(text: string): { role: ColRole; text: string }[] {
+  const words = text.split(/[\s.·/|]+/).filter(Boolean);
+  const out: { role: ColRole; text: string }[] = [];
+  // Shortest match first: a longer span would also "contain" the role of its last word.
+  for (let i = 0; i < words.length; ) {
+    let hit: { role: ColRole; text: string; n: number } | null = null;
+    for (let n = 1; n <= Math.min(3, words.length - i) && !hit; n++) {
+      const t = words.slice(i, i + n).join(' ');
+      const role = headerRole(t);
+      if (role) hit = { role, text: t, n };
+    }
+    if (!hit) {
+      i++;
+      continue;
+    }
+    if (out.length && out[out.length - 1].role === hit.role) out[out.length - 1].text += ` ${hit.text}`;
+    else out.push({ role: hit.role, text: hit.text });
+    i += hit.n;
+  }
+  return out;
+}
+
+/**
+ * One heading printed (or read by OCR) as a single cell over several body columns, such as
+ * "CALIF.LETRA CRÉDITOS" over "7 | SIETE | 10", is split into one column per role it names,
+ * when the body shows exactly that many columns beneath it.
+ */
+function splitMergedHeadings(cols: HCol[], body: Row[]): HCol[] {
+  const out: HCol[] = [];
+  cols.forEach((c, ci) => {
+    const roles = headingRoles(c.text);
+    if (roles.length < 2) return void out.push(c);
+    // The cells under this heading, row by row, up to the neighbouring headings.
+    const left = ci > 0 ? cols[ci - 1].x1 : -Infinity;
+    const right = ci + 1 < cols.length ? cols[ci + 1].x0 : Infinity;
+    const under = body.map((r) => r.cells.filter((x) => x.x + x.w / 2 > Math.max(left, c.x0 - x.h) && x.x + x.w / 2 < Math.min(right, c.x1 + x.h)).sort((a, b) => a.x - b.x)).filter((cs) => cs.length);
+    const k = roles.length;
+    const even = under.filter((cs) => cs.length === k);
+    // Most rows must show one cell per named role, so the heading really is several columns.
+    if (even.length < 2 || even.length < under.length * 0.5) return void out.push(c);
+    roles.forEach((r, j) => {
+      const x0 = Math.min(...even.map((cs) => cs[j].x));
+      const x1 = Math.max(...even.map((cs) => cs[j].x + cs[j].w));
+      out.push({ ...c, x0: j === 0 ? Math.min(c.x0, x0) : x0, x1: j === k - 1 ? Math.max(c.x1, x1) : x1, text: r.text, role: r.role });
+    });
+  });
+  return out;
+}
+
 /**
  * Lines the header columns up with the body's columns. Two headings that sit over one body column are
  * merged (a row-number column glued to the subject column), and extents follow the data.
@@ -281,6 +333,10 @@ function reconcile(cols: HCol[], body: Row[]): HCol[] {
   });
   // Every body column needs a heading; otherwise the headings do not describe this body.
   if (data.some((_, di) => !home.includes(di))) return cols;
+  // Headings for different things (subject, grade, credits) over one body column mean a wide cell
+  // bridged real columns, not that the headings belong together.
+  const distinctRoles = (di: number) => new Set(cols.filter((c, i) => home[i] === di && c.role && c.role !== 'code').map((c) => c.role)).size;
+  if (data.some((_, di) => distinctRoles(di) > 1)) return cols;
   const out: HCol[] = [];
   data.forEach((d, di) => {
     const mine = cols.filter((_, i) => home[i] === di);
@@ -422,6 +478,13 @@ function coursesFromGroup(cols: HCol[], idx: number[], grid: (Cell | undefined)[
       course.credits = first(['credits']);
       course.hours = first(['hours']);
       course.qualifier = first(['qualifier']);
+      course.words = first(['words']);
+      // The number could not be read but the same grade is written out in words beside it.
+      // The number may also have slid into the words column as one cell ("10 DIEZ").
+      if (!course.grade && course.words) {
+        const s = splitGrade(course.words.text);
+        if (gradeFromWords(course.words.text) != null || (/^\d/.test(s.grade) && gradeFromWords(s.rest) != null)) course.grade = course.words;
+      }
       return course.grade || course.credits || course.hours ? course : null;
     };
     if (groups.length) {
@@ -567,7 +630,8 @@ export function readTables(doc: DocTokens): TableResult {
     const body = segments.flatMap((s) => s.rows);
     if (!body.length) return;
     bodyIdx.forEach((i) => used.add(i));
-    band.cols = reconcile(band.cols, body);
+
+    band.cols = reconcile(splitMergedHeadings(band.cols, body), body);
     const grid = assign(band.cols, body);
     const guessedRoles = inferRoles(band.cols, grid);
     const coursesBefore = courses.length;

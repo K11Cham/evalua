@@ -1,7 +1,7 @@
 // Extraction: positioned text → structured record (student, school, system, courses), with provenance.
 import type { Cell, Row } from './layout.ts';
 import { rowText } from './layout.ts';
-import { academicYear, detectTerm, genericLevel, infoField, infoFieldExact, isGradeLike, isPeriodLabel, looksLikeSchool, splitGrade, STUDENT_CLASS, termOf, type InfoField } from './lexicon.ts';
+import { academicYear, detectTerm, genericLevel, gradeFromWords, infoField, infoFieldExact, isGradeLike, isPeriodLabel, looksLikeSchool, splitGrade, STUDENT_CLASS, termOf, type InfoField } from './lexicon.ts';
 import { buildMatcher, fixOcrNumerals } from './match.ts';
 import { readTables, type RawCourse, type TableResult } from './tables.ts';
 import { asciiDigits, displayName, dominantScript, key, parseDate, parseNumber, stripDiacritics } from './text.ts';
@@ -172,6 +172,19 @@ function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; hea
     const g = cleanGrade(raw.grade.text);
     const shape = isGradeLike(raw.grade.text) ? 1 : 0.55;
     course.grade = { value: g.value, original: raw.grade.text, confidence: Math.min(0.99, raw.grade.conf) * shape * (raw.gradeGuessed ? 0.7 : 1), source: src(raw.grade) };
+    // A grade written only in words ("SIETE") is the number it names.
+    const onlyWords = parseNumber(g.value) == null ? gradeFromWords(raw.grade.text) : null;
+    if (onlyWords != null) course.grade = { ...course.grade, value: String(onlyWords), confidence: Math.min(0.85, Math.max(course.grade.confidence, 0.7)) };
+    // The same grade printed twice, as a number and in words: two independent readings.
+    const wordsCell = raw.words && raw.words !== raw.grade ? raw.words : undefined;
+    const wordsText = (wordsCell?.text ?? g.descriptor).trim();
+    const fromWords = onlyWords == null && wordsText ? gradeFromWords(wordsText) : null;
+    const asNumber = parseNumber(course.grade.value);
+    if (fromWords != null && asNumber != null) {
+      const agrees = Math.abs(fromWords - asNumber) < 1e-6;
+      course.gradeWords = { text: wordsText, value: fromWords, agrees, source: wordsCell ? src(wordsCell) : course.grade.source };
+      course.grade.confidence = agrees ? Math.max(course.grade.confidence, 0.95) : Math.min(course.grade.confidence, 0.5);
+    }
     // "Annual", "Cumulative", "Cả năm" columns are whole-year results ("SEM FINAL GRADE" is not).
     if (raw.gradeHeader && WHOLE_YEAR.test(raw.gradeHeader) && !/\bsem/i.test(raw.gradeHeader)) course.wholeYear = true;
   }

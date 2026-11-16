@@ -80,6 +80,8 @@ export interface ExtractedCourse {
   qualifier?: string;
   /** The grade printed is for the whole year (an annual or cumulative column), even on a term report. */
   wholeYear?: boolean;
+  /** The grade as also written out in words ("8 OCHO", "5 (отлично)"), and whether the two agree. */
+  gradeWords?: { text: string; value: number; agrees: boolean; source?: SourceRef };
   /** What the document calls the part of the year `term` counts in, when it says ("semester", "quarter"). */
   termUnit?: 'term' | 'semester' | 'trimester' | 'quarter';
 }
@@ -93,6 +95,8 @@ export interface VerifyFlag {
   title: string;
   detail: string;
   courseId?: string;
+  /** For one item that stands for several courses ("5 grades may be misread"). */
+  courseIds?: string[];
   source?: SourceRef;
   resolved?: boolean;
 }

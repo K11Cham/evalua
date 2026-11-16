@@ -79,10 +79,10 @@ To try the app, use the fictitious transcripts in [`fixtures/fake/`](fixtures/fa
 |---|---|
 | Education system identified | 36/36 |
 | Courses found | 98.1% (667/680) |
-| Grade correct | 98.1% |
+| Grade correct | 99.3% |
 | US grade level correct | 99.9% |
 | Subject matched | 99.7% |
-| US letter grade correct | 98.2% |
+| US letter grade correct | 99.3% |
 
 **Records made of several files.** A counselor often has one report per term or per year. `npm run eval:split` splits every multi-year fake (11 records, 11 systems) into one file per period, in two styles (the period as a heading over each table, or printed once in the page header), recombines them, and checks every course: 100% of courses found, and 100% of grade levels, terms and school years right in both styles ([`docs/ACCURACY_COMBINED.md`](docs/ACCURACY_COMBINED.md)). Each file's grade, year and term are read from that file only, and terms are recognised in every supported language ("Second Term", "2e trimestre", "PRIMER SEMESTRE", "Học kỳ II", "2학기", "第二学期", "2 четверть", "الفصل الدراسي الثاني").
 
