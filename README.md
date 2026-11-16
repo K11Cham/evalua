@@ -67,7 +67,7 @@ Other commands:
 | `npm run fakes` | Regenerates the fictitious transcripts in `fixtures/fake/` |
 | `npm run deploy` | Builds, loads the knowledge base into D1, deploys to Cloudflare Pages |
 
-To try the app, use the fictitious transcripts in [`fixtures/fake/`](fixtures/fake). Never test with, or commit, a real one.
+To try the app, use the fictitious transcripts in [`fixtures/fake/`](fixtures/fake). Never commit a real transcript, and only try one locally with the permission of the person it belongs to.
 
 ## Accuracy
 
@@ -133,7 +133,7 @@ The look comes from registrars' ledgers and transcript paper: deep ink on warm p
 - **JCPS details.** The 2025-26 JCPS handbook is the newest found (no 2026-27 edition), so the profile shows as possibly outdated. No district-wide JCPS course catalog was found; the catalog uses Kentucky state course codes, and some (non-AP Pre-Calculus, English Learner, world-language levels) have no code. The "normal year" of 7 credits assumes a seven-period day.
 - **Requirements only US coursework can meet** (US history, state assessments, state-specific courses) are not checked.
 - **Cases live in one browser.** There are no accounts and no sync. Clearing site data deletes them.
-- **Not verified with real records.** All testing used fictitious documents.
+- **Tested on few real records.** Besides the fictitious golden set, evalua was tested on the author's own Gambian term reports (five reports across grades 10 and 11), which are kept private and never committed. That is one school in one system; other countries' real documents have not been tried, and real scans and photos will do worse than the fakes.
 - The Florida template figures come from the statute as generally published; the state page could not be fetched for verification when the template was written. Check any template against its linked source.
 
 ## How this was built
