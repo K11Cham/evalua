@@ -116,7 +116,7 @@ export function Settings() {
           evalua works without a model, using rules and dictionaries. If you run <a href="https://ollama.com" target="_blank" rel="noreferrer noopener">Ollama</a> on this computer, evalua can ask it to translate course names the dictionaries do not cover. The text goes only to your own machine.
         </p>
         <p className="small">
-          To set it up: install a model (qwen2.5-coder:7b translated best in our tests), set Ollama’s OLLAMA_ORIGINS setting to <code>{window.location.origin}</code> (on Windows: <code>setx OLLAMA_ORIGINS "{window.location.origin}"</code>), quit and restart Ollama, then press Test connection. If the browser asks whether this site may reach apps on this device, choose Allow.
+          To set it up: install a model (in our tests qwen2.5-coder:7b was quick and good; :14b was a little more accurate and much slower), set Ollama’s OLLAMA_ORIGINS setting to <code>{window.location.origin}</code> (on Windows: <code>setx OLLAMA_ORIGINS "{window.location.origin}"</code>), quit and restart Ollama, then press Test connection. If the browser asks whether this site may reach apps on this device, choose Allow.
         </p>
         <div className="grid2">
           <label className="field">

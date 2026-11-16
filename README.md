@@ -66,6 +66,7 @@ Other commands:
 | `npm run eval` | Golden set: every fake transcript through the full pipeline; rewrites `docs/ACCURACY.md` |
 | `npm run eval:split` | Records combined from separate files: every multi-year fake split into one file per year or term, recombined, and checked for grade level, term and school year; rewrites `docs/ACCURACY_COMBINED.md` |
 | `npm run build && npm run eval:browser` | Uploads fakes through the real interface in headless Chromium |
+| `npm run eval:model` | What the optional local model adds: sends the names the dictionaries leave untranslated, then every non-English name, to Ollama (qwen2.5-coder 7B and 14B) and scores them; rewrites `docs/ACCURACY_MODEL.md` |
 | `npm run build && npm run eval:a11y` | Runs axe (WCAG 2.1 A and AA) on every page at desktop width and at 820 px, and fails if a page scrolls sideways |
 | `npm run fakes` | Regenerates the fictitious transcripts in `fixtures/fake/` |
 | `npm run deploy` | Builds, loads the knowledge base into D1, deploys to Cloudflare Pages |
@@ -86,6 +87,8 @@ To try the app, use the fictitious transcripts in [`fixtures/fake/`](fixtures/fa
 | US letter grade correct | 99.3% |
 
 **Records made of several files.** A counselor often has one report per term or per year. `npm run eval:split` splits every multi-year fake (11 records, 11 systems) into one file per period, in two styles (the period as a heading over each table, or printed once in the page header), recombines them, and checks every course: 100% of courses found, and 100% of grade levels, terms and school years right in both styles ([`docs/ACCURACY_COMBINED.md`](docs/ACCURACY_COMBINED.md)). Each file's grade, year and term are read from that file only, and terms are recognised in every supported language ("Second Term", "2e trimestre", "PRIMER SEMESTRE", "Học kỳ II", "2학기", "第二学期", "2 четверть", "الفصل الدراسي الثاني").
+
+**The optional local model.** A model in Ollama only suggests English names for courses the dictionaries cannot translate; reading, grades, credits and subjects are the same with or without it. On the golden set only 4 real course names (all damaged by OCR) were left for it, so “English name close to the reference” moves from 96.1% to 96.3%. Head to head on all 276 non-English course names, the model named the right US subject for 85% (qwen2.5-coder:7b) and 89% (:14b, about 6× slower), against 99% for evalua's rules, and its mistakes are confident ones. So it is a fallback for names the dictionaries do not know, and it never chooses the subject or the credit ([`docs/ACCURACY_MODEL.md`](docs/ACCURACY_MODEL.md)).
 
 Read these with care. The fakes and the parser were written by the same author, so layouts the generator does not produce are not measured. Text PDFs and Word files are close to perfect; the misses are almost all in scans and photos, where a watermark or glare hides a row or a digit is misread. Real documents will do worse.
 
