@@ -15,9 +15,9 @@ function Shell() {
       <a className="skip" href="#main">Skip to content</a>
       <header className="masthead">
         <div className="masthead-in">
-          <a className="wordmark" href="#/" aria-label="evalua, home">
+          <a className="wordmark" href="#/">
             <span className="seal" aria-hidden="true"><span>ev</span></span>
-            evalua
+            evalua<span className="sr-only">, home</span>
           </a>
           <nav className="nav" aria-label="Main">
             <a href="#/" aria-current={at(['cases', 'case', 'report'])}>Cases</a>

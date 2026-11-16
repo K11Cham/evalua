@@ -6,7 +6,7 @@
   --desk: #d6cebd;
   --ink: #1b242e;
   --ink-2: #414c57;
-  --ink-3: #5d6772;
+  --ink-3: #545d68; /* 5.2:1 on --paper-sunk, the darkest background it sits on */
   --rule: #cdc3ae;
   --rule-strong: #9d937e;
   --stamp: #a8321f;
@@ -106,7 +106,8 @@ label.field input, label.field select { font-weight: 400; color: var(--ink); fon
 .ledger tr.clickable { cursor: pointer; }
 .ledger .rowlink { color: inherit; text-decoration: none; font-weight: 600; }
 .ledger .rowlink:hover { text-decoration: underline; }
-.table-wrap { overflow-x: auto; border-radius: var(--radius); }
+/* position: relative keeps screen-reader-only labels inside the scrolling box, so they never widen the page. */
+.table-wrap { overflow-x: auto; border-radius: var(--radius); position: relative; }
 
 /* ── stamps (status) ── */
 .stamp {
@@ -253,7 +254,8 @@ dialog { border: 1.5px solid var(--ink); border-radius: 4px; background: var(--p
 dialog::backdrop { background: rgba(27, 36, 46, 0.5); }
 
 @media (max-width: 1080px) {
-  .workspace { grid-template-columns: 1fr; }
+  .workspace { grid-template-columns: minmax(0, 1fr); }
+  .viewer-bar { flex-wrap: wrap; }
   .viewer { position: static; height: 62vh; }
   .drop-grid, .two-col { grid-template-columns: 1fr; }
   .side-list { position: static; max-height: 260px; }
@@ -263,7 +265,7 @@ dialog::backdrop { background: rgba(27, 36, 46, 0.5); }
 }
 
 /* ── report (screen preview + print) ── */
-.report { background: #fff; color: #111; max-width: 8.5in; margin: 0 auto; padding: 0.7in 0.75in; box-shadow: 0 2px 22px rgba(27, 36, 46, 0.18); font-size: 10.5pt; line-height: 1.4; }
+.report { background: #fff; color: #111; max-width: min(8.5in, 100%); box-sizing: border-box; margin: 0 auto; padding: 0.7in 0.75in; box-shadow: 0 2px 22px rgba(27, 36, 46, 0.18); font-size: 10.5pt; line-height: 1.4; }
 .report h1 { font-size: 20pt; }
 .report h2 { font-size: 12.5pt; margin: 18pt 0 6pt; padding-bottom: 3pt; border-bottom: 1.5pt solid #111; }
 .report .letterhead { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3pt double #111; padding-bottom: 8pt; margin-bottom: 12pt; gap: 16pt; }
@@ -296,3 +298,7 @@ dialog::backdrop { background: rgba(27, 36, 46, 0.5); }
 .drop-target.over .viewer { outline: 3px dashed var(--ledger); outline-offset: -3px; }
 .drop-hint { position: absolute; inset: 40px 12px auto; padding: 14px; text-align: center; background: var(--ledger-wash); color: var(--ledger); border: 1.5px solid var(--ledger); border-radius: var(--radius); font-weight: 600; pointer-events: none; }
 @media (min-width: 1081px) { .drop-target { position: sticky; top: 10px; align-self: start; } .drop-target .viewer { position: static; } }
+
+@media screen and (max-width: 900px) {
+  .report { padding: 0.4in 0.35in; }
+}

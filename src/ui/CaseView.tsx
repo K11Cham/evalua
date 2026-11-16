@@ -607,7 +607,7 @@ export function CaseView({ id }: { id: string }) {
                                     </button>
                                   )}
                                   {!ov.exclude && s && !s.needsReview && <span className="tag ok" title={ov.accepted ? 'Accepted by a counselor' : 'High confidence'}>{ov.accepted ? 'Accepted' : 'OK'}</span>}
-                                  <button className="btn small quiet" disabled={locked} onClick={() => override(c.id, { exclude: !ov.exclude }, ov.exclude ? 'Restored a course' : 'Excluded a course', c.name.value)} aria-label={ov.exclude ? `Restore ${c.name.value}` : `Leave ${c.name.value} out of the evaluation`}>
+                                  <button className="btn small quiet" disabled={locked} onClick={() => override(c.id, { exclude: !ov.exclude }, ov.exclude ? 'Restored a course' : 'Excluded a course', c.name.value)} aria-label={ov.exclude ? `Restore ${c.name.value}` : `Leave out ${c.name.value}`}>
                                     {ov.exclude ? 'Restore' : 'Leave out'}
                                   </button>
                                 </div>
@@ -713,10 +713,10 @@ export function CaseView({ id }: { id: string }) {
                 What the suggested credits cover in {district.name}, and what remains.{' '}
                 {district.kind === 'template' && <strong>This is a state-minimum template, not your district’s rules.</strong>} <Source source={district.provenance.source} />
               </p>
-              <div className="req" role="list">
+              <div className="req">
                 {evaluation.progress.map((p) => (
                   <Fragment key={p.requirementId}>
-                    <div role="listitem">
+                    <div>
                       <strong>{p.label}</strong>
                     </div>
                     <div className={`bar ${p.remaining === 0 && p.required > 0 ? 'full' : ''}`} role="img" aria-label={`${p.earned} of ${p.required} credits`}>

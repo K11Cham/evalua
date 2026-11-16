@@ -66,6 +66,7 @@ Other commands:
 | `npm run eval` | Golden set: every fake transcript through the full pipeline; rewrites `docs/ACCURACY.md` |
 | `npm run eval:split` | Records combined from separate files: every multi-year fake split into one file per year or term, recombined, and checked for grade level, term and school year; rewrites `docs/ACCURACY_COMBINED.md` |
 | `npm run build && npm run eval:browser` | Uploads fakes through the real interface in headless Chromium |
+| `npm run build && npm run eval:a11y` | Runs axe (WCAG 2.1 A and AA) on every page at desktop width and at 820 px, and fails if a page scrolls sideways |
 | `npm run fakes` | Regenerates the fictitious transcripts in `fixtures/fake/` |
 | `npm run deploy` | Builds, loads the knowledge base into D1, deploys to Cloudflare Pages |
 

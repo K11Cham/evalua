@@ -373,7 +373,9 @@ export function DistrictEditor({ id }: { id: string }) {
             </div>
           </div>
         )}
-        <div className="table-wrap" style={{ maxHeight: 520, overflow: 'auto' }}>
+        {/* Scrolls on its own, so it takes keyboard focus to be scrolled without a mouse. */}
+        {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region must be focusable (WCAG 2.1.1) */}
+        <div className="table-wrap" style={{ maxHeight: 520, overflow: 'auto' }} tabIndex={0} role="region" aria-label="Course catalog">
           <table className="ledger">
             <thead>
               <tr>
