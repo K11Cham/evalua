@@ -338,7 +338,7 @@ export function CourseTable({ ex, rec, evaluation, kb, district, locked, toolbar
         <div className="course-tools no-print">{toolbar}</div>
         <div className="notice check">
           <h3>No courses were found</h3>
-          <p className="small">Try a clearer scan, choose the writing system when uploading, or add the courses by hand with “Add a course”.</p>
+          <p className="small">Try a clearer scan, or choose the writing system when uploading. Or type the subjects and grades with “Type a table” at the top of the case: they are read like any other document.</p>
         </div>
       </>
     );

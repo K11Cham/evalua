@@ -13,6 +13,7 @@ import { Confidence, fmtDateTime, Icon, Source, Stamp } from './bits.tsx';
 import { CourseTable } from './CourseTable.tsx';
 import { DocViewer } from './DocViewer.tsx';
 import { FlagList } from './FlagList.tsx';
+import { TypedTable } from './TypedTable.tsx';
 import { go, useApp } from './state.tsx';
 import { useCase } from './useCase.ts';
 
@@ -28,6 +29,7 @@ export function CaseView({ id }: { id: string }) {
   const [aiBusy, setAiBusy] = useState(false);
   const [aiError, setAiError] = useState('');
   const [aiDone, setAiDone] = useState('');
+  const [typing, setTyping] = useState(false);
 
   const district = useMemo(() => kb.districts.find((d) => d.id === rec?.districtId) ?? (kb.districts.find((d) => d.id === DEFAULT_DISTRICT) ?? kb.districts[0]), [kb, rec?.districtId]);
   const evaluation = useMemo(() => (rec?.extraction ? evaluate(rec.extraction, kb, district, rec.overrides, rec.assume) : null), [rec?.extraction, rec?.overrides, rec?.assume, kb, district]);
@@ -126,6 +128,20 @@ export function CaseView({ id }: { id: string }) {
         >
           <Icon name="plus" /> Add documents
         </button>
+        <button className="btn" disabled={locked || !!reading} title={locked ? 'Reopen the case to add to it' : 'Type subjects and grades from a record that cannot be read; it is added to this case as a document'} onClick={() => setTyping(true)}>
+          <Icon name="table" /> Type a table
+        </button>
+        {typing && (
+          <TypedTable
+            withStudent={false}
+            action="Add to this case"
+            onClose={() => setTyping(false)}
+            onDone={(file) => {
+              setTyping(false);
+              addFiles([file]);
+            }}
+          />
+        )}
         <input
           ref={addRef}
           type="file"
@@ -164,7 +180,7 @@ export function CaseView({ id }: { id: string }) {
         <div className="notice error" role="alert">
           <h3>The document could not be read</h3>
           <p>{rec.error ?? 'Reading stopped before it finished.'}</p>
-          <p className="small muted">The file is still stored on this device. Common causes: a password-protected PDF, a damaged file, or a browser that blocks WebAssembly.</p>
+          <p className="small muted">The file is still stored on this device. Common causes: a password-protected PDF, a damaged file, or a browser that blocks WebAssembly. If it cannot be read at all, choose <strong>Type a table</strong> above and type its subjects and grades.</p>
           <div className="row">
             <button className="btn primary" onClick={() => reread()}>
               <Icon name="redo" /> Try again

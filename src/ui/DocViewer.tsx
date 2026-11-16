@@ -9,6 +9,18 @@ interface Props {
   fileName: string;
 }
 
+/** The file a page came from, in a record made of several files. */
+function partName(doc: DocTokens, page: number): string {
+  return [...(doc.parts ?? [])].filter((p) => p.firstPage <= page).sort((a, b) => b.firstPage - a.firstPage)[0]?.name ?? '';
+}
+
+/** What a page without an image is: a typed table, a text file, or the text of a Word file. */
+function textKind(name: string): string {
+  if (/^typed table/i.test(name)) return 'typed by hand';
+  if (/\.(txt|csv|tsv)$/i.test(name)) return 'text file as read';
+  return 'text of the Word file as read';
+}
+
 export function DocViewer({ doc, previews, highlight, fileName }: Props) {
   const [zoom, setZoom] = useState(1);
   const urls = useMemo(() => previews.map((b) => (b ? URL.createObjectURL(b) : null)), [previews]);
@@ -68,7 +80,8 @@ export function DocViewer({ doc, previews, highlight, fileName }: Props) {
               </div>
               <div className="page-no">
                 Page {i + 1}
-                {!urls[i] && ' · text of the Word file as read'}
+                {doc.parts && doc.parts.length > 1 ? ` · ${partName(doc, i)}` : ''}
+                {!urls[i] && ` · ${textKind(doc.parts?.length ? partName(doc, i) : fileName)}`}
               </div>
             </div>
           );

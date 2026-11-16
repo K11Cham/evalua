@@ -5,6 +5,7 @@ import { OCR_MODELS, type OcrModelId } from '../ingest/ocrModels.ts';
 import { caseLabel, deleteCase, listCases, nextNumber, now, putCase, putDoc, STATUS_ORDER, STATUS_LABEL, uid, type CaseRecord, type CaseStatus } from '../store/db.ts';
 import { fmtDate, Icon, Stamp } from './bits.tsx';
 import { go, useApp } from './state.tsx';
+import { TypedTable } from './TypedTable.tsx';
 
 const HINTS: { id: OcrModelId | 'auto'; label: string }[] = [
   { id: 'auto', label: 'Detect automatically' },
@@ -26,6 +27,7 @@ export function Dashboard() {
   const [hint, setHint] = useState<OcrModelId | 'auto'>('auto');
   const [filter, setFilter] = useState<CaseStatus | 'all'>('all');
   const [error, setError] = useState('');
+  const [typing, setTyping] = useState(false);
   const input = useRef<HTMLInputElement>(null);
 
   useEffect(() => setDistrictId(settings.districtId), [settings.districtId]);
@@ -88,7 +90,7 @@ export function Dashboard() {
           <div style={{ display: 'grid', gap: 14 }}>
             <h2 id="new-h">New evaluation</h2>
             <p className="muted" style={{ margin: 0 }}>
-              Drop a transcript here, or choose a file: PDF, Word (.docx), or a photo or scan (JPG, PNG, HEIC). Several photos become the pages of one record.
+              Drop a transcript here, or choose a file: PDF, Word (.docx), a photo or scan (JPG, PNG, HEIC), or a .txt or .csv list of subjects and grades. Several photos become the pages of one record. If a record cannot be read, type its table instead.
             </p>
             <div className="grid2">
               <label className="field">
@@ -119,11 +121,25 @@ export function Dashboard() {
               <span className="small muted">
                 or press <kbd className="mono">N</kbd>
               </span>
+              <button className="btn" onClick={() => setTyping(true)} disabled={!ready} title="For a record that cannot be read, or that you only have on paper">
+                <Icon name="table" /> Type a table instead
+              </button>
               <a className="btn quiet" href="#/districts">
                 Set up my district
               </a>
             </div>
             <input ref={input} type="file" accept={ACCEPT} multiple className="sr-only" tabIndex={-1} aria-label="Choose transcript files" onChange={(e) => { void start([...(e.target.files ?? [])]); e.target.value = ''; }} />
+            {typing && (
+              <TypedTable
+                withStudent
+                action="Start the evaluation"
+                onClose={() => setTyping(false)}
+                onDone={(file) => {
+                  setTyping(false);
+                  void start([file]);
+                }}
+              />
+            )}
             {error && (
               <div className="notice error" role="alert">
                 {error}

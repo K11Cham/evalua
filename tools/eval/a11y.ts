@@ -59,6 +59,10 @@ for (const width of [1440, 820]) {
   await page.goto(`${BASE}/#/`);
   await page.waitForSelector('input[type=file]', { state: 'attached' });
   await check(page, 'cases (empty)', width);
+  await page.locator('button:has-text("Type a table instead")').click();
+  await page.waitForSelector('dialog.typed[open]');
+  await check(page, 'type a table', width);
+  await page.locator('dialog.typed button:has-text("Cancel")').click();
   await page.setInputFiles('input[type=file]', path.resolve('fixtures/fake/gm-termreport.pdf'));
   await page.waitForURL(/#\/case\//);
   await page.waitForSelector('#courses-h', { timeout: 180_000 });

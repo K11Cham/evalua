@@ -208,9 +208,16 @@ export function useCase(id: string, kb: KnowledgeBase, who: string): CaseState {
             };
             previews = [...d.previews, ...ing.previews];
           } else {
-            // The earlier reading failed: read everything together.
+            // The earlier reading failed: read everything together, or, if the earlier file still cannot be read,
+            // just the new ones (a typed table for a record that cannot be read, for example).
             setReading('Opening the files…');
-            const ing = await ingestMany(allFiles.map((f) => new File([f.blob], f.name, { type: f.type })), hint, setReading);
+            let ing: Awaited<ReturnType<typeof ingestMany>>;
+            try {
+              ing = await ingestMany(allFiles.map((f) => new File([f.blob], f.name, { type: f.type })), hint, setReading);
+            } catch {
+              ing = await ingestMany(fresh, hint, setReading);
+              ing.doc.warnings.push(`${d.files.map((f) => f.name).join(', ')} could not be read and is kept with the case as it is.`);
+            }
             tokens = ing.doc;
             previews = ing.previews;
           }

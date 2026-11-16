@@ -2,6 +2,7 @@
 import type { DocTokens, PageInfo } from '../core/types.ts';
 import { estimateSkew, SKEW_WIDTH } from './deskew.ts';
 import { docxHtmlToDoc } from './docx.ts';
+import { typedTextToDoc } from './typed.ts';
 import { OCR_MODELS, type OcrModelId } from './ocrModels.ts';
 import { segmentsToTokens } from './ocrTokens.ts';
 import { greyStretch, hasColouredInk } from './prepare.ts';
@@ -171,12 +172,19 @@ export async function ingestMany(files: File[], hint: OcrModelId | 'auto', progr
   return out;
 }
 
-export const ACCEPT ='.pdf,.docx,.jpg,.jpeg,.png,.heic,.heif,.webp,application/pdf,image/*,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+export const ACCEPT ='.pdf,.docx,.jpg,.jpeg,.png,.heic,.heif,.webp,.txt,.csv,.tsv,application/pdf,image/*,text/plain,text/csv,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+/** A typed table (from "Type a table") or a .txt / .csv / .tsv file: one subject and grade per line. */
+async function ingestText(file: Blob, name: string): Promise<Ingested> {
+  const text = await file.text();
+  return { doc: typedTextToDoc(text, name.startsWith('typed table') ? 'Typed by hand' : 'Text file'), previews: [null] };
+}
 
 export async function ingestFile(file: File, hint: OcrModelId | 'auto', progress: Progress): Promise<Ingested> {
   const name = file.name.toLowerCase();
   if (name.endsWith('.pdf') || file.type === 'application/pdf') return ingestPdf(file, hint, progress);
   if (name.endsWith('.docx')) return ingestDocx(file);
+  if (/\.(txt|csv|tsv)$/.test(name) || file.type === 'text/plain' || file.type === 'text/csv') return ingestText(file, name);
   if (name.endsWith('.doc')) throw new Error('Old .doc files are not supported. Save the file as .docx or PDF and try again.');
   if (name.endsWith('.heic') || name.endsWith('.heif') || /hei[cf]/.test(file.type)) {
     progress('Converting the HEIC photo…');
@@ -185,5 +193,5 @@ export async function ingestFile(file: File, hint: OcrModelId | 'auto', progress
     return ingestImage(jpeg, hint, progress);
   }
   if (file.type.startsWith('image/') || /\.(jpe?g|png|webp|bmp|gif)$/.test(name)) return ingestImage(file, hint, progress);
-  throw new Error('This file type is not supported. Use a PDF, a Word .docx file, or a JPG, PNG or HEIC image.');
+  throw new Error('This file type is not supported. Use a PDF, a Word .docx file, a JPG, PNG or HEIC image, or a .txt or .csv file with one subject and grade per line.');
 }
