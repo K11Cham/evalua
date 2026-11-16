@@ -16,10 +16,10 @@ The golden set is 36 files rendered from 21 **fictitious** records in `fixtures/
 | Measure | Result |
 |---|---|
 | Education system identified | 36/36 |
-| Student name | 32/36 |
+| Student name | 33/36 |
 | Date of birth | 33/36 |
 | Student ID | 34/36 |
-| School name | 32/34 |
+| School name | 33/34 |
 | Courses found (recall) | 98.1% (667/680) |
 | Rows that are not real courses | 6 |
 | Course name read exactly | 97.0% |
@@ -56,10 +56,10 @@ The golden set is 36 files rendered from 21 **fictitious** records in `fixtures/
 | Measure | Result |
 |---|---|
 | Education system identified | 19/19 |
-| Student name | 15/19 |
+| Student name | 16/19 |
 | Date of birth | 16/19 |
 | Student ID | 17/19 |
-| School name | 16/18 |
+| School name | 17/18 |
 | Courses found (recall) | 96.3% (337/350) |
 | Rows that are not real courses | 6 |
 | Course name read exactly | 94.1% |
@@ -107,7 +107,7 @@ The golden set is 36 files rendered from 21 **fictitious** records in `fixtures/
 | vn-hocba.pdf | PDF text layer | yes | yes | 23/23 | 0 | 100% | 100% | 100% | 100% |
 | vn-hocba.scan.jpg | PP-OCRv6 small (Latin, Chinese, Japanese) | yes | yes | 23/23 | 0 | 100% | 100% | 100% | 100% |
 | eg-thanaweya.pdf | PDF text layer | yes | yes | 7/7 | 0 | 100% | 100% | 100% | 100% |
-| eg-thanaweya.scan.png | PP-OCRv5 Arabic | yes | no | 6/7 | 0 | 50% | 100% | 100% | 33% |
+| eg-thanaweya.scan.png | PP-OCRv5 Arabic | yes | name only | 6/7 | 0 | 50% | 100% | 100% | 33% |
 | ru-attestat.pdf | PDF text layer | yes | yes | 14/14 | 0 | 100% | 100% | 100% | 100% |
 | ru-attestat.photo.jpg | PP-OCRv5 Cyrillic | yes | no | 11/14 | 2 | 100% | 100% | 82% | 100% |
 | in-hindi-board.scan.jpg | PP-OCRv5 Devanagari | yes | yes | 5/6 | 1 | 80% | 100% | 100% | 80% |
@@ -147,10 +147,8 @@ Every miss, so the weak spots are visible:
 
 **eg-thanaweya.scan.png**
 
-- student: got “”, want “يوسف أحمد عبد الرحمن الشناوي”
-- dob: got “” (), want 2007-04-25
-- id: got “”, want 318642
-- school: got “”
+- dob: got “” (٥ ٠), want 2007-04-25
+- id: got “1864”, want 318642
 - grade: اللغة العربية [الصف الثالث الثانوي] got “6”, want “68”
 - US grade: اللغة العربية (68) got F, want B
 - US grade: اللغة الأجنبية الأولى (الإنجليزية) (46) got F, want A

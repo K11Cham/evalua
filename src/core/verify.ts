@@ -81,7 +81,7 @@ export function verify(ex: Extraction, doc: DocTokens, tables: TableResult): Ver
 
 // Ids of the checks below. They are worked out again on every view, so a case read by an
 // earlier version, or a course the counselor has since edited, never shows a stale one.
-export const LIVE_FLAG = /^(grade-missing(-|$)|grade-lowconf(-|$)|name-lowconf(-|$)|grade-words-|untranslated$|gap-|level-unknown$|year-order-|age-|dup-)/;
+export const LIVE_FLAG = /^(grade-missing(-|$)|grade-lowconf(-|$)|name-lowconf(-|$)|grade-words-|name-unsure$|untranslated$|gap-|level-unknown$|year-order-|age-|dup-)/;
 
 /** Checks on the courses and student as they stand now, edits included. Run with each evaluation. */
 export function courseFlags(ex: Extraction): VerifyFlag[] {
@@ -126,6 +126,21 @@ export function courseFlags(ex: Extraction): VerifyFlag[] {
     add({ id: `name-lowconf-${c.id}`, severity: 'check', courseId: c.id, title: `Course name may be misread: ${nameOf(c)}`, detail: `Read with low confidence (${pct(c.name.confidence)}). Compare with the original.`, source: c.name.source });
   } else if (badNames.length > 1) {
     add({ id: 'name-lowconf', severity: 'check', courseIds: badNames.map((c) => c.id), title: `${badNames.length} course names may be misread`, detail: `Read with low confidence: ${list(badNames)}. Compare these with the original.`, source: badNames[0].name.source });
+  }
+  // A name read with low confidence, or with a word whose case changes mid-word the way OCR slips do
+  // ("DEEm" for "ADEYEMI"), is shown but marked for checking. Editing the name clears it.
+  const name = ex.student.name;
+  if (name.value && !name.edited) {
+    const odd = name.value.split(/\s+/).find((w) => /^\p{Lu}{2,}\p{Ll}+$/u.test(w) || /\p{Ll}\p{Lu}{2,}/u.test(w));
+    if (name.confidence < 0.8 || odd) {
+      add({
+        id: 'name-unsure',
+        severity: 'check',
+        title: 'Student name may be misread',
+        detail: odd ? `“${odd}” in “${name.value}” looks like a reading slip. Check the name against the original and correct it.` : `The name was read with low confidence (${pct(name.confidence)}). Check it against the original.`,
+        source: name.source,
+      });
+    }
   }
   const untranslated = ex.courses.filter((c) => c.translation === 'none');
   if (untranslated.length) {

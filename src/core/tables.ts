@@ -1,7 +1,7 @@
 // Table understanding: finds header bands, builds columns (including two-level "matrix" headers and
 // side-by-side tables), assigns body cells to columns and turns rows into raw course records.
 import { buildRows, rowText, type Cell, type Row } from './layout.ts';
-import { gradeFromWords, headerRole, isGradeLike, isPeriodLabel, isSummaryLabel, splitGrade, STUDENT_CLASS, type Role } from './lexicon.ts';
+import { gradeFromWords, headerRole, isGradeLike, isPeriodLabel, isSummaryLabel, labelWithoutColon, splitGrade, STUDENT_CLASS, type Role } from './lexicon.ts';
 import { key } from './text.ts';
 import type { DocTokens } from './types.ts';
 
@@ -57,7 +57,8 @@ function isHeaderCandidate(row: Row): boolean {
   let periods = 0;
   let hasName = false;
   for (const c of row.cells) {
-    if (!short(c) || /[:：]\s*\S/.test(c.text)) continue;
+    // "Name: …", or the same with the colon lost to OCR ("اسم الطالب يوسف أحمد"), is a field, not a heading.
+    if (!short(c) || /[:：]\s*\S/.test(c.text) || labelWithoutColon(c.text)) continue;
     const r = headerRole(c.text);
     if (r) {
       roles++;
@@ -161,7 +162,7 @@ function findBands(rows: Row[]): Band[] {
       !isDataRow(r) &&
       r.cells.every(
         (c) =>
-          c.text.length <= 40 && !/[:：]/.test(c.text) && !isPeriodLabel(c.text) && !/\d{3,}/.test(c.text) &&
+          c.text.length <= 40 && !/[:：]/.test(c.text) && !labelWithoutColon(c.text) && !isPeriodLabel(c.text) && !/\d{3,}/.test(c.text) &&
           anchor.some((a) => overlap(a.x, a.x + a.w, c.x, c.x + c.w) > 0.3 * Math.min(a.w, c.w)),
       );
     // Lines closer together than one line height belong to the same multi-line header cell row.

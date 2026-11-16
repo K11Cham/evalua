@@ -1,7 +1,7 @@
 // Extraction: positioned text → structured record (student, school, system, courses), with provenance.
 import type { Cell, Row } from './layout.ts';
 import { rowText } from './layout.ts';
-import { academicYear, detectTerm, genericLevel, gradeFromWords, infoField, infoFieldExact, isGradeLike, isPeriodLabel, looksLikeSchool, splitGrade, STUDENT_CLASS, termOf, type InfoField } from './lexicon.ts';
+import { academicYear, detectTerm, genericLevel, gradeFromWords, infoField, isGradeLike, isPeriodLabel, labelWithoutColon, looksLikeSchool, splitGrade, STUDENT_CLASS, termOf, type InfoField } from './lexicon.ts';
 import { buildMatcher, fixOcrNumerals } from './match.ts';
 import { readTables, type RawCourse, type TableResult } from './tables.ts';
 import { asciiDigits, displayName, dominantScript, key, parseDate, parseNumber, stripDiacritics } from './text.ts';
@@ -56,16 +56,8 @@ interface Pair {
 function splitLabel(text: string): { label: string; value: string } | null {
   const m = /^(.{1,70}?)\s*[:：]\s*(.*)$/.exec(text);
   if (m && !/^\d+$/.test(m[1])) return { label: m[1], value: m[2] };
-  // No colon (OCR often drops it): accept only an exact known label at the start. Single Latin words are
-  // too ambiguous ("STUDENT ACADEMIC TRANSCRIPT"), so those need at least two words.
-  const words = text.split(/\s+/);
-  for (let n = Math.min(6, words.length - 1); n >= 1; n--) {
-    const label = words.slice(0, n).join(' ');
-    const latin = /[A-Za-z]/.test(label);
-    if (latin && n < 2) continue;
-    if (infoFieldExact(label) !== 'other' && key(label).length >= 2) return { label, value: words.slice(n).join(' ') };
-  }
-  return null;
+  // No colon (OCR often drops it): only an exact known label at the start.
+  return labelWithoutColon(text);
 }
 
 function readInfo(rows: Row[], rtl: boolean): Pair[] {

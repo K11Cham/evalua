@@ -144,6 +144,21 @@ export function infoFieldExact(label: string): InfoField {
   return 'other';
 }
 
+/**
+ * A known field label at the start of a line without its colon (OCR often drops it), followed by a value:
+ * "اسم الطالب يوسف أحمد", "Fecha de nacimiento 21 de septiembre". A single Latin word is too ambiguous
+ * ("STUDENT ACADEMIC TRANSCRIPT"), so a Latin label needs at least two words.
+ */
+export function labelWithoutColon(text: string): { label: string; value: string } | null {
+  const words = text.trim().split(/\s+/);
+  for (let n = Math.min(6, words.length - 1); n >= 1; n--) {
+    const label = words.slice(0, n).join(' ');
+    if (/[A-Za-z]/.test(label) && n < 2) continue;
+    if (infoFieldExact(label) !== 'other' && key(label).length >= 2) return { label, value: words.slice(n).join(' ') };
+  }
+  return null;
+}
+
 const SCHOOL_WORDS = [
   'school', 'college', 'academy', 'institute', 'lycée', 'lycee', 'collège', 'gymnasium', 'gesamtschule', 'realschule', 'colégio', 'colegio', 'escola',
   'escuela', 'preparatoria', 'bachillerato', 'instituto', 'liceo', '中学', '高中', '学校', '고등학교', '중학교', 'trường', 'thpt', 'مدرسة', 'школа', 'лицей',

@@ -17,7 +17,7 @@ export function Report({ id }: { id: string }) {
   const ev = useMemo(() => (rec?.extraction ? evaluate(rec.extraction, kb, district, rec.overrides, rec.assume) : null), [rec, kb, district]);
 
   useEffect(() => {
-    if (rec?.extraction) document.title = `${caseLabel(rec)} ${rec.extraction.student.name.value} — transcript evaluation`;
+    if (rec?.extraction) document.title = `${caseLabel(rec)} ${rec.extraction.student.name.value || ''} — transcript evaluation`.replace('  ', ' ');
     return () => void (document.title = 'evalua');
   }, [rec]);
 
@@ -77,7 +77,7 @@ export function Report({ id }: { id: string }) {
         </header>
 
         <dl className="meta">
-          <div><dt>Student</dt><dd>{ex.student.name.value || '—'}</dd></div>
+          <div><dt>Student</dt><dd>{ex.student.name.value || 'Not found on the document'}</dd></div>
           <div><dt>Date of birth</dt><dd>{ex.student.dob.value || '—'}</dd></div>
           <div><dt>Student ID</dt><dd>{ex.student.id.value || '—'}</dd></div>
           <div><dt>Sending school</dt><dd lang={ex.language}>{ex.school.name.value || '—'}</dd></div>

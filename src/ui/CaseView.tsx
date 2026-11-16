@@ -93,7 +93,8 @@ export function CaseView({ id }: { id: string }) {
       </a>
       <div>
         <div className="case-no">{caseLabel(rec)}</div>
-        <h1>{ex?.student.name.value || rec.fileName}</h1>
+        {/* Never a file name in place of the student's name: a file name can be anything. */}
+        <h1 className={ex?.student.name.value ? '' : 'muted'}>{ex?.student.name.value || (ex ? 'Student name not found' : 'Not read yet')}</h1>
       </div>
       <Stamp status={rec.status} />
       <div className="case-actions">
