@@ -2,8 +2,11 @@
 // OCR runs here, off the main thread, entirely inside the browser. Models and the WebAssembly runtime are
 // loaded from this site's own /models and /ort folders: the image never leaves the device.
 import * as ort from 'onnxruntime-web';
-import { PaddleOcrService } from 'ppu-paddle-ocr/web';
+import { DetectionService, PaddleOcrService } from 'ppu-paddle-ocr/web';
+import { installBoxFilter } from './detectFix.ts';
 import { modelUrls, routeOcr, type OcrModelId, type OcrSegment } from './ocrModels.ts';
+
+installBoxFilter(DetectionService as unknown as Parameters<typeof installBoxFilter>[0]);
 
 const origin = self.location.origin;
 ort.env.wasm.wasmPaths = `${origin}/ort/`;

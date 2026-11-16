@@ -23,11 +23,16 @@ export function repairArabic(str: string): string {
   return fixRtl(visual).normalize('NFKC').replace(/ی/g, 'ي').replace(/ھ/g, 'ه').replace(/ک/g, 'ك');
 }
 
+// Right-to-left scripts (Hebrew, Arabic, and Arabic presentation forms).
+const RTL = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/;
+
 export function pdfItemsToTokens(items: PdfTextItem[], pageHeight: number, page: number): Token[] {
   const out: Token[] = [];
   // The PDF marks real word spaces itself: a narrow space item between words of one phrase, a wide one (or none)
   // between table columns. Words joined by a narrow space stay one token, whatever the font's spacing:
   // a typewriter font's spaces are as wide as a tight column gap, so gap widths alone cannot tell them apart.
+  // Right-to-left words are never joined here: items come in visual order and Arabic is repaired per item, so joining
+  // moved letters across word boundaries ("اللغا ةلعربية"); the layout step puts right-to-left words in order instead.
   let joinNext = false;
   for (const it of items) {
     const raw = it.str;
@@ -43,7 +48,7 @@ export function pdfItemsToTokens(items: PdfTextItem[], pageHeight: number, page:
     // Rotated text is a watermark or stamp, not part of the record's reading order.
     if (Math.abs(it.transform[1]) > 0.25 * Math.abs(it.transform[0] || 1)) continue;
     const last = out[out.length - 1];
-    if (joinNext && last) {
+    if (joinNext && last && !RTL.test(raw) && !RTL.test(last.text)) {
       const h0 = it.height || Math.abs(it.transform[3]) || 10;
       const x = it.transform[4];
       const y = pageHeight - it.transform[5] - h0;

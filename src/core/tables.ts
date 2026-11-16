@@ -423,7 +423,9 @@ function coursesFromGroup(cols: HCol[], idx: number[], grid: (Cell | undefined)[
       if (isPeriodLabel(e.cells[nameIdx]!.text) || isSummaryLabel(e.cells[nameIdx]!.text)) continue;
       const toNext = next && near(e, next) && (!hasName(next) || CONNECTOR_END.test(e.cells[nameIdx]!.text)) && hasValue(next);
       const toPrev = prev && near(prev, e) && hasName(prev);
-      if (toNext && (!toPrev || !hasName(next) || CONNECTOR_END.test(e.cells[nameIdx]!.text))) {
+      // When it could belong to either, it belongs to the row it is closer to: a name's last line sits right under it.
+      const closerToPrev = toPrev && toNext && e.y - prev.y < (next.y - e.y) * 0.6;
+      if (toNext && !closerToPrev && (!toPrev || !hasName(next) || CONNECTOR_END.test(e.cells[nameIdx]!.text))) {
         entries[k + 1] = { ...next, cells: next.cells.slice() };
         joinName(entries[k + 1], e, true);
         continue;
@@ -571,11 +573,18 @@ export function readTables(doc: DocTokens): TableResult {
         single && !!nameCol && !!next && next.page === r.page && Math.abs(next.y - r.y) < Math.max(next.h, r.h) * 1.7 && isDataRow(next) &&
         // Subject names start at the column's left edge; the heading ("Matières") can be far narrower than they are.
         r.cells[0].x >= nameCol.x0 - r.h * 1.5 && r.cells[0].x <= nameCol.x1 && !/[.。;:：]\s*$/.test(r.cells[0].text);
-      if (wrappedName) {
-        if (r.page === prev.page && seg.rows.length) pitches.push(r.y - prev.y);
+      // …and its last line can also drop below the row with the marks ("Spécialité Sciences de la vie et de la" with its
+      // marks, then "Terre"). That line sits much closer to the row above than rows sit to each other; a heading for
+      // the next group sits at least a full row away, so it is never taken for the end of a name.
+      const rowPitch = pitches.length ? [...pitches].sort((a, b2) => a - b2)[Math.floor(pitches.length / 2)] : 0;
+      const wrappedTail =
+        single && !!nameCol && count > 0 && prev.page === r.page && isDataRow(prev) && r.y - prev.y < Math.max(prev.h, r.h) * 1.7 && (!rowPitch || r.y - prev.y < rowPitch * 0.75) &&
+        r.cells[0].x >= nameCol.x0 - r.h * 1.5 && r.cells[0].x <= nameCol.x1 && !/[.。;:：]\s*$/.test(r.cells[0].text) && !isPeriodLabel(r.cells[0].text) && letters(r.cells[0].text) >= 2;
+      if (wrappedName || wrappedTail) {
+        if (r.page === prev.page && seg.rows.length && !wrappedTail) pitches.push(r.y - prev.y);
         seg.rows.push(r);
         bodyIdx.push(i);
-        prev = r;
+        prev = wrappedTail ? prev : r;
         lastIdx = i;
         continue;
       }
@@ -584,6 +593,11 @@ export function readTables(doc: DocTokens): TableResult {
         const c0 = r.cells[0];
         const inSideColumn = band.cols.some((c) => c.role !== 'name' && c.role !== 'code' && overlap(c.x0, c.x1, c0.x, c0.x + c0.w) > 0.6 * c0.w) && !band.cols.some((c) => c.role === 'name' && overlap(c.x0, c.x1, c0.x, c0.x + c0.w) > 0);
         if (inSideColumn && r.page === prev.page && r.y - prev.y < Math.max(prev.h, r.h) * 2.2) continue;
+      }
+      // A row made only of text far taller than the table's own (a letter of a watermark or a seal) is not a course.
+      if (count >= 2) {
+        const rowH = [...seg.rows.map((x) => x.h)].sort((a, b2) => a - b2)[Math.floor(seg.rows.length / 2)] ?? r.h;
+        if (r.cells.every((c) => c.h > rowH * 2.6)) continue;
       }
       // Page furniture (a printed web address, "1/2", a print timestamp) is never part of a table.
       const furniture = r.cells.some((c) => /https?:\/\/|www\./i.test(c.text)) || r.cells.every((c) => /^\s*(page\s*)?\d{1,3}\s*(\/|of)\s*\d{1,3}\s*$/i.test(c.text));

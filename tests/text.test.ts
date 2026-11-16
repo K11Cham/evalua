@@ -43,3 +43,12 @@ describe('text', () => {
     expect(sameName('Hernández Zavala Diego Alejandro', 'Diego Alejandro Hernández Zavala')).toBe(true);
   });
 });
+
+describe('words OCR ran together', () => {
+  it('splits them for matching, but keeps a case slip inside one word whole', () => {
+    expect(key('Brikama Lantern Senior SecondarySchool')).toBe('brikama lantern senior secondary school');
+    expect(key('State ofOrigin')).toBe('state of origin');
+    expect(key('OChO')).toBe('ocho');
+    expect(key('McDonald')).toBe('mcdonald');
+  });
+});

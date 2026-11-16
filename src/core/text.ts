@@ -28,6 +28,9 @@ export function stripDiacritics(s: string): string {
  */
 export function key(s: string): string {
   return stripDiacritics(asciiDigits(s))
+    // Words OCR ran together ("SecondarySchool", "StateofOrigin") are split where a word meets a capitalised word.
+    // Both sides must look like words, so an OCR case slip inside one word ("OChO", "McDonald") stays whole.
+    .replace(/(?<=\p{Ll}{2})(?=\p{Lu}\p{Ll}{2})/gu, ' ')
     .toLowerCase()
     .replace(/[ـ‌-‏ً-ْ]/g, '') // tatweel, bidi marks, Arabic vowel marks
     .replace(/[أإآٱ]/g, 'ا')

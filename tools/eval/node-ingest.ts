@@ -1,19 +1,27 @@
 // Node version of the browser ingest: same shared code, with Node-side PDF rendering and ONNX runtime.
 // Used by the golden-set evaluation and unit-test fixtures.
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import type { DocTokens, Token } from '../../src/core/types.ts';
 import { docxHtmlToDoc } from '../../src/ingest/docx.ts';
 import { modelUrls, OCR_MODELS, routeOcr, type OcrModelId, type OcrSegment } from '../../src/ingest/ocrModels.ts';
 import { segmentsToTokens } from '../../src/ingest/ocrTokens.ts';
+import { installBoxFilter } from '../../src/ingest/detectFix.ts';
+import { typedTextToDoc } from '../../src/ingest/typed.ts';
 import { greyStretch, hasColouredInk } from '../../src/ingest/prepare.ts';
 import { estimateSkew, SKEW_WIDTH } from '../../src/ingest/deskew.ts';
 import { looksScanned, pdfItemsToTokens, type PdfTextItem } from '../../src/ingest/pdfText.ts';
 
 const HF_BASE = 'https://huggingface.co/snowfluke/ppu-paddle-ocr-models/resolve/main';
 const CACHE = path.resolve('tools/eval/.cache');
-const INGEST_VERSION = 'v10';
+// The cache key covers the reader's own code as well as the file, so a change to how documents are read can never be
+// hidden behind an old cached read (it once was: an Arabic text-layer regression went unseen for two sessions).
+const READER_SOURCES = [
+  ...readdirSync(path.resolve('src/ingest')).filter((f) => f.endsWith('.ts')).map((f) => path.join('src/ingest', f)),
+  'tools/eval/node-ingest.ts',
+];
+const INGEST_VERSION = createHash('sha1').update(READER_SOURCES.sort().map((f) => readFileSync(path.resolve(f))).join('\0')).update(JSON.stringify(Object.keys(OCR_MODELS))).digest('hex').slice(0, 12);
 
 interface OcrService {
   recognize(image: ArrayBuffer): Promise<{ lines: OcrSegment[][] }>;
@@ -24,7 +32,8 @@ const services = new Map<OcrModelId, OcrService>();
 async function service(id: OcrModelId): Promise<OcrService> {
   let s = services.get(id);
   if (!s) {
-    const { PaddleOcrService } = await import('ppu-paddle-ocr');
+    const { DetectionService, PaddleOcrService } = await import('ppu-paddle-ocr');
+    installBoxFilter(DetectionService as unknown as Parameters<typeof installBoxFilter>[0]);
     const svc = new PaddleOcrService({ model: modelUrls(HF_BASE, id) });
     await svc.initialize();
     s = svc as unknown as OcrService;
@@ -111,7 +120,7 @@ export async function ingestFile(file: string, useCache = true): Promise<DocToke
   const cached = path.join(CACHE, `${path.basename(file)}.${hash}.json`);
   if (useCache && existsSync(cached)) return JSON.parse(readFileSync(cached, 'utf8')) as DocTokens;
   const ext = path.extname(file).toLowerCase();
-  const doc = ext === '.pdf' ? await ingestPdf(file) : ext === '.docx' ? await ingestDocx(file) : await ingestImage(file);
+  const doc = ext === '.pdf' ? await ingestPdf(file) : ext === '.docx' ? await ingestDocx(file) : ['.txt', '.csv', '.tsv'].includes(ext) ? typedTextToDoc(readFileSync(file, 'utf8'), 'Text file') : await ingestImage(file);
   // Only the fictitious fixtures are cached. Anything else (a real record being debugged) is never written to disk.
   if (useCache && path.resolve(file).startsWith(path.resolve('fixtures/fake'))) {
     mkdirSync(CACHE, { recursive: true });

@@ -20,16 +20,16 @@ The golden set is 36 files rendered from 21 **fictitious** records in `fixtures/
 | Date of birth | 33/36 |
 | Student ID | 34/36 |
 | School name | 33/34 |
-| Courses found (recall) | 98.1% (667/680) |
-| Rows that are not real courses | 6 |
-| Course name read exactly | 97.0% |
-| Grade correct (of courses found) | 99.3% |
+| Courses found (recall) | 99.1% (674/680) |
+| Rows that are not real courses | 4 |
+| Course name read exactly | 97.3% |
+| Grade correct (of courses found) | 99.7% |
 | Credits correct (where printed) | 100.0% |
 | Hours correct (where printed) | 100.0% |
-| US grade level correct | 99.9% |
+| US grade level correct | 100.0% |
 | Subject matched to the expected concept | 99.7% |
-| US letter grade correct | 99.3% |
-| English name close to the reference translation | 96.1% |
+| US letter grade correct | 99.1% |
+| English name close to the reference translation | 95.9% |
 
 ## Text PDFs and Word files (17)
 
@@ -60,16 +60,16 @@ The golden set is 36 files rendered from 21 **fictitious** records in `fixtures/
 | Date of birth | 16/19 |
 | Student ID | 17/19 |
 | School name | 17/18 |
-| Courses found (recall) | 96.3% (337/350) |
-| Rows that are not real courses | 6 |
-| Course name read exactly | 94.1% |
-| Grade correct (of courses found) | 98.5% |
+| Courses found (recall) | 98.3% (344/350) |
+| Rows that are not real courses | 4 |
+| Course name read exactly | 94.8% |
+| Grade correct (of courses found) | 99.4% |
 | Credits correct (where printed) | 100.0% |
 | Hours correct (where printed) | 100.0% |
-| US grade level correct | 99.7% |
+| US grade level correct | 100.0% |
 | Subject matched to the expected concept | 99.4% |
-| US letter grade correct | 98.5% |
-| English name close to the reference translation | 95.5% |
+| US letter grade correct | 98.3% |
+| English name close to the reference translation | 95.2% |
 
 ## Per file
 
@@ -97,7 +97,7 @@ The golden set is 36 files rendered from 21 **fictitious** records in `fixtures/
 | cn-gaozhong.photo.jpg | PP-OCRv6 small (Latin, Chinese, Japanese) | yes | yes | 56/56 | 0 | 100% | 100% | 100% | 100% |
 | mx-sep.pdf | PDF text layer | yes | yes | 36/36 | 0 | 100% | 100% | 100% | 100% |
 | mx-sep.photo.jpg | PP-OCRv6 small (Latin, Chinese, Japanese) | yes | yes | 36/36 | 0 | 100% | 100% | 100% | 100% |
-| fr-lycee.scan.pdf | PP-OCRv6 small (Latin, Chinese, Japanese) | yes | yes | 22/29 | 1 | 95% | 95% | 100% | 100% |
+| fr-lycee.scan.pdf | PP-OCRv6 small (Latin, Chinese, Japanese) | yes | yes | 29/29 | 0 | 100% | 100% | 100% | 100% |
 | de-gymnasium.pdf | PDF text layer | yes | yes | 22/22 | 0 | 100% | 100% | 100% | 100% |
 | de-gymnasium.docx | Word document text | yes | yes | 22/22 | 0 | 100% | 100% | 100% | 100% |
 | br-historico.scan.jpg | PP-OCRv6 small (Latin, Chinese, Japanese) | yes | yes | 35/35 | 1 | 100% | 100% | 100% | 100% |
@@ -107,10 +107,10 @@ The golden set is 36 files rendered from 21 **fictitious** records in `fixtures/
 | vn-hocba.pdf | PDF text layer | yes | yes | 23/23 | 0 | 100% | 100% | 100% | 100% |
 | vn-hocba.scan.jpg | PP-OCRv6 small (Latin, Chinese, Japanese) | yes | yes | 23/23 | 0 | 100% | 100% | 100% | 100% |
 | eg-thanaweya.pdf | PDF text layer | yes | yes | 7/7 | 0 | 100% | 100% | 100% | 100% |
-| eg-thanaweya.scan.png | PP-OCRv5 Arabic | yes | name only | 6/7 | 0 | 50% | 100% | 100% | 33% |
+| eg-thanaweya.scan.png | PP-OCRv5 Arabic | yes | name only | 5/7 | 0 | 80% | 100% | 100% | 0% |
 | ru-attestat.pdf | PDF text layer | yes | yes | 14/14 | 0 | 100% | 100% | 100% | 100% |
 | ru-attestat.photo.jpg | PP-OCRv5 Cyrillic | yes | no | 11/14 | 2 | 100% | 100% | 82% | 100% |
-| in-hindi-board.scan.jpg | PP-OCRv5 Devanagari | yes | yes | 5/6 | 1 | 80% | 100% | 100% | 80% |
+| in-hindi-board.scan.jpg | PP-OCRv5 Devanagari | yes | yes | 6/6 | 0 | 83% | 100% | 100% | 83% |
 
 ## What went wrong
 
@@ -126,20 +126,7 @@ Every miss, so the weak spots are visible:
 - dob: got “” (), want 2006-11-14
 - id: got “”, want 202550418837FA
 - missing: CHEMISTRY [UTME 2025]
-- extra row: “A” = “STRY”
-
-**fr-lycee.scan.pdf**
-
-- grade: Enseignement moral et civique [Classe de Seconde générale et technologique — Année scolaire 2022-2023] got “14.5”, want “15,0”
-- level: Enseignement moral et civique [Classe de Seconde générale et technologique — Année scolaire 2022-2023] got 11, want 10
-- missing: Enseignement moral et civique [Classe de Première générale — Année scolaire 2023-2024]
-- missing: Spécialité Physique-Chimie [Classe de Première générale — Année scolaire 2023-2024]
-- missing: Spécialité Sciences de la vie et de la Terre [Classe de Première générale — Année scolaire 2023-2024]
-- missing: LVB Espagnol [Classe de Terminale générale — Année scolaire 2024-2025]
-- missing: Éducation physique et sportive [Classe de Terminale générale — Année scolaire 2024-2025]
-- missing: Spécialité Physique-Chimie [Classe de Terminale générale — Année scolaire 2024-2025]
-- missing: Spécialité Sciences de la vie et de la Terre [Classe de Terminale générale — Année scolaire 2024-2025]
-- extra row: “neignementmra tleti” = “15,0 1”
+- extra row: “CHEMISTRY AGGREGA f10” = “66”
 
 **br-historico.scan.jpg**
 
@@ -147,16 +134,16 @@ Every miss, so the weak spots are visible:
 
 **eg-thanaweya.scan.png**
 
-- dob: got “” (٥ ٠), want 2007-04-25
-- id: got “1864”, want 318642
-- grade: اللغة العربية [الصف الثالث الثانوي] got “6”, want “68”
-- US grade: اللغة العربية (68) got F, want B
+- dob: got “” (), want 2007-04-25
+- id: got “31864”, want 318642
+- missing: اللغة العربية [الصف الثالث الثانوي]
 - US grade: اللغة الأجنبية الأولى (الإنجليزية) (46) got F, want A
-- grade: اللغة الأجنبية الثانية (الفرنسية) [الصف الثالث الثانوي] got “Y”, want “34”
-- US grade: اللغة الأجنبية الثانية (الفرنسية) (34) got null, want B
+- US grade: اللغة الأجنبية الثانية (الفرنسية) (34) got F, want B
 - grade: الكيمياء [الصف الثالث الثانوي] got “4”, want “44”
 - US grade: الكيمياء (44) got F, want B
+- US grade: الفيزياء (39) got F, want B
 - missing: الأحياء [الصف الثالث الثانوي]
+- US grade: الجيولوجيا وعلوم البيئة (49) got F, want B
 
 **ru-attestat.photo.jpg**
 
@@ -175,6 +162,4 @@ Every miss, so the weak spots are visible:
 
 - grade: संस्कृत [कक्षा १०] got “ll”, want “88”
 - US grade: संस्कृत (88) got null, want B
-- missing: सामाजिक विज्ञान [कक्षा १०]
-- extra row: “सामाजिक वि्ान परीक्राफल० त् णप्रथम” = “84”
 
