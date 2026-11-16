@@ -6,9 +6,11 @@ Helps US school counselors and registrars evaluate transcripts from internationa
 
 A counselor opens a transcript in any format and language. evalua reads it, structures it, maps each course to the receiving district's graduation requirements, and suggests credit. Every suggestion shows what it matched, why, how confident it is, and the source it relied on, so the counselor can confirm or change it. Credit for coursework done abroad is local policy, so evalua suggests and a person decides.
 
-![The review workspace: the original document beside the extracted courses, with the reasoning for one suggestion open](docs/screenshots/review.png)
+![A fictitious Gambian second-term report evaluated at Jefferson County Public Schools: the original beside the courses read from it, with the reasoning for Mathematics open — two of three terms documented, counted as Geometry, half a credit](docs/screenshots/review.png)
 
-More screenshots: [case list](docs/screenshots/cases.png), [report](docs/screenshots/report.png). All data shown is fictitious.
+![Placement for the same record: which US mathematics courses its system is expected to have covered by the second term of grade 11, and where to continue](docs/screenshots/placement.png)
+
+More screenshots: [case list](docs/screenshots/cases.png), [report](docs/screenshots/report.png). All data shown is fictitious. `npx tsx tools/eval/hero.ts` retakes the two above.
 
 ## What it does
 
