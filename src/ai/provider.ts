@@ -17,19 +17,22 @@ export interface AiProvider {
   translateCourses(names: string[], language: string, system: string): Promise<CourseTranslation[]>;
 }
 
+// Measured with qwen2.5-coder 7B and 14B on OCR-damaged Russian names ("Фиика", "Бнодогия"): without the note on
+// OCR slips and the numbered answers, the model guessed other subjects and answers could not be matched safely.
 const PROMPT = (names: string[], language: string, system: string) =>
-  `These are course names from a school transcript (${system}; language code ${language}). ` +
-  `Translate each into the plain English course name a US school registrar would use. Keep course numbers and levels (I, II, HL). ` +
-  `Do not explain. Answer with JSON only, in this exact shape: {"translations":[{"original":"…","english":"…"}]}\n\n` +
+  `These are course names from a school transcript (${system}; language code ${language}). They may have been read by OCR, which can change or drop a letter, so read each as the closest real school subject in that language. ` +
+  `Give the plain English course name a US school registrar would use, keeping a course number or level only when one is printed (I, II, HL); never add one. If you are not sure, give an empty string. ` +
+  `Do not explain. Answer with JSON only, in this exact shape: {"translations":[{"n":1,"original":"…","english":"…"}]}\n\n` +
   names.map((n, i) => `${i + 1}. ${n}`).join('\n');
 
 function parse(text: string, names: string[]): CourseTranslation[] {
   const json = /\{[\s\S]*\}/.exec(text)?.[0];
   if (!json) throw new Error('The model did not answer in the expected format.');
-  const data = JSON.parse(json) as { translations?: { original?: string; english?: string }[] };
+  const data = JSON.parse(json) as { translations?: { n?: number; original?: string; english?: string }[] };
   const list = data.translations ?? [];
   return names.map((n, i) => {
-    const hit = list.find((t) => t.original === n) ?? list[i];
+    // By the number asked for, then by the name as given; by position only when the list is complete.
+    const hit = list.find((t) => t.n === i + 1) ?? list.find((t) => t.original === n) ?? (list.length === names.length ? list[i] : undefined);
     const english = (hit?.english ?? '').trim();
     // Reject answers that are not plausibly a course name.
     return { original: n, english: english.length > 0 && english.length <= 90 && !/\n/.test(english) ? english : '' };
