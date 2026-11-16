@@ -56,11 +56,11 @@ export function CaseView({ id }: { id: string }) {
   const locked = rec.status === 'finalised';
   const show = (s?: SourceRef) => s && setHighlight({ ...s });
   // From an item that lists several courses: bring that row into view, put the cursor in its grade and show it on the original.
-  const goToCourse = (id: string) => {
-    const row = document.getElementById(`course-${id}`);
+  const goToCourse = (courseId: string) => {
+    const row = document.getElementById(`course-${courseId}`);
     row?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     row?.querySelector<HTMLInputElement>('input.grade')?.focus({ preventScroll: true });
-    show(ex?.courses.find((c) => c.id === id)?.grade.source);
+    show(ex?.courses.find((c) => c.id === courseId)?.grade.source);
   };
 
   // ── edits ──

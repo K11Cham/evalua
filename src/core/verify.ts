@@ -150,8 +150,8 @@ export function courseFlags(ex: Extraction): VerifyFlag[] {
   // Years: gaps and ordering.
   const levels = [...new Set(ex.courses.map((c) => c.level).filter((l): l is number => l != null))].sort((a, b) => a - b);
   for (let i = 0; i + 1 < levels.length; i++) {
-    for (let missing = levels[i] + 1; missing < levels[i + 1]; missing++) {
-      add({ id: `gap-${missing}`, severity: 'important', title: `No courses found for grade ${missing}`, detail: `Courses were read for grade ${levels[i]} and grade ${levels[i + 1]} but none in between. A page or a year of the record may be missing.` });
+    for (let gap = levels[i] + 1; gap < levels[i + 1]; gap++) {
+      add({ id: `gap-${gap}`, severity: 'important', title: `No courses found for grade ${gap}`, detail: `Courses were read for grade ${levels[i]} and grade ${levels[i + 1]} but none in between. A page or a year of the record may be missing.` });
     }
   }
   if (ex.courses.length && ex.courses.some((c) => c.level == null)) {
