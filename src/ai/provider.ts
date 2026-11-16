@@ -39,6 +39,29 @@ function parse(text: string, names: string[]): CourseTranslation[] {
   });
 }
 
+// A browser gives no reason when a request to this computer fails, so name the three things that block it. Checked on
+// the live site: Ollama refuses a page whose address is not in OLLAMA_ORIGINS, and Chrome asks before a website may
+// reach apps on this device (Local Network Access) and fails the request if the answer is Block.
+export const OLLAMA_UNREACHABLE =
+  'Could not reach Ollama. Check three things: that Ollama is running on this computer; that its OLLAMA_ORIGINS setting includes this page’s address (then quit and restart Ollama); and that this browser may reach apps on this device. If the browser asked, choose Allow; if it was blocked, allow it again in the site settings (the icon left of the address).';
+
+/** fetch, with a network failure turned into a message that says what to check. */
+async function reach(url: string, init?: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init);
+  } catch {
+    throw new Error(OLLAMA_UNREACHABLE);
+  }
+}
+
+/** The models installed in Ollama at `url`. */
+export async function ollamaModels(url: string): Promise<string[]> {
+  const res = await reach(`${url.replace(/\/$/, '')}/api/tags`);
+  if (!res.ok) throw new Error(`Ollama answered with an error (${res.status}).`);
+  const j = (await res.json()) as { models?: { name: string }[] };
+  return (j.models ?? []).map((m) => m.name);
+}
+
 /** A model running on the counselor's own computer through Ollama. Nothing leaves the machine. */
 export function ollamaProvider(url: string, model: string): AiProvider {
   const base = url.replace(/\/$/, '');
@@ -46,7 +69,7 @@ export function ollamaProvider(url: string, model: string): AiProvider {
     id: 'ollama',
     label: `${model} on this computer (Ollama)`,
     async translateCourses(names, language, system) {
-      const res = await fetch(`${base}/api/chat`, {
+      const res = await reach(`${base}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model, stream: false, format: 'json', options: { temperature: 0 }, messages: [{ role: 'user', content: PROMPT(names, language, system) }] }),

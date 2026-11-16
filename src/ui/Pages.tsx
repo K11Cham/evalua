@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { listCases, wipeAll, getDoc } from '../store/db.ts';
 import { download } from '../export/csv.ts';
+import { OLLAMA_UNREACHABLE, ollamaModels } from '../ai/provider.ts';
 import { go, useApp } from './state.tsx';
 
 export function Privacy() {
@@ -69,12 +70,10 @@ export function Settings() {
   const testOllama = async () => {
     setAiStatus('Checking…');
     try {
-      const r = await fetch(`${s.ollamaUrl.replace(/\/$/, '')}/api/tags`);
-      const j = (await r.json()) as { models?: { name: string }[] };
-      const names = (j.models ?? []).map((m) => m.name);
+      const names = await ollamaModels(s.ollamaUrl);
       setAiStatus(names.length ? `Connected. Models on this computer: ${names.join(', ')}` : 'Connected, but no models are installed.');
-    } catch {
-      setAiStatus('Could not reach Ollama. Start it on this computer and allow this site: set the environment variable OLLAMA_ORIGINS to this page’s address, then restart Ollama.');
+    } catch (e) {
+      setAiStatus(e instanceof Error ? e.message : OLLAMA_UNREACHABLE);
     }
   };
   const exportAll = async () => {
@@ -115,6 +114,9 @@ export function Settings() {
         <h2>Optional: language model on this computer</h2>
         <p className="small">
           evalua works without a model, using rules and dictionaries. If you run <a href="https://ollama.com" target="_blank" rel="noreferrer noopener">Ollama</a> on this computer, evalua can ask it to translate course names the dictionaries do not cover. The text goes only to your own machine.
+        </p>
+        <p className="small">
+          To set it up: install a model (qwen2.5-coder:7b translated best in our tests), set Ollama’s OLLAMA_ORIGINS setting to <code>{window.location.origin}</code> (on Windows: <code>setx OLLAMA_ORIGINS "{window.location.origin}"</code>), quit and restart Ollama, then press Test connection. If the browser asks whether this site may reach apps on this device, choose Allow.
         </p>
         <div className="grid2">
           <label className="field">
