@@ -219,8 +219,16 @@ export function displayName(raw: string): string {
       .map((w) => (initials(w) ? w.toUpperCase() : w.toLowerCase().replace(/(^|[-'’])(\p{L})/gu, (_m, a: string, b: string) => a + b.toUpperCase())))
       .join(' ');
   } else {
-    // Mixed case with a shouting surname: "Akosua Serwaa MENSAH"
-    s = s.replace(/\b(\p{Lu}{2,})\b/gu, (w) => w[0] + w.slice(1).toLowerCase());
+    // Mixed case with a shouting surname: "Akosua Serwaa MENSAH", or one OCR read with a stray small letter ("OsORIO").
+    s = s
+      .split(' ')
+      .map((w) => {
+        const ls = [...w].filter((ch) => /\p{L}/u.test(ch));
+        const up = ls.filter((ch) => /\p{Lu}/u.test(ch)).length;
+        if (initials(w) || ls.length < 2 || up < 2 || up < ls.length * 0.6) return w;
+        return w.toLowerCase().replace(/(^|[-'’])(\p{L})/gu, (_m, a: string, b: string) => a + b.toUpperCase());
+      })
+      .join(' ');
   }
   return s;
 }

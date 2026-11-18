@@ -52,3 +52,12 @@ describe('words OCR ran together', () => {
     expect(key('McDonald')).toBe('mcdonald');
   });
 });
+
+describe('display names from OCR', () => {
+  it('title-cases a surname in capitals even when OCR misread one letter as small', () => {
+    expect(displayName('RESTREPO OsORIO, Valentina')).toBe('Valentina Restrepo Osorio');
+    expect(displayName('Lucía Belén GIMéNEZ')).toBe('Lucía Belén Giménez');
+    expect(displayName('Akosua Serwaa MENSAH')).toBe('Akosua Serwaa Mensah');
+    expect(displayName('Touray M.L Amie')).toBe('Touray M.L Amie');
+  });
+});
