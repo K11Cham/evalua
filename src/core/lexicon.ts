@@ -12,17 +12,19 @@ const ROLE_TERMS: Record<Role, string[]> = {
     'asignatura', 'asignaturas', 'materia', 'materias', 'unidad de aprendizaje', 'matière', 'matières', 'discipline', 'disciplines', 'enseignements',
     'fach', 'fächer', 'componente curricular', 'componentes curriculares', 'disciplina', 'disciplinas',
     '科目', '课程', '課程', '学科', '과목', '교과목', 'môn học', 'môn', 'विषय', 'المادة', 'المواد', 'المواد الدراسية',
-    'наименование учебных предметов', 'учебные предметы', 'предмет', 'предметы', 'title', 'description', 'mata pelajaran', 'somo', 'ders',
+    'наименование учебных предметов', 'учебные предметы', 'предмет', 'предметы', 'unidad curricular', 'área curricular', 'áreas curriculares', 'área asignatura', 'áreas asignaturas', 'espacio curricular', 'espacios curriculares', 'materias cursadas', 'title', 'description', 'mata pelajaran', 'somo', 'ders',
   ],
   final: [
     'final grade', 'sem final grade', 'final', 'final mark', 'cả năm', 'nota final', 'calificación final', 'promedio final', 'média final',
     'média anual', 'moyenne annuelle', 'total', 'итоговая отметка', 'итоговая оценка', '学年成绩', '总评', '总评成绩', 'annual', 'year mark',
     'final score', 'overall', 'endnote', 'jahresnote', 'điểm tổng kết', 'tb cả năm', '학년말',
+    'definitiva', 'nota definitiva', 'calificación definitiva', 'promedio anual', 'nota promocional', 'calificación anual', 'nota de promoción', 'resultado final',
   ],
   grade: [
     'grade', 'grades', 'calif', 'calificación', 'calificaciones', 'nota', 'notas', 'note', 'noten', 'moyenne élève', 'moyenne', 'note punkte', 'punkte',
     '成绩', '成績', '分数', '得分', '评定', '성취도', '성적', 'điểm', 'प्राप्तांक', 'درجة الطالب', 'الدرجة', 'درجة', 'التقدير', 'отметка', 'оценка',
     'mark', 'marks', 'marks obtained', 'result', 'resultado', 'conceito', 'média', 'promedio', 'media', 'nilai', 'alama', 'not',
+    'valoración', 'cuantitativa', 'nota numérica', 'puntaje', 'calificación numérica', 'nota cuantitativa', 'moy',
   ],
   score: ['score', 'percentage', 'percent', '원점수', '원점수 과목평균', 'raw score', 'points', 'pontos', 'puntos', '百分制'],
   component: [
@@ -33,10 +35,10 @@ const ROLE_TERMS: Record<Role, string[]> = {
     '期中', '期末', '平时', '중간', '기말', 'thường xuyên', 'giữa kỳ', 'cuối kỳ',
   ],
   credits: ['credits', 'credit', 'créditos', 'crédits', 'units', 'unit', 'unit value', '단위수', '이수단위', '학점', '学分', '學分', 'tín chỉ', 'кредиты', 'credit hours', 'ects', 'sks', 'kredit'],
-  hours: ['hours', 'horas', 'carga horária', 'carga horaria', 'c h', 'ch', 'heures', 'stunden', 'wochenstunden', '课时', '学时', '시수', 'số tiết', 'часы', 'hrs', 'periods', 'hours per week', 'h sem'],
+  hours: ['hours', 'horas', 'intensidad horaria', 'i h', 'ih', 'horas semanales', 'horas anuales', 'carga horária', 'carga horaria', 'c h', 'ch', 'heures', 'stunden', 'wochenstunden', '课时', '学时', '시수', 'số tiết', 'часы', 'hrs', 'periods', 'hours per week', 'h sem'],
   max: ['maximum marks', 'max marks', 'max', 'maximum', 'full marks', 'النهاية العظمى', 'الدرجة العظمى', 'पूर्णांक', 'out of', '满分', 'puntos posibles'],
   min: ['minimum', 'min marks', 'minimum marks', 'pass marks', 'pass mark', 'النهاية الصغرى', 'الدرجة الصغرى', 'न्यूनतम'],
-  words: ['in words', 'total in words', 'letra', 'en letra', 'con letra', 'por extenso', 'en toutes lettres', 'in worten'],
+  words: ['in words', 'total in words', 'letra', 'en letra', 'con letra', 'por extenso', 'en toutes lettres', 'in worten', 'en letras', 'literal', 'cualitativa', 'desempeño', 'juicio valorativo', 'nivel de desempeño', 'nivel de logro'],
   code: ['code', 'sub code', 'subject code', 'course code', 'clave', 'código', 'no', 's n', 'sn', 'sl no', '序号', '编号', '번호', 'stt', 'م', 'п п', 'nr'],
   qualifier: ['level', 'niveau', 'qualification', 'type', 'indicate if subject is core applied or specialized', 'indicate if subject is', 'core applied or specialized', 'core applied', 'category', 'nivel', 'kursart', 'track', '구분'],
   area: ['교과', 'area', 'área', 'campo disciplinar', 'domaine', 'aufgabenfeld', '领域', 'learning area group', 'subject group', 'group'],
@@ -45,7 +47,7 @@ const ROLE_TERMS: Record<Role, string[]> = {
     'remark', 'remarks', 'interpretation', 'observaciones', 'observações', 'appréciations', 'appréciation', 'action taken', 'comment', 'comments',
     'nhận xét', '评语', '备注', '비고', 'ملاحظات', 'примечание', 'bemerkung', 'bemerkungen', 'teacher', 'professeur', 'enseignant', 'signature', 'lehrer',
   ],
-  ignore: ['moyenne classe', 'class average', 'moyenne de la classe', 'média da turma', 'promedio del grupo', '과목평균', 'highest', 'lowest', 'min classe', 'max classe', '班级平均', 'weight', 'coef', 'coefficient', 'coeff'],
+  ignore: ['moy classe', 'moyenne classe', 'class average', 'moyenne de la classe', 'média da turma', 'promedio del grupo', '과목평균', 'highest', 'lowest', 'min classe', 'max classe', '班级平均', 'weight', 'coef', 'coefficient', 'coeff'],
 };
 
 const TERM_INDEX: { term: string; role: Role }[] = [];
@@ -203,6 +205,12 @@ const PERIOD_RES: RegExp[] = [
   /[高初][一二三]|[一二三四五六]年级|第[一二三四五六]学[期年]|[上下]学期/u,
   /\d\s*학년|\d\s*학기/u,
   /\b[1-6]\s*[ªºao°]\.?\s*(série|serie|ano|año|semestre|grado|bimestre|trimestre)\b/iu,
+  // Spanish-speaking systems: "1º Medio", "3º BGU", "1er Curso", "6to de Secundaria", "3ro Básico", "Grado 11º", "Décimo grado".
+  // NFKC turns "11º" into "11o", so ordinal endings are allowed before the word boundary.
+  /\b\d{1,2}\s*(?:º|ª|°|o|a|er|ero|ro|do|to|vo|no|mo)?\.?\s*(?:a[ñn]o\s+)?(?:de\s+)?(medio|bgu|bachillerato|secundaria|b[áa]sico|diversificado|curso|grado|a[ñn]o|egb)(?![\p{L}\p{N}])/iu,
+  /\b(grado|curso)\s*\.?:?\s*\d{1,2}\s*(?:º|ª|°|o|a|er|ro|do|to|vo|no|mo)?(?![\p{L}\p{N}])/iu,
+  /\b(primer[oa]?|segund[oa]|tercer[oa]?|cuart[oa]|quint[oa]|sext[oa]|s[ée]ptim[oa]|octav[oa]|noven[oa]|d[ée]cim[oa]|und[ée]cim[oa]|duod[ée]cim[oa])\s+(?:a[ñn]o\s+)?(?:de\s+)?(medio|bgu|bachillerato|secundaria|b[áa]sico|diversificado|curso|grado|a[ñn]o)(?![\p{L}\p{N}])/iu,
+  /\bgrado\s+(d[ée]cimo|und[ée]cimo|once|diez|noveno|octavo|s[ée]ptimo|sexto)(?![\p{L}\p{N}])/iu,
   /\b(qualifikationsphase|einführungsphase|kursstufe|oberstufe)\b/iu,
   /\b(first|second|third|fourth|1st|2nd|3rd|4th)\s+(year|semester|term|quarter)\b/iu,
   /\b(freshman|sophomore|junior|senior)\s+(year|class)\b/iu,
@@ -253,17 +261,19 @@ export const PER_YEAR: Record<TermUnit, number> = { term: 3, semester: 2, trimes
 
 // Words for "term", "semester" and so on, in the languages evalua reads. Order matters: longer words first.
 const UNIT_WORDS: [string, TermUnit][] = [
-  ['cuatrimestre', 'trimester'], ['trimestre', 'trimester'], ['trimester', 'trimester'],
+  ['cuatrimestre', 'trimester'], ['trimestre', 'trimester'], ['trimester', 'trimester'], ['lapso', 'trimester'],
+  // Colombian and Central American "período" follows the system's calendar; Ecuador's "quimestre" is one of two.
+  ['quimestre', 'semester'], ['período', 'term'], ['periodo', 'term'],
   ['semester', 'semester'], ['semestre', 'semester'], ['sem', 'semester'], ['hk', 'semester'], ['halbjahr', 'semester'], ['học kỳ', 'semester'], ['hoc ky', 'semester'], ['học kì', 'semester'],
   ['학기', 'semester'], ['学期', 'semester'], ['полугодие', 'semester'], ['семестр', 'semester'], ['الفصل الدراسي', 'semester'], ['الترم', 'semester'],
-  ['quarter', 'quarter'], ['bimestre', 'quarter'], ['четверть', 'quarter'], ['quý', 'quarter'],
+  ['quarter', 'quarter'], ['bimestre', 'quarter'], ['bim', 'quarter'], ['четверть', 'quarter'], ['quý', 'quarter'],
   ['termly', 'term'], ['term', 'term'], ['terminal', 'term'],
 ];
 const ORDINALS: Record<string, number> = {
   first: 1, '1st': 1, second: 2, '2nd': 2, third: 3, '3rd': 3, fourth: 4, '4th': 4, fifth: 5, '5th': 5, sixth: 6, '6th': 6,
   primer: 1, primero: 1, primera: 1, segundo: 2, segunda: 2, tercer: 3, tercero: 3, tercera: 3, cuarto: 4, cuarta: 4, quinto: 5, quinta: 5, sexto: 6, sexta: 6,
   premier: 1, première: 1, premiere: 1, '1er': 1, '1re': 1, '1ère': 1, deuxième: 2, deuxieme: 2, '2e': 2, '2ème': 2, '2eme': 2, troisième: 3, troisieme: 3, '3e': 3, '3ème': 3, '3eme': 3, quatrième: 4, '4e': 4,
-  primeiro: 1, terceiro: 3, quarto: 4,
+  primeiro: 1, terceiro: 3, quarto: 4, '1ero': 1, '1ro': 1, '2do': 2, '3ero': 3, '3ro': 3, '4to': 4, '5to': 5, '6to': 6,
   erste: 1, erstes: 1, ersten: 1, zweite: 2, zweites: 2, zweiten: 2, dritte: 3, drittes: 3,
   'первое': 1, 'первая': 1, 'второе': 2, 'вторая': 2, 'третья': 3, 'четвертая': 4, 'четвёртая': 4,
   'الأول': 1, 'الاول': 1, 'الثاني': 2, 'الثالث': 3,

@@ -14,6 +14,7 @@ const entry = (languages: string[], varies: InstructionLanguage['varies'], note:
 const WENR = (country: string, slug: string) => src(`WES World Education News & Reviews: ${country} secondary education (Language of Instruction)`, `https://wenr.wes.org/country-profiles/secondary-sections/${slug}-secondary-education/`);
 const GAMBIA = src('ADEA Knowledge Hub: The Gambia, overview of the country', 'https://knowledgehub.adeanet.org/node/161');
 const SIERRA_LEONE = src('Parliament of Sierra Leone: The Basic and Senior Secondary Education Act, 2023, Part XI (English is medium of instruction)', 'https://www.parliament.gov.sl/uploads/acts/The Basic and Senior Secondary Education Act, 2023.pdf');
+const CONST = (country: string, slug: string) => src(`Constitute Project: constitution of ${country} (English translation)`, `https://www.constituteproject.org/constitution/${slug}`);
 const LIBERIA = src('UNESCO GEM education profiles: Liberia (Education Reform Act 2011)', 'https://education-profiles.org/node/320');
 
 export const INSTRUCTION = {
@@ -79,5 +80,26 @@ export const INSTRUCTION = {
   ),
   // Whether some Egyptian schools teach in English or French is not stated in the source, so it is left unknown.
   eg: entry(['ar'], 'unknown', 'Egyptian secondary schools teach in Arabic. Whether this student’s school taught some subjects in another language is not known from the system.', WENR('Egypt', 'egypt')),
+  // ── Latin America and the Caribbean: constitutions (Constitute Project, English text), else an education law or the
+  // IEA PIRLS / TIMSS encyclopedias. Private bilingual schools exist everywhere; where they matter, "varies" says so.
+  ar: entry(['es'], 'by-school', 'Spanish is the medium of instruction in all public schools in Argentina; private bilingual schools also teach in another language, and indigenous peoples have a constitutional right to bilingual intercultural education (Art. 75).', src('IEA PIRLS 2016 Encyclopedia: Buenos Aires, Argentina', 'https://pirls2016.org/encyclopedia/benchmarking-participants/buenos-aires-argentina'), [CONST('Argentina', 'Argentina_1994')]),
+  co: entry(['es'], 'by-region', 'Spanish is the official language of Colombia (Constitution Art. 10); communities with their own languages are taught bilingually.', CONST('Colombia', 'Colombia_2015')),
+  ve: entry(['es'], 'by-region', 'Spanish is the official language of Venezuela (Constitution Art. 9); indigenous languages are also official for their peoples.', CONST('Venezuela', 'Venezuela_2009')),
+  do: entry(['es'], 'by-school', 'Spanish is the official language of the Dominican Republic (Constitution Art. 29).', CONST('the Dominican Republic', 'Dominican_Republic_2015')),
+  pe: entry(['es'], 'by-region', 'Spanish is an official language of Peru, as are Quechua, Aymara and other native languages where they predominate (Constitution Art. 48), which some schools teach in.', CONST('Peru', 'Peru_2021')),
+  cl: entry(['es'], 'by-school', 'Spanish is the language of instruction in the vast majority of Chilean schools; a few bilingual schools teach subjects in a foreign language, and some schools teach in indigenous languages.', src('IEA TIMSS 2015 Encyclopedia: Chile', 'https://timss2015.org/encyclopedia/?p=116')),
+  ec: entry(['es'], 'by-region', 'Spanish is Ecuador’s official language; Kichwa and Shuar are official for intercultural ties, and people have the right to learn in their own language (Constitution Arts. 2 and 29).', CONST('Ecuador', 'Ecuador_2021')),
+  bo: entry(['es'], 'by-region', 'Spanish and the languages of Bolivia’s indigenous peoples are official (Constitution Art. 5); schools teach in Spanish and, in many regions, an indigenous language.', CONST('Bolivia', 'Bolivia_2009')),
+  py: entry(['es', 'gn'], 'by-school', 'Paraguay has two official languages, Spanish and Guaraní; schooling begins in the student’s own official language and both are taught (Constitution Art. 77).', CONST('Paraguay', 'Paraguay_2011')),
+  uy: entry(['es'], 'by-region', 'Uruguay’s Education Law names Uruguayan Spanish, Uruguayan Portuguese and Uruguayan Sign Language as the country’s mother tongues (Ley 18.437, Art. 40).', src('IMPO: Ley General de Educación 18.437, Art. 40', 'https://impo.com.uy/bases/leyes/18437-2008/40')),
+  gt: entry(['es'], 'by-region', 'Spanish is the official language of Guatemala (Constitution Art. 143); schools in mainly indigenous areas teach bilingually.', CONST('Guatemala', 'Guatemala_1993')),
+  hn: entry(['es'], 'by-school', 'Spanish is the official language of Honduras (Constitution Art. 6).', CONST('Honduras', 'Honduras_2013')),
+  sv: entry(['es'], 'by-school', 'Spanish is the official language of El Salvador (Constitution Art. 62).', CONST('El Salvador', 'El_Salvador_2014')),
+  ni: entry(['es'], 'by-region', 'Spanish is the official language of Nicaragua (Constitution Art. 11); peoples of the Atlantic Coast have the right to intercultural education in their own language (Art. 121).', CONST('Nicaragua', 'Nicaragua_2014')),
+  cr: entry(['es'], 'by-school', 'Spanish is the official language of Costa Rica (Constitution Art. 76).', CONST('Costa Rica', 'Costa_Rica_2020')),
+  pa: entry(['es'], 'by-school', 'Education in Panama is given in the official language, Spanish (Constitution Arts. 7 and 100).', CONST('Panama', 'Panama_2004')),
+  cu: entry(['es'], 'no', 'Spanish is the official language of Cuba (Constitution Art. 2).', CONST('Cuba', 'Cuba_2019')),
+  pr: entry([], 'unknown', 'Many private schools in Puerto Rico teach in English; the source does not say which language public schools use, so it is not known from the system. Check the record or ask the school.', src('Scholaro: Education System in Puerto Rico', 'https://www.scholaro.com/db/Countries/Puerto-Rico/Education-System')),
+  sn: entry(['fr'], 'by-school', 'French is the official language of Senegal (Constitution Art. 1).', CONST('Senegal', 'Senegal_2016')),
   generic: entry([], 'unknown', 'The education system was not recognised, so the language of instruction is not known from it.', src('evalua: no profile for this system', 'https://evalua-5ly.pages.dev/#/reference')),
 } satisfies Record<string, InstructionLanguage>;

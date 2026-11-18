@@ -129,7 +129,9 @@ const COUNTRY_WORDS: Record<string, string[]> = {
   Philippines: ['philippines', 'pilipinas'], 'United Kingdom': ['united kingdom', 'england', 'wales'], Ukraine: ['україна'], Pakistan: ['pakistan'], Bangladesh: ['bangladesh', 'বাংলাদেশ'],
   Nepal: ['nepal', 'नेपाल'], Kenya: ['kenya'], Ethiopia: ['ethiopia'], Colombia: ['colombia'], Guatemala: ['guatemala'], Honduras: ['honduras'], 'El Salvador': ['el salvador'],
   Venezuela: ['venezuela'], Haiti: ['haïti', 'haiti'], Afghanistan: ['afghanistan', 'افغانستان'], Syria: ['سوريا', 'syrian'], Iraq: ['العراق', 'iraq'], Jordan: ['الأردن', 'jordan'],
-  Japan: ['日本'], Turkey: ['türkiye', 'turkiye'], Iran: ['ایران'], Cuba: ['cuba'], 'Dominican Republic': ['república dominicana'], Ecuador: ['ecuador'], Peru: ['perú'],
+  Japan: ['日本'], Turkey: ['türkiye', 'turkiye'], Iran: ['ایران'], Cuba: ['cuba'], 'Dominican Republic': ['república dominicana'], Ecuador: ['ecuador'], Peru: ['perú', 'peru'],
+  Argentina: ['argentina'], Chile: ['chile'], Bolivia: ['bolivia'], Paraguay: ['paraguay'], Uruguay: ['uruguay'], Nicaragua: ['nicaragua'], 'Costa Rica': ['costa rica'],
+  Panama: ['panamá', 'panama'], 'Puerto Rico': ['puerto rico'], Senegal: ['sénégal', 'senegal'],
 };
 
 function findCountry(text: string, profile: SystemProfile | undefined): string {
@@ -248,10 +250,12 @@ function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; hea
   course.hours = num(raw.hours);
   if (raw.qualifier && raw.qualifier.text.trim()) course.qualifier = raw.qualifier.text.trim();
   // The course's own period label (a matrix column, a heading over its table) comes first, then its report's header.
+  // A term column ("1er Lapso") carries no level or year of its own; the heading over its table ("4to año, 2024-2025") does.
   const lv = resolveLevel(raw.period, ctx.profile);
-  course.level = lv.level ?? ctx.header.level;
+  const around = raw.context ? resolveLevel(raw.context, ctx.profile) : { level: null };
+  course.level = lv.level ?? around.level ?? ctx.header.level;
   course.term = lv.term ?? termOf(raw.period);
-  course.academicYear = academicYear(raw.period) ?? ctx.header.year;
+  course.academicYear = academicYear(raw.period) ?? (raw.context ? academicYear(raw.context) : undefined) ?? ctx.header.year;
   return course;
 }
 

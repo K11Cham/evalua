@@ -1,7 +1,7 @@
 // Table understanding: finds header bands, builds columns (including two-level "matrix" headers and
 // side-by-side tables), assigns body cells to columns and turns rows into raw course records.
 import { buildRows, rowText, type Cell, type Row } from './layout.ts';
-import { gradeFromWords, headerRole, isGradeLike, isPeriodLabel, isSummaryLabel, labelWithoutColon, splitGrade, STUDENT_CLASS, type Role } from './lexicon.ts';
+import { detectTerm, gradeFromWords, headerRole, isGradeLike, isPeriodLabel, isSummaryLabel, labelWithoutColon, splitGrade, STUDENT_CLASS, type Role } from './lexicon.ts';
 import { key } from './text.ts';
 import type { DocTokens } from './types.ts';
 
@@ -35,6 +35,8 @@ export interface RawCourse {
   /** Period label text (heading above the table, or matrix column group). */
   period: string;
   periodCell?: Cell;
+  /** The heading over the table when `period` is a term column ("4to año" over "1er Lapso"), for its year and level. */
+  context?: string;
 }
 
 export interface TableResult {
@@ -495,12 +497,28 @@ function coursesFromGroup(cols: HCol[], idx: number[], grid: (Cell | undefined)[
     };
     if (groups.length) {
       const shared = others.filter((i) => !cols[i].group);
+      const sharedGrades = shared.filter((i) => GRADE_ROLES.includes(cols[i].role));
+      const h = headingFor();
+      // Term columns with a final column beside them ("1er Lapso | 2do Lapso | 3er Lapso | Definitiva"): the terms are
+      // parts of one year's course, and the final grade is that course's grade.
+      if (groups.every((g) => detectTerm(g)) && sharedGrades.some((i) => cols[i].role === 'final' || cols[i].role === 'grade')) {
+        const c = pick(shared);
+        if (c?.grade) {
+          c.period = h.text;
+          c.periodCell = h.cell;
+          out.push(c);
+          continue;
+        }
+      }
+      // Otherwise each group is its own result, and a grade column shared by all of them ("Promedio" after
+      // "1º Medio | 2º Medio") is an average across them, not any one group's grade.
       for (const g of groups) {
-        const c = pick([...others.filter((i) => cols[i].group === g), ...shared]);
+        const c = pick([...others.filter((i) => cols[i].group === g), ...shared.filter((i) => !sharedGrades.includes(i))]);
         if (!c || !c.grade) continue;
         const gc = cols[others.find((i) => cols[i].group === g)!];
         c.period = g;
         c.periodCell = gc.groupCell;
+        c.context = h.text;
         out.push(c);
       }
     } else {

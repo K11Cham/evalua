@@ -2,6 +2,7 @@
 // conventions used by evaluators, not law, and a counselor can override any of them.
 // Grade tables were read from the cited pages on 2026-11-15.
 import { INSTRUCTION } from './instruction.ts';
+import { latamSystems, sn } from './latam.ts';
 import type { GradeScale, Provenance, ScaleEntry, SourceInfo, SystemCourse, SystemProfile, USLetter } from '../core/types.ts';
 
 const YEAR = '2026-27';
@@ -1007,5 +1008,5 @@ waec.sequences = [
   },
 ];
 
-export const systems: SystemProfile[] = [waec, gabece, jamb, ib, uk, inCbse, inCisce, cn, mx, fr, de, ph, br, kr, vn, ru, eg, generic];
+export const systems: SystemProfile[] = [waec, gabece, jamb, ib, uk, inCbse, inCisce, cn, mx, fr, de, ph, br, kr, vn, ru, eg, ...latamSystems, sn, generic];
 export type { GradeScale };
