@@ -2,6 +2,7 @@
 import type { Cell, Row } from './layout.ts';
 import { buildRows, rowText } from './layout.ts';
 import { academicYear, detectTerm, genericLevel, gradeFromWords, infoField, infoFieldExact, isGradeLike, isPeriodLabel, labelWithoutColon, looksLikeSchool, splitGrade, STUDENT_CLASS, termOf, type InfoField } from './lexicon.ts';
+import { printedInstruction, translationMarker } from './instruction.ts';
 import { buildMatcher, fixOcrNumerals } from './match.ts';
 import { readTables, type RawCourse, type TableResult } from './tables.ts';
 import { asciiDigits, displayName, dominantScript, key, parseDate, parseNumber, similarity, stripDiacritics } from './text.ts';
@@ -143,6 +144,14 @@ function findCountry(text: string, profile: SystemProfile | undefined): string {
 }
 
 const SCRIPT_LANG: Record<string, string> = { han: 'zh', hangul: 'ko', kana: 'ja', cyrillic: 'ru', arabic: 'ar', devanagari: 'hi', thai: 'th', greek: 'el', hebrew: 'he' };
+
+/** A value that was blacked out or replaced: "XXXXXX", "****", "█████", "[REDACTED]", "(removed)". */
+export function isRedactedValue(v: string): boolean {
+  const t = v.trim();
+  if (!t) return false;
+  if (/^[xX*█▇■▮●•#_\-\s.]{3,}$/u.test(t) && /[xX*█▇■▮●•#]{3,}/u.test(t)) return true;
+  return /^[[(<{]?\s*(redacted|removed|withheld|anonymi[sz]ed|censored|hidden|tachado|omitido|retirado|eliminado|suprimido|caviard[ée]|supprim[ée]|masqu[ée]|removido|ocultado|geschwärzt|entfernt)\s*[\])>}]?$/iu.test(t);
+}
 
 function cleanGrade(text: string): { value: string; descriptor: string; repaired?: boolean } {
   const { grade, rest, repaired } = splitGrade(text);
@@ -381,15 +390,22 @@ export function extract(doc: DocTokens, kb: KnowledgeBase, opts: ExtractOptions 
   const issuedP = first('issued');
   const conf = (p: Pair) => Math.min(0.98, p.cell.conf);
   const student = { name: empty(''), dob: empty(''), id: empty('') };
-  if (nameP) student.name = { value: displayName(nameP.value), original: nameP.value, confidence: conf(nameP), source: src(nameP.cell) };
+  // A redacted field ("XXXX", "[REDACTED]", a row of blocks) is redacted, never a value.
+  const redactedField = (p: Pair | undefined): Field<string> | null => (p && isRedactedValue(p.value) ? { value: '', original: '', confidence: 1, source: src(p.cell), redacted: true } : null);
+  const rName = redactedField(nameP), rDob = redactedField(dobP), rId = redactedField(idP);
+  if (rName) student.name = rName;
+  // A "name" with no run of letters is a mark read from a bar or a stamp ("|||", "—"), not a name.
+  else if (nameP && /\p{L}{2}/u.test(nameP.value)) student.name = { value: displayName(nameP.value), original: nameP.value, confidence: conf(nameP), source: src(nameP.cell) };
   let dobAmbiguous = false;
-  if (dobP) {
+  if (rDob) student.dob = rDob;
+  else if (dobP) {
     const order = /mm\s*[/.-]\s*dd/i.test(dobP.label) ? 'mdy' : /dd\s*[/.-]\s*mm/i.test(dobP.label) ? 'dmy' : (profile?.dateOrder ?? 'dmy');
     const d = parseDate(dobP.value, order);
     dobAmbiguous = !!d?.ambiguous && !profile;
     student.dob = { value: d?.iso ?? '', original: dobP.value, confidence: d ? conf(dobP) * (d.ambiguous && !profile ? 0.6 : 1) : 0.2, source: src(dobP.cell) };
   }
-  if (idP) student.id = { value: asciiDigits(idP.value).trim(), original: idP.value, confidence: conf(idP), source: src(idP.cell) };
+  if (rId) student.id = rId;
+  else if (idP) student.id = { value: asciiDigits(idP.value).trim(), original: idP.value, confidence: conf(idP), source: src(idP.cell) };
   let school: Field<string> = empty('');
   if (schoolP) school = { value: schoolP.value.trim(), original: schoolP.value, confidence: conf(schoolP), source: src(schoolP.cell) };
   else {
@@ -426,6 +442,20 @@ export function extract(doc: DocTokens, kb: KnowledgeBase, opts: ExtractOptions 
     else if (!c.period.value.toLowerCase().includes(span.label.toLowerCase())) c.period.value = `${span.label} · ${c.period.value}`;
   }
 
+  // Evidence about the language of instruction printed on the record: a statement, or a translator's note.
+  const stated: Extraction['stated'] = {};
+  for (const r of buildRows(doc)) {
+    const text = r.cells.map((c) => c.text).join('  ');
+    if (!stated.instruction) {
+      const p = printedInstruction(text);
+      if (p) stated.instruction = { languages: p.languages, text: p.match, source: src(r.cells.find((c) => p.match.includes(c.text.trim().slice(0, 12))) ?? r.cells[0]) };
+    }
+    if (!stated.translation) {
+      const t = translationMarker(text);
+      if (t) stated.translation = { text: t, source: src(r.cells.find((c) => c.text.toLowerCase().includes(t.toLowerCase().slice(0, 10))) ?? r.cells[0]) };
+    }
+  }
+
   // The aggregate an examination certificate prints ("Aggregate 06"), so it can be checked against the grades.
   let aggregate: Field<number> | undefined;
   const aggLabel = profile?.credit.aggregate?.label;
@@ -449,6 +479,7 @@ export function extract(doc: DocTokens, kb: KnowledgeBase, opts: ExtractOptions 
     student,
     school: { name: school },
     issued,
+    stated: stated.instruction || stated.translation ? stated : undefined,
     aggregate,
     courses,
     flags: [],

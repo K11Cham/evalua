@@ -5,8 +5,8 @@ import { docxHtmlToDoc } from './docx.ts';
 import { typedTextToDoc } from './typed.ts';
 import { OCR_MODELS, type OcrModelId } from './ocrModels.ts';
 import { segmentsToTokens } from './ocrTokens.ts';
-import { greyStretch, hasColouredInk } from './prepare.ts';
-import { looksScanned, pdfItemsToTokens, type PdfTextItem } from './pdfText.ts';
+import { greyStretch, hasColouredInk, maskBars } from './prepare.ts';
+import { darkBoxes, hiddenItems, looksScanned, pdfItemsToTokens, type PdfTextItem } from './pdfText.ts';
 import type { OcrRequest, OcrResponse } from './ocr.worker.ts';
 
 export interface Ingested {
@@ -78,14 +78,15 @@ async function ocrCanvas(canvas: HTMLCanvasElement, page: number, hint: OcrModel
   const pctx = prepared.getContext('2d', { willReadFrequently: true })!;
   pctx.drawImage(canvas, 0, 0);
   const img = pctx.getImageData(0, 0, prepared.width, prepared.height);
-  if (hasColouredInk(img.data)) {
-    greyStretch(img.data);
-    pctx.putImageData(img, 0, 0);
-  }
+  const coloured = hasColouredInk(img.data);
+  if (coloured) greyStretch(img.data);
+  // Redaction bars are painted out, so they cannot swallow the lines next to them.
+  const bars = maskBars(img.data, prepared.width, prepared.height);
+  if (coloured || bars) pctx.putImageData(img, 0, 0);
   const png = await toBlob(prepared, 'image/png');
   const res = await ocr(await png.arrayBuffer(), hint, progress);
   const info: PageInfo = { width: canvas.width, height: canvas.height, skew: skewOf(canvas) };
-  return { tokens: segmentsToTokens(res.lines, page), info, model: res.model };
+  return { tokens: segmentsToTokens(res.lines, page), info, model: res.model, bars };
 }
 
 async function imageToCanvas(blob: Blob): Promise<HTMLCanvasElement> {
@@ -103,7 +104,7 @@ async function ingestImage(file: Blob, hint: OcrModelId | 'auto', progress: Prog
   const canvas = await imageToCanvas(file);
   const r = await ocrCanvas(canvas, 0, hint, progress);
   return {
-    doc: { kind: 'ocr', pages: [r.info], tokens: r.tokens, engine: OCR_MODELS[r.model].label, warnings: [] },
+    doc: { kind: 'ocr', pages: [r.info], tokens: r.tokens, engine: OCR_MODELS[r.model].label, warnings: [], redactionBars: r.bars || undefined },
     previews: [await toBlob(canvas)],
   };
 }
@@ -129,7 +130,12 @@ async function ingestPdf(file: Blob, hint: OcrModelId | 'auto', progress: Progre
     await page.render({ canvas, canvasContext: canvas.getContext('2d')!, viewport: v2 }).promise;
     previews.push(await toBlob(canvas));
     const tc = await page.getTextContent();
-    const toks = pdfItemsToTokens(tc.items as unknown as PdfTextItem[], vp.height, p - 1);
+    // Text under a black box that does not show on the page is a failed redaction: not read, and reported.
+    const items = tc.items as unknown as PdfTextItem[];
+    const boxes = darkBoxes(await page.getOperatorList(), pdfjs.OPS as unknown as Record<string, number>, vp.width, vp.height);
+    const hidden = await hiddenItems(items, boxes, vp.height, async () => ({ rgba: canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data, width: canvas.width, height: canvas.height, scale }));
+    if (hidden.size) doc.hiddenText = { pages: [...(doc.hiddenText?.pages ?? []), p - 1], count: (doc.hiddenText?.count ?? 0) + hidden.size };
+    const toks = pdfItemsToTokens(hidden.size ? items.filter((it) => !hidden.has(it)) : items, vp.height, p - 1);
     if (!looksScanned(toks)) {
       doc.pages.push({ width: vp.width, height: vp.height });
       doc.tokens.push(...toks);
@@ -140,6 +146,7 @@ async function ingestPdf(file: Blob, hint: OcrModelId | 'auto', progress: Progre
       doc.engine = OCR_MODELS[r.model].label;
       doc.pages.push(r.info);
       doc.tokens.push(...r.tokens);
+      if (r.bars) doc.redactionBars = (doc.redactionBars ?? 0) + r.bars;
     }
   }
   return { doc, previews };
@@ -163,6 +170,8 @@ export async function ingestMany(files: File[], hint: OcrModelId | 'auto', progr
     out.doc.pages.push(...part.doc.pages);
     out.doc.tokens.push(...part.doc.tokens.map((t) => ({ ...t, page: t.page + offset })));
     out.doc.warnings.push(...part.doc.warnings);
+    if (part.doc.redactionBars) out.doc.redactionBars = (out.doc.redactionBars ?? 0) + part.doc.redactionBars;
+    if (part.doc.hiddenText) out.doc.hiddenText = { pages: [...(out.doc.hiddenText?.pages ?? []), ...part.doc.hiddenText.pages.map((x) => x + offset)], count: (out.doc.hiddenText?.count ?? 0) + part.doc.hiddenText.count };
     out.previews.push(...part.previews);
     engines.add(part.doc.engine);
     if (part.doc.kind === 'ocr') out.doc.kind = 'ocr';

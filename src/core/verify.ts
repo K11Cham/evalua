@@ -6,6 +6,9 @@ import { periodKey, periodLabel } from './periods.ts';
 import { asciiDigits, parseNumber } from './text.ts';
 import type { DocTokens, Extraction, VerifyFlag } from './types.ts';
 
+/** Said when a PDF's redaction only drew a box over the text. */
+export const REDACTION_WARNING = 'This PDF still contains text under a black box. The redaction did not remove it; anyone can copy it out.';
+
 // "Total: 335", "المجموع الكلي: 335 من 410", "कुल योग 499", "总分 612", "ИТОГО 58"
 const TOTAL_RE = /(?:grand total|total marks|total general|total de puntos|total|المجموع الكلي|المجموع|कुल योग|कुल|योग|总分|合计|합계|tổng điểm|tổng cộng|итого|всего|toplam)\s*(?:marks|score|obtained|点|分)?\s*[:：=-]?\s*(\d{1,4}(?:[.,]\d{1,2})?)(?![\d.,]*\s*%)/iu;
 
@@ -25,8 +28,10 @@ export function verify(ex: Extraction, doc: DocTokens, tables: TableResult): Ver
   } else if (ex.systemId.confidence < 0.75) {
     add({ id: 'system-unsure', severity: 'check', title: 'Education system is a best guess', detail: `The document looks like “${ex.docType}”, but only a few identifying terms were found. Confirm the system.` });
   }
-  if (!ex.student.name.value) add({ id: 'no-name', severity: 'check', title: 'Student name not found', detail: 'No name label was recognised. Enter the name from the document.' });
-  if (!ex.student.dob.value) {
+  const red = [ex.student.name.redacted && 'name', ex.student.dob.redacted && 'date of birth', ex.student.id.redacted && 'ID'].filter(Boolean) as string[];
+  if (red.length) add({ id: 'redacted', severity: 'info', title: `Student ${red.join(', ')} redacted`, detail: `The document has the student’s ${red.join(', ')} blacked out or replaced. That is expected on an anonymized record; enter them from the original if you have it.` });
+  if (!ex.student.name.value && !ex.student.name.redacted) add({ id: 'no-name', severity: 'check', title: 'Student name not found', detail: 'No name label was recognised. Enter the name from the document.' });
+  if (!ex.student.dob.value && !ex.student.dob.redacted) {
     add({ id: 'no-dob', severity: 'info', title: 'Date of birth not found', detail: ex.student.dob.original ? `“${ex.student.dob.original}” could not be read as a date.` : 'No date of birth label was recognised.', source: ex.student.dob.source });
   }
 
@@ -76,6 +81,14 @@ export function verify(ex: Extraction, doc: DocTokens, tables: TableResult): Ver
     });
   });
   for (const w of doc.warnings) add({ id: `ingest-${flags.length}`, severity: 'check', title: 'Reading the file', detail: w });
+  // A redaction that only drew a box over the text. Where, never what: the hidden text was not kept.
+  if (doc.hiddenText?.count) {
+    const pages = doc.hiddenText.pages.map((p) => p + 1);
+    add({
+      id: 'redaction-failed', severity: 'important', title: 'The redaction did not remove the text',
+      detail: `${REDACTION_WARNING} Found on page${pages.length > 1 ? 's' : ''} ${pages.join(', ')}. evalua did not read it, but the file should be redacted again with a real redaction tool, or printed and scanned, before it is shared.`,
+    });
+  }
   return flags;
 }
 

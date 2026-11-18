@@ -49,6 +49,10 @@ export type Matcher = (name: string) => CourseLookup;
 export function buildMatcher(kb: KnowledgeBase, profile: SystemProfile | undefined, englishDoc: boolean): Matcher {
   const profileIndex = new Map<string, { en: string; concept: string }>();
   for (const c of profile?.courses ?? []) for (const n of c.names) profileIndex.set(key(n), { en: c.en, concept: c.concept });
+  // A translated record prints the English names ("Mathematics I" for "Matemáticas I"), so the profile's own English
+  // names are known too, with and without their gloss ("Mathematics I (Algebra)"). They never replace a native name.
+  for (const c of profile?.courses ?? [])
+    for (const en of [c.en, c.en.replace(/\s*\([^)]*\)\s*/g, ' ').trim()]) if (en && !profileIndex.has(key(en))) profileIndex.set(key(en), { en: c.en, concept: c.concept });
   const aliasIndex: { alias: string; concept: Concept }[] = [];
   for (const c of kb.concepts) for (const a of [c.label, ...c.aliases]) aliasIndex.push({ alias: key(a), concept: c });
   aliasIndex.sort((a, b) => b.alias.length - a.alias.length);

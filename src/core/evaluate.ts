@@ -9,6 +9,7 @@ import { convertGrade, type SectionContext } from './convert.ts';
 import { planLadders, roundToStep, spans, type CoverageOptions } from './coverage.ts';
 import { buildMatcher } from './match.ts';
 import { periodKey } from './periods.ts';
+import { assessInstruction, LANGUAGE_LABEL } from './instruction.ts';
 import { parseNumber } from './text.ts';
 import { courseFlags } from './verify.ts';
 import { usCourses } from '../kb/usCourses.ts';
@@ -129,10 +130,43 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
   const span = spans(included, profile, opts);
   const conceptOf = new Map<string, string>();
   const looks = new Map<string, ReturnType<typeof match>>();
+  // The English subject follows the language the student was taught in: in an English-medium school it is English
+  // language arts; elsewhere it is English studied as a foreign language, whatever language the record is written in.
+  const instruction = assessInstruction(ex, profile);
+  const englishReason = new Map<string, Reason>();
+  const instrSource = profile?.instruction.provenance.source;
   for (const c of included) {
     const look = match(c.name.original ?? c.name.value);
     looks.set(c.id, look);
-    conceptOf.set(c.id, overrides[c.id]?.conceptId ?? look.conceptId);
+    let concept = overrides[c.id]?.conceptId ?? look.conceptId;
+    const langArts = concept === 'ela.english' || concept === 'ela.efl' || concept === 'ela.literature';
+    if (!overrides[c.id]?.conceptId && instruction.english != null && langArts) {
+      // Is the subject English itself, or the school's own language arts ("Literature", "Reading and Writing")?
+      const namesEnglish = /\b(english|ingl[ée]s|ingles|anglais|ingl[êe]s|englisch|английск|영어|英语|tiếng anh|إنجليزي|अंग्रेज)/iu.test(`${c.name.original ?? ''} ${c.name.value}`);
+      const taught = instruction.languages.map((l) => LANGUAGE_LABEL[l] ?? l).join(' or ');
+      const how = instruction.strength === 'printed' ? 'the record states the language of instruction' : `${profile?.name ?? 'the system'} teaches in ${taught}`;
+      const translatedNote = instruction.translated ? ' The record is a translation, so its being in English says nothing about this.' : '';
+      let want = concept;
+      let text = '';
+      if (instruction.english && concept === 'ela.efl' && namesEnglish) {
+        want = 'ela.english';
+        text = `Taught in English (${how}), so “${c.name.original}” is English language arts, not English as a foreign language.`;
+      } else if (instruction.english && concept === 'ela.english') {
+        text = `Taught in English (${how}), so “${c.name.original}” is English language arts.`;
+      } else if (!instruction.english && concept !== 'ela.efl' && namesEnglish) {
+        want = 'ela.efl';
+        text = `Taught in ${taught} (${how}), so “${c.name.original}” is English studied as a foreign-language subject.${translatedNote}`;
+      } else if (!instruction.english && concept === 'ela.efl') {
+        text = `Taught in ${taught} (${how}), so “${c.name.original}” is English studied as a foreign-language subject.${translatedNote}`;
+      } else if (!instruction.english && !namesEnglish) {
+        // "Literature" on a translated Spanish record is Spanish literature: home-language arts.
+        want = 'wl.native';
+        text = `Taught in ${taught} (${how}), so “${c.name.original}” is language arts in ${taught}, the student’s school language, not English.${translatedNote}`;
+      }
+      if (text) englishReason.set(c.id, { text, source: instruction.strength === 'printed' ? undefined : instrSource });
+      concept = want;
+    }
+    conceptOf.set(c.id, concept);
   }
   const plan = planLadders(included, conceptOf, span, profile, district);
 
@@ -151,6 +185,8 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
     else if (look.how === 'alias-part') reasons.push({ text: `“${c.name.original}” contains a term for ${concept.label} (${concept.sced}).` });
     else if (look.how === 'alias-fuzzy') reasons.push({ text: `“${c.name.original}” is similar to a term for ${concept.label}. Low confidence: confirm the subject.` });
     else reasons.push({ text: `“${c.name.original}” was not recognised. It is placed as an unclassified elective until a counselor chooses a subject.` });
+    const er = englishReason.get(c.id);
+    if (er) reasons.push(er);
 
     const overrideReq = ov.requirementId ?? district.conceptOverrides[conceptId];
     const req =
@@ -427,5 +463,5 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
     });
   }
 
-  return { districtId: district.id, schoolYear: district.schoolYear, suggestions, progress, totalEarned, totalRequired: district.totalCredits, flags, placements: plan.placements };
+  return { districtId: district.id, schoolYear: district.schoolYear, suggestions, progress, totalEarned, totalRequired: district.totalCredits, flags, placements: plan.placements, instruction };
 }

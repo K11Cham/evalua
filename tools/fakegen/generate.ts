@@ -2,18 +2,19 @@
 //   npm run fakes            → regenerate everything into fixtures/fake/
 //   npm run fakes -- mx-sep  → only matching ids
 // Output is deterministic (seeded) so re-running does not churn the repo.
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { chromium, type Browser } from 'playwright';
 import sharp from 'sharp';
 import * as docx from 'docx';
 import { specsA } from './specs-a.ts';
 import { specsB } from './specs-b.ts';
-import { buildTables, pagesOf, photoSceneHtml, scanPdfHtml, specHtml } from './render.ts';
-import type { FakeSpec, Format, Truth, TruthCourse } from './types.ts';
+import { specsC } from './specs-c.ts';
+import { BAR, buildTables, LEAK, pagesOf, photoSceneHtml, scanPdfHtml, specHtml } from './render.ts';
+import type { FakeSpec, Format, Redaction, Truth, TruthCourse } from './types.ts';
 
 const OUT = path.resolve('fixtures/fake');
-export const allSpecs: FakeSpec[] = [...specsA, ...specsB];
+export const allSpecs: FakeSpec[] = [...specsA, ...specsB, ...specsC];
 
 function rng(seed: string): () => number {
   let h = 1779033703 ^ seed.length;
@@ -132,21 +133,52 @@ function makeDocx(spec: FakeSpec): Promise<Buffer> {
   return Packer.toBuffer(new Document({ sections: [{ children }] }));
 }
 
+// Expected language of instruction by system, as the knowledge base states it (null where it varies by school).
+const ENGLISH_BY_SYSTEM: Record<string, boolean | null> = {
+  waec: true, gabece: true, jamb: true, uk: true, 'in-cisce': true, ib: null, 'in-cbse': null, 'ph-k12': null, generic: null,
+};
+
+// null (not knowable) must stay null: not `?? false`.
+const expectedEnglish = (system: string): boolean | null => (system in ENGLISH_BY_SYSTEM ? ENGLISH_BY_SYSTEM[system] : false);
+
+/** The record with the student's name, date of birth and ID removed in the given style. */
+function redacted(spec: FakeSpec, style: Redaction, format: Format): FakeSpec {
+  const hide = (v: string) =>
+    style === 'bar' ? (format === 'docx' ? '█'.repeat(Math.max(6, v.length)) : BAR(Math.max(6, v.length))) : style === 'leak' ? LEAK(v) : style === 'xxxx' ? 'X'.repeat(Math.max(6, v.length)) : style === 'tag' ? '[REDACTED]' : '';
+  const roles = new Set(['name', 'dob', 'id']);
+  return {
+    ...spec,
+    info: spec.info.map((i) => (i.role && roles.has(i.role) ? { ...i, value: hide(i.value) } : i)),
+    student: { ...spec.student, name: hide(spec.student.name) },
+  };
+}
+
 const EXT: Record<Format, string> = {
   pdf: 'pdf', 'scan-jpg': 'scan.jpg', 'scan-png': 'scan.png', 'scan-pdf': 'scan.pdf', 'photo-jpg': 'photo.jpg', docx: 'docx',
 };
 
 async function main() {
-  const filter = process.argv.slice(2);
+  // --variants-only: write only the redacted variants of the matching records, leaving their original files as they are.
+  const variantsOnly = process.argv.includes('--variants-only');
+  const filter = process.argv.slice(2).filter((a) => !a.startsWith('--'));
   const specs = allSpecs.filter((s) => !filter.length || filter.some((f) => s.id.includes(f)));
   await mkdir(OUT, { recursive: true });
   const browser = await chromium.launch();
   const manifest: Truth[] = [];
+  // Each record, then its redacted variants, each in its own formats.
+  const jobs: { spec: FakeSpec; base: FakeSpec; formats: Format[]; suffix: string; redact?: Redaction }[] = [];
   for (const spec of specs) {
-    const rand = rng(spec.id);
-    const pngs = await pagePngs(browser, spec);
-    for (const format of spec.formats) {
-      const file = `${spec.id}.${EXT[format]}`;
+    if (!variantsOnly) jobs.push({ spec, base: spec, formats: spec.formats, suffix: '' });
+    for (const v of spec.variants ?? []) jobs.push({ spec, base: spec, formats: v.formats, suffix: `.${v.suffix}`, redact: v.redact });
+  }
+  for (const job of jobs) {
+    // A variant gets the original's seed, so its scan or photo has the same angle, glare and noise: the only
+    // difference from the original is the redaction.
+    const rand = rng(job.base.id);
+    for (const format of job.formats) {
+      const spec = job.redact ? redacted(job.base, job.redact, format) : job.base;
+      const pngs = await pagePngs(browser, spec);
+      const file = `${spec.id}${job.suffix}.${EXT[format]}`;
       let data: Buffer;
       let pages = pngs.length;
       if (format === 'pdf') {
@@ -188,16 +220,24 @@ async function main() {
       const courses = truthCourses(spec).filter((c) => !firstPageOnly || firstPageYears.has(c.year));
       manifest.push({
         id: spec.id, file, format, system: spec.system, country: spec.country, lang: spec.lang, pages,
-        student: spec.student, school: spec.school, courses,
+        // A redacted file's student details must read as not found.
+        student: job.redact ? { name: '', dob: '', id: '' } : job.base.student, school: spec.school, courses,
+        instruction: job.base.instruction ?? { english: expectedEnglish(spec.system) },
+        redacted: job.redact,
       });
       console.log(`  ${file}  (${(data.length / 1024).toFixed(0)} KB, ${courses.length} courses)`);
     }
   }
   await browser.close();
-  if (!filter.length) {
-    await writeFile(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 1) + '\n');
-    console.log(`\n${manifest.length} files from ${specs.length} fictitious records → ${OUT}`);
-  }
+  // A filtered run updates only its own entries, so new records can be added without regenerating (and so slightly
+  // re-rendering) every existing fixture.
+  const file = path.join(OUT, 'manifest.json');
+  const kept: Truth[] = filter.length ? (JSON.parse(await readFile(file, 'utf8')) as Truth[]).filter((t) => !manifest.some((m) => m.file === t.file)) : [];
+  const all = [...kept, ...manifest].sort((a, b) => allSpecs.findIndex((s) => s.id === a.id) - allSpecs.findIndex((s) => s.id === b.id) || a.file.localeCompare(b.file));
+  // Every truth entry says what language of instruction to expect.
+  for (const t of all) t.instruction = allSpecs.find((x) => x.id === t.id)?.instruction ?? { english: expectedEnglish(t.system) };
+  await writeFile(file, JSON.stringify(all, null, 1) + '\n');
+  console.log(`\n${manifest.length} files written; manifest has ${all.length} → ${OUT}`);
 }
 
 if (process.argv[1]?.endsWith('generate.ts')) {

@@ -30,6 +30,10 @@ export interface DocTokens {
   warnings: string[];
   /** When the record is made of several files: the first page of each, so one report's header never leaks into the next. */
   parts?: { name: string; firstPage: number }[];
+  /** Text found under a black box (a redaction that did not remove it): where, never what. The text itself is not kept. */
+  hiddenText?: { pages: number[]; count: number };
+  /** Black redaction bars found on scanned pages and painted out before reading. */
+  redactionBars?: number;
 }
 
 /** Where a value came from on the original document. */
@@ -51,6 +55,8 @@ export interface Field<T> {
   source?: SourceRef;
   /** Set when a person changed the value. */
   edited?: boolean;
+  /** The document has the field but its value was blacked out or replaced ("XXXX", "[REDACTED]"). */
+  redacted?: boolean;
 }
 
 export type TranslationSource = 'same' | 'system-profile' | 'dictionary' | 'model' | 'none';
@@ -114,6 +120,11 @@ export interface Extraction {
   };
   school: { name: Field<string> };
   issued?: Field<string>;
+  /** Evidence about the language of instruction printed on the record. */
+  stated?: {
+    instruction?: { languages: string[]; text: string; source?: SourceRef };
+    translation?: { text: string; source?: SourceRef };
+  };
   /** An aggregate printed on an examination certificate ("Aggregate 06"). */
   aggregate?: Field<number>;
   courses: ExtractedCourse[];
@@ -139,6 +150,34 @@ export interface Provenance {
   schoolYear: string;
   /** ISO date the fact was added. */
   addedOn: string;
+}
+
+/** The language of instruction of a system's secondary schools, as published. */
+export interface InstructionLanguage {
+  /** BCP-47 codes ("en", "es"). Empty when it is not known. */
+  languages: string[];
+  /** Whether a student's own school may teach in another language. */
+  varies: 'no' | 'by-school' | 'by-subject' | 'by-region' | 'unknown';
+  /** One or two plain sentences, for the counselor. */
+  note: string;
+  provenance: Provenance;
+  /** Further sources for multi-country profiles. */
+  more?: SourceInfo[];
+}
+
+/** What a case's evidence says about the language the student was taught in. */
+export interface InstructionAssessment {
+  languages: string[];
+  /** true / false when known; null when the evidence does not say. */
+  english: boolean | null;
+  /** Strongest evidence found: a statement printed on the record, the system profile, or only the document's language. */
+  strength: 'printed' | 'system' | 'system-varies' | 'document' | 'unknown';
+  /** The record says it is a translation, so its language says nothing about instruction. */
+  translated: boolean;
+  /** One sentence for the counselor ("Taught in English: …"). */
+  summary: string;
+  /** Why, evidence by evidence. */
+  evidence: { text: string; source?: SourceInfo; ref?: SourceRef }[];
 }
 
 export type USLetter = 'A' | 'B' | 'C' | 'D' | 'F' | 'P' | 'NC';
@@ -267,6 +306,8 @@ export interface SystemProfile {
     provenance: Provenance;
   };
   courses: SystemCourse[];
+  /** The language(s) the system's secondary schools teach in, with its source. Required: "unknown" is an answer. */
+  instruction: InstructionLanguage;
   /** How the school year is divided. A report for one part covers that fraction of the year. */
   calendar?: Calendar;
   /** What each year of a subject covers, in the shared topic vocabulary (src/kb/usCourses.ts). */
@@ -317,6 +358,8 @@ export interface DistrictPolicy {
   title: string;
   text: string;
   source: SourceInfo;
+  /** Further sources, when a rule comes from both the state and the district. */
+  more?: SourceInfo[];
 }
 
 export interface DistrictProfile {
@@ -413,6 +456,8 @@ export interface Evaluation {
   flags: VerifyFlag[];
   /** Where the student stands on each US course sequence, and what to take next. */
   placements: Placement[];
+  /** The language the student was taught in, and how strong the evidence is. */
+  instruction: InstructionAssessment;
 }
 
 export interface LadderStep {

@@ -33,6 +33,10 @@ export interface FileScore {
   letterOk: number;
   translationOk: number;
   translationTotal: number;
+  /** The language-of-instruction answer matches (English-medium or not, or not knowable). */
+  instructionOk: boolean | null;
+  /** A redacted file: its student details read as empty or redacted, never as text. */
+  redactionOk: boolean | null;
   flags: number;
   misses: string[];
 }
@@ -49,14 +53,18 @@ export function scoreFile(truth: Truth, ex: Extraction, ev: Evaluation, engine: 
   const s: FileScore = {
     file: truth.file, format: truth.format, system: truth.system, lang: truth.lang, engine, ms,
     systemOk: ex.systemId.value === truth.system,
-    nameOk: sameName(ex.student.name.value, truth.student.name),
-    dobOk: ex.student.dob.value === truth.student.dob,
-    idOk: !truth.student.id || key(ex.student.id.value).replace(/ /g, '') === key(truth.student.id).replace(/ /g, ''),
+    nameOk: truth.student.name ? sameName(ex.student.name.value, truth.student.name) : !ex.student.name.value,
+    dobOk: (ex.student.dob.value ?? '') === truth.student.dob,
+    idOk: truth.redacted ? !ex.student.id.value : !truth.student.id || key(ex.student.id.value).replace(/ /g, '') === key(truth.student.id).replace(/ /g, ''),
     schoolOk: truth.school.name ? key(ex.school.name.value).includes(key(truth.school.name)) || similarity(ex.school.name.value, truth.school.name) >= 0.8 : null,
     truthCourses: truth.courses.length, extracted: ex.courses.length,
     found: 0, spurious: 0, exactName: 0, gradeOk: 0, creditsOk: 0, creditsTotal: 0, hoursOk: 0, hoursTotal: 0, levelOk: 0, levelTotal: 0,
     conceptOk: 0, letterOk: 0, translationOk: 0, translationTotal: 0, flags: ex.flags.length + ev.flags.length, misses: [],
+    instructionOk: truth.instruction ? ev.instruction.english === truth.instruction.english && (!truth.instruction.translated || ev.instruction.translated) : null,
+    redactionOk: truth.redacted ? !ex.student.name.value && !ex.student.dob.value && !ex.student.id.value : null,
   };
+  if (s.instructionOk === false) s.misses.push(`language of instruction: got ${ev.instruction.english} (${ev.instruction.strength}${ev.instruction.translated ? ", translated" : ""}), want ${truth.instruction!.english}${truth.instruction!.translated ? " (translated)" : ""}`);
+  if (s.redactionOk === false) s.misses.push(`redacted details were read as text: name “${ex.student.name.value}”, dob “${ex.student.dob.value}”, id “${ex.student.id.value}”`);
   if (!s.systemOk) s.misses.push(`system: got ${ex.systemId.value}, want ${truth.system}`);
   if (!s.nameOk) s.misses.push(`student: got “${ex.student.name.value}”, want “${truth.student.name}”`);
   if (!s.dobOk) s.misses.push(`dob: got “${ex.student.dob.value}” (${ex.student.dob.original ?? ''}), want ${truth.student.dob}`);

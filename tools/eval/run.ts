@@ -55,6 +55,8 @@ function table(set: FileScore[]): string {
     ['Subject matched to the expected concept', P(sum((s) => s.conceptOk, set), sum((s) => s.found, set))],
     ['US letter grade correct', P(sum((s) => s.letterOk, set), sum((s) => s.found, set))],
     ['English name close to the reference translation', P(sum((s) => s.translationOk, set), sum((s) => s.translationTotal, set))],
+    ['Language of instruction (English-medium or not) correct', `${set.filter((s) => s.instructionOk).length}/${set.filter((s) => s.instructionOk !== null).length}`],
+    ['Redacted files: student details kept out (never read as text)', set.some((s) => s.redactionOk !== null) ? `${set.filter((s) => s.redactionOk).length}/${set.filter((s) => s.redactionOk !== null).length}` : '—'],
   ];
   return '| Measure | Result |\n|---|---|\n' + rows.map((r) => `| ${r[0]} | ${r[1]} |`).join('\n') + '\n';
 }

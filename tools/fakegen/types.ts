@@ -79,6 +79,23 @@ export interface FakeSpec {
   specimen: string;
   /** Colour for the title (report cards often print the term in red). */
   titleColor?: string;
+  /** Expected language of instruction (defaults by system in the generator). */
+  instruction?: { english: boolean | null; translated?: boolean };
+  /** Extra files of the same record with the student's details redacted (anonymized test documents). */
+  variants?: Variant[];
+}
+
+/**
+ * How the name, date of birth and ID are removed: a solid bar with the text really gone; "XXXX"; "[REDACTED]"; an
+ * empty field; or a failed redaction, a black box drawn over text that is still in the PDF.
+ */
+export type Redaction = 'bar' | 'xxxx' | 'tag' | 'blank' | 'leak';
+
+export interface Variant {
+  /** File name part: `<id>.<suffix>.<format extension>`. */
+  suffix: string;
+  redact: Redaction;
+  formats: Format[];
 }
 
 export interface TruthCourse {
@@ -105,4 +122,8 @@ export interface Truth {
   student: { name: string; dob: string; id?: string };
   school: { name: string; city?: string };
   courses: TruthCourse[];
+  /** Expected language-of-instruction answer: English-medium (true), not (false), or not knowable (null). */
+  instruction?: { english: boolean | null; translated?: boolean };
+  /** The student's details were redacted in this file; they must read as not found, never as text. */
+  redacted?: Redaction;
 }

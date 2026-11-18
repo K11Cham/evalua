@@ -16,6 +16,10 @@ const SPPG: SourceInfo = {
   url: 'https://core-docs.s3.us-east-1.amazonaws.com/documents/asset/uploaded_file/4298/JCPS/4108721/High_School_Student_Progression_Promotion_and_Grading_Handbook_SPPG.pdf',
 };
 const KECS: SourceInfo = { title: 'Kentucky course codes (KDE course database and course standards documents)', url: 'https://kecs.education.ky.gov/Public/CourseSearch' };
+// English-learner identification, read on 2026-11-17.
+const JCPS_LAU: SourceInfo = { title: 'JCPS Lau Plan for Multilingual Learners, 2026-27, Section II (linked from the Office of Multilingual Learners page)', url: 'https://www.jefferson.kyschools.us/page/office-of-multilingual-learners/' };
+const KY_EL_ID: SourceInfo = { title: 'Kentucky English Learner Identification and Placement Guidance, 2025-26 (KDE and WIDA)', url: 'https://wida.wisc.edu/sites/default/files/id-placement/KY-ID-Placement-Guidance.pdf' };
+const KY_EL_MISID: SourceInfo = { title: 'KDE: Addressing the Misidentification of Students as English Learners', url: 'https://education.ky.gov/federal/progs/eng/Documents/Process%20for%20Addressing%20the%20Misidentification%20of%20Students%20as%20English%20Learners.pdf' };
 const KAR_307: SourceInfo = { title: '704 KAR 3:307, credit for students from non-accredited schools (as quoted in the JCPS handbook)', url: SPPG.url };
 
 const k = (code: string | undefined, title: string, requirement: string, concepts: string[], o: { levels?: number[]; credits?: number; keywords?: string[] } = {}): CatalogCourse => ({
@@ -87,6 +91,14 @@ const policies: DistrictPolicy[] = [
     title: 'Who evaluates a non-US transcript',
     text: 'For multilingual learners, non-US transcripts are evaluated by the JCPS Office of Multilingual Learners; for other transfers, the school counselor converts transcripts from outside JCPS. Use this evaluation as preparation for that review.',
     source: SPPG,
+  },
+  {
+    id: 'el-identification',
+    title: 'How English learners are identified',
+    text:
+      'Every new student’s family completes the Home Language Survey at enrollment. If any of its four answers names a language other than English, the student is screened with the WIDA Screener, and is identified as a multilingual learner only with an overall score below 4.5 (grades 1–12), within 30 days. In JCPS the screening is overseen by the Office of Multilingual Learners Welcome Center. Country of origin is not part of the process. A student identified in error can have the designation removed after the district reviews grades, teacher input and screener scores.',
+    source: JCPS_LAU,
+    more: [KY_EL_ID, KY_EL_MISID],
   },
   {
     id: 'completed-abroad',

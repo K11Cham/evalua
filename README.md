@@ -16,6 +16,8 @@ More screenshots: [case list](docs/screenshots/cases.png), [report](docs/screens
 
 - **Reads** PDF (text or scanned), Word (.docx), images (JPG, PNG, HEIC, including skewed phone photos), and .txt or .csv lists of subjects and grades. A record that cannot be read at all (handwritten, a faint carbon copy, paper only) can be **typed as a table** instead: it becomes a document of the case and is read like any other. Several files chosen together (one per term, say) become the pages of one record, and **Add documents** on a case brings in later term reports or missing pages without losing corrections or decisions already made.
 - **Extracts** student, school, country and education system, and every course with its grade, credits or hours, year and term. The original text is kept beside an English name, and every field has a confidence score and a link to where it sits on the page.
+- **Shows the language of instruction**, with how strong the evidence is: a statement printed on the record ("Medium of instruction: English") first, then the education system's own language of instruction (sourced for every system), then, weakly, the language the record is written in. A certified translation is recognised, so a record being in English is never taken to mean the student was taught in English. English courses are credited to match: English language arts for English-medium schooling, English as a foreign language otherwise. evalua never decides English-learner status: the case says that placement follows the district's identification process (for JCPS, the Home Language Survey and WIDA Screener, with sources), not country of origin.
+- **Handles anonymized records.** Redacted fields (black bars, "XXXX", "[REDACTED]") read as redacted, never as text. A PDF that only drew a black box over a name, leaving the text in the file, gets a plain warning that the redaction failed; the hidden text is not read or shown.
 - **Converts** grades to a US letter, 4.0 points and percentage, naming the conversion table used, and converts hours to Carnegie units.
 - **Matches** each course to a subject, then to the district's requirement areas and closest catalog course, and shows what is covered and what is still needed to graduate.
 - **Flags items to verify**: unreadable grades, missing years, marks that do not add up to the printed total, ages that do not fit the grade level. It never calls a document fake.
@@ -75,16 +77,20 @@ To try the app, use the fictitious transcripts in [`fixtures/fake/`](fixtures/fa
 
 ## Accuracy
 
-`npm run eval` runs 36 files, rendered from 21 fictitious records, through the pipeline and compares against known answers. Full results, including every miss, are in [`docs/ACCURACY.md`](docs/ACCURACY.md).
+`npm run eval` runs 46 files, rendered from 22 fictitious records, through the pipeline and compares against known answers. They include a certified English translation of a Spanish-medium record and eight anonymized copies of other fakes (black bars, "XXXX", "[REDACTED]", blank fields, and a PDF whose "redaction" only drew a box over the text). Full results, including every miss, are in [`docs/ACCURACY.md`](docs/ACCURACY.md).
 
-| Measure | All 36 files |
+| Measure | All 46 files |
 |---|---|
-| Education system identified | 36/36 |
-| Courses found | 99.1% (674/680) |
-| Grade correct | 99.7% |
+| Education system identified | 46/46 |
+| Courses found | 98.8% (899/910) |
+| Grade correct | 99.3% |
 | US grade level correct | 100% |
-| Subject matched | 99.7% |
-| US letter grade correct | 99.1% |
+| Subject matched | 99.6% |
+| US letter grade correct | 98.9% |
+| Language of instruction (English-medium or not) | 46/46 |
+| Anonymized files: student details kept out, never read as text | 8/8 |
+
+The 36 files that were already in the set read exactly as before; the new translation accounts for most of the change.
 
 **Records made of several files.** A counselor often has one report per term or per year. `npm run eval:split` splits every multi-year fake (11 records, 11 systems) into one file per period, in two styles (the period as a heading over each table, or printed once in the page header), recombines them, and checks every course: 100% of courses found, and 100% of grade levels, terms and school years right in both styles ([`docs/ACCURACY_COMBINED.md`](docs/ACCURACY_COMBINED.md)). Each file's grade, year and term are read from that file only, and terms are recognised in every supported language ("Second Term", "2e trimestre", "PRIMER SEMESTRE", "Học kỳ II", "2학기", "第二学期", "2 четверть", "الفصل الدراسي الثاني").
 

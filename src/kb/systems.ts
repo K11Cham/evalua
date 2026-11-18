@@ -1,13 +1,14 @@
 // International system profiles. Every scale names the published table it follows; US equivalents are
 // conventions used by evaluators, not law, and a counselor can override any of them.
 // Grade tables were read from the cited pages on 2026-11-15.
+import { INSTRUCTION } from './instruction.ts';
 import type { GradeScale, Provenance, ScaleEntry, SourceInfo, SystemCourse, SystemProfile, USLetter } from '../core/types.ts';
 
 const YEAR = '2026-27';
 const ADDED = '2026-11-15';
 const prov = (title: string, url?: string): Provenance => ({ source: { title, url }, schoolYear: YEAR, addedOn: ADDED });
 const scholaro = (country: string, slug: string) => prov(`Scholaro: Grading System in ${country}`, `https://www.scholaro.com/db/Countries/${slug}/Grading-System`);
-const WENR_WA: SourceInfo = { title: 'WES World Education News & Reviews: School Examinations and Curricula in Anglophone West Africa', url: 'https://wenr.wes.org/?p=13104' };
+const WENR_WA: SourceInfo = { title: 'WES World Education News & Reviews: Ghana secondary education (BECE, WASSCE)', url: 'https://wenr.wes.org/country-profiles/secondary-sections/ghana-secondary-education/' };
 
 const L = (labels: string[], us: USLetter, descriptor?: string): ScaleEntry => ({ labels, us, descriptor });
 const R = (min: number, max: number, us: USLetter, descriptor?: string): ScaleEntry => ({ min, max, us, descriptor });
@@ -21,6 +22,7 @@ const WAEC_LABELS: ScaleEntry[] = [
 
 const waec: SystemProfile = {
   id: 'waec',
+  instruction: INSTRUCTION['waec'],
   name: 'WAEC / NECO senior secondary (WASSCE, SSCE, school transcripts)',
   countries: ['The Gambia', 'Nigeria', 'Ghana', 'Sierra Leone', 'Liberia'],
   languages: ['en'],
@@ -86,6 +88,7 @@ const waec: SystemProfile = {
 
 const gabece: SystemProfile = {
   id: 'gabece',
+  instruction: INSTRUCTION['gabece'],
   name: 'GABECE / BECE (end of Grade 9 basic education)',
   countries: ['The Gambia', 'Ghana', 'Nigeria', 'Sierra Leone', 'Liberia'],
   languages: ['en'],
@@ -132,6 +135,7 @@ const gabece: SystemProfile = {
 
 const jamb: SystemProfile = {
   id: 'jamb',
+  instruction: INSTRUCTION['jamb'],
   name: 'JAMB UTME (Nigeria university entrance test)',
   countries: ['Nigeria'],
   languages: ['en'],
@@ -161,6 +165,7 @@ const jamb: SystemProfile = {
 const IB_SRC = prov('Scholaro: IB Diploma scale (shown on its country grading pages)', 'https://www.scholaro.com/db/Countries/United-Kingdom/Grading-System');
 const ib: SystemProfile = {
   id: 'ib',
+  instruction: INSTRUCTION['ib'],
   name: 'International Baccalaureate (Diploma Programme)',
   countries: ['International'],
   languages: ['en'],
@@ -208,6 +213,7 @@ const ib: SystemProfile = {
 const UK_SRC = scholaro('the United Kingdom', 'United-Kingdom');
 const uk: SystemProfile = {
   id: 'uk',
+  instruction: INSTRUCTION['uk'],
   name: 'UK GCSE and A level',
   countries: ['United Kingdom'],
   languages: ['en'],
@@ -259,6 +265,7 @@ const IN_SRC = scholaro('India', 'India');
 const CBSE_PCT: ScaleEntry[] = [R(91, 100, 'A', 'A1'), R(81, 90.99, 'A', 'A2'), R(71, 80.99, 'B', 'B1'), R(61, 70.99, 'B', 'B2'), R(51, 60.99, 'C', 'C1'), R(41, 50.99, 'C', 'C2'), R(33, 40.99, 'D', 'D'), R(0, 32.99, 'F', 'E')];
 const inCbse: SystemProfile = {
   id: 'in-cbse',
+  instruction: INSTRUCTION['in-cbse'],
   name: 'India: CBSE (Classes IX–XII)',
   countries: ['India'],
   languages: ['en', 'hi'],
@@ -304,6 +311,7 @@ const inCbse: SystemProfile = {
 
 const inCisce: SystemProfile = {
   id: 'in-cisce',
+  instruction: INSTRUCTION['in-cisce'],
   name: 'India: CISCE (ICSE Class X, ISC Class XII)',
   countries: ['India'],
   languages: ['en'],
@@ -340,6 +348,7 @@ const inCisce: SystemProfile = {
 const CN_SRC = scholaro('China', 'China');
 const cn: SystemProfile = {
   id: 'cn',
+  instruction: INSTRUCTION['cn'],
   name: 'China: senior high school (普通高中)',
   countries: ['China'],
   languages: ['zh'],
@@ -388,6 +397,7 @@ const cn: SystemProfile = {
 const MX_SRC = scholaro('Mexico', 'Mexico');
 const mx: SystemProfile = {
   id: 'mx-sep',
+  instruction: INSTRUCTION['mx-sep'],
   name: 'Mexico: bachillerato / preparatoria (SEP)',
   countries: ['Mexico'],
   languages: ['es'],
@@ -403,6 +413,10 @@ const mx: SystemProfile = {
     { pattern: '\\b(segundo|2do\\.?)\\s+(año|grado)\\s+(de\\s+)?(bachillerato|preparatoria)', level: 11 },
     { pattern: '\\b(tercer|3er\\.?)\\s+(año|grado)\\s+(de\\s+)?(bachillerato|preparatoria)', level: 12 },
     { pattern: '\\b(tercer|tercero|3er\\.?)\\s+(año|grado)\\s+(de\\s+)?secundaria', level: 9 },
+    // English translations of the certificate print the semesters in English.
+    { pattern: '\\b(first|1st|second|2nd)\\s+semester', level: 10 },
+    { pattern: '\\b(third|3rd|fourth|4th)\\s+semester', level: 11 },
+    { pattern: '\\b(fifth|5th|sixth|6th)\\s+semester', level: 12 },
   ],
   scales: [
     { id: 'mx-10', label: 'Mexico 0–10 scale, pass at 6 → US letter (Scholaro, Mexico)', kind: 'numeric', domain: [0, 10], passing: '6', entries: [R(9, 10, 'A', 'Excelente / Muy bien'), R(8, 8.99, 'B', 'Bien'), R(6, 7.99, 'C', 'Suficiente'), R(0, 5.99, 'F', 'Reprobado')], provenance: MX_SRC },
@@ -449,6 +463,7 @@ const mx: SystemProfile = {
 const FR_SRC = scholaro('France', 'France');
 const fr: SystemProfile = {
   id: 'fr',
+  instruction: INSTRUCTION['fr'],
   name: 'France: lycée and baccalauréat',
   countries: ['France'],
   languages: ['fr'],
@@ -503,6 +518,7 @@ const fr: SystemProfile = {
 const DE_SRC = scholaro('Germany', 'Germany');
 const de: SystemProfile = {
   id: 'de',
+  instruction: INSTRUCTION['de'],
   name: 'Germany: Gymnasium and Abitur',
   countries: ['Germany'],
   languages: ['de'],
@@ -565,6 +581,7 @@ const de: SystemProfile = {
 const PH_SRC = scholaro('the Philippines', 'Philippines');
 const ph: SystemProfile = {
   id: 'ph-k12',
+  instruction: INSTRUCTION['ph-k12'],
   name: 'Philippines: K to 12 (junior and senior high school)',
   countries: ['Philippines'],
   languages: ['en', 'tl'],
@@ -616,6 +633,7 @@ const ph: SystemProfile = {
 const BR_SRC = scholaro('Brazil', 'Brazil');
 const br: SystemProfile = {
   id: 'br',
+  instruction: INSTRUCTION['br'],
   name: 'Brazil: ensino médio',
   countries: ['Brazil'],
   languages: ['pt'],
@@ -662,6 +680,7 @@ const br: SystemProfile = {
 const KR_SRC = scholaro('South Korea', 'South-Korea');
 const kr: SystemProfile = {
   id: 'kr',
+  instruction: INSTRUCTION['kr'],
   name: 'South Korea: high school (고등학교)',
   countries: ['South Korea'],
   languages: ['ko'],
@@ -739,6 +758,7 @@ const kr: SystemProfile = {
 const VN_SRC = scholaro('Vietnam', 'Vietnam');
 const vn: SystemProfile = {
   id: 'vn',
+  instruction: INSTRUCTION['vn'],
   name: 'Vietnam: upper secondary (THPT)',
   countries: ['Vietnam'],
   languages: ['vi'],
@@ -791,6 +811,7 @@ const vn: SystemProfile = {
 const RU_SRC = scholaro('Russia', 'Russia');
 const ru: SystemProfile = {
   id: 'ru',
+  instruction: INSTRUCTION['ru'],
   name: 'Russia: secondary general education (аттестат)',
   countries: ['Russia'],
   languages: ['ru'],
@@ -842,6 +863,7 @@ const ru: SystemProfile = {
 const EG_SRC = scholaro('Egypt', 'Egypt');
 const eg: SystemProfile = {
   id: 'eg',
+  instruction: INSTRUCTION['eg'],
   name: 'Egypt: general secondary certificate (الثانوية العامة)',
   countries: ['Egypt'],
   languages: ['ar'],
@@ -893,6 +915,7 @@ const eg: SystemProfile = {
 const GENERIC_SRC: Provenance = prov('College Board BigFuture: How to Convert Your GPA to a 4.0 Scale', 'https://bigfuture.collegeboard.org/plan-for-college/college-basics/how-to-convert-gpa-4.0-scale');
 const generic: SystemProfile = {
   id: 'generic',
+  instruction: INSTRUCTION['generic'],
   name: 'Unprofiled system (generic rules)',
   countries: [],
   languages: [],

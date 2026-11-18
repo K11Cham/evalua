@@ -209,7 +209,7 @@ export function Dashboard() {
                     <td className="mono">{caseLabel(c)}</td>
                     <td>
                       <a className="rowlink" href={`#/case/${c.id}`}>
-                        {c.extraction?.student.name.value || (c.extraction ? 'Student name not found' : 'Not read yet')}
+                        {c.extraction?.student.name.value || (c.extraction ? (c.extraction.student.name.redacted ? 'Student name redacted' : 'Student name not found') : 'Not read yet')}
                       </a>
                       <span className="orig">{c.fileName}</span>
                     </td>

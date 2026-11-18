@@ -52,6 +52,18 @@ export function buildTables(spec: FakeSpec): TableBlock[] {
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+// Redaction markers set by the generator: a solid bar with nothing under it, or a failed redaction (a black box
+// drawn behind text that is still on the page and in the PDF's text layer).
+export const BAR = (chars: number) => `⟦BAR:${chars}⟧`;
+export const LEAK = (text: string) => `⟦LEAK:${text}⟧`;
+function valueHtml(v: string): string {
+  const bar = /^⟦BAR:(\d+)⟧$/.exec(v);
+  if (bar) return `<span class="rbar" style="width:${bar[1]}ch"></span>`;
+  const leak = /^⟦LEAK:(.*)⟧$/.exec(v);
+  if (leak) return `<span class="rleak">${esc(leak[1])}</span>`;
+  return esc(v);
+}
+
 function tableHtml(t: TableBlock): string {
   const row = (cells: Cell[], tag: 'th' | 'td') =>
     `<tr>${cells
@@ -95,7 +107,7 @@ export function specHtml(spec: FakeSpec, opts: HtmlOpts = {}): string {
       ${spec.subtitle ? `<h2>${esc(spec.subtitle)}</h2>` : ''}
     </header>
     <section class="info">${spec.info
-      .map((i) => `<div class="irow"><span class="ilabel">${esc(i.label)}:</span> <span class="ivalue">${esc(i.value)}</span></div>`)
+      .map((i) => `<div class="irow"><span class="ilabel">${esc(i.label)}:</span> <span class="ivalue">${valueHtml(i.value)}</span></div>`)
       .join('')}</section>`;
   const footer = `
     <section class="notes">${(spec.notes ?? []).map((n) => `<p>${esc(n)}</p>`).join('')}</section>
@@ -105,7 +117,7 @@ export function specHtml(spec: FakeSpec, opts: HtmlOpts = {}): string {
   const pageHtml = (tables: TableBlock[], idx: number) => `
     <div class="page${idx > 0 ? ' later' : ''}">
       <div class="specimen">SPECIMEN</div>
-      ${idx === 0 ? header : `<div class="cont">${esc(spec.student.name)} — ${idx + 1}/${pages.length}</div>`}
+      ${idx === 0 ? header : `<div class="cont">${valueHtml(spec.student.name)} — ${idx + 1}/${pages.length}</div>`}
       <div class="tables${spec.twoUp ? ' twoup' : ''}">${tables.map(tableHtml).join('')}</div>
       ${idx === pages.length - 1 ? footer : ''}
       <div class="foot">${esc(spec.specimen)}</div>
@@ -147,6 +159,8 @@ export function specHtml(spec: FakeSpec, opts: HtmlOpts = {}): string {
   .scribble { height: 30px; margin: 0 30px; border-bottom: 2px solid #1c2f7a; border-radius: 60% 30% 70% 20% / 80% 40% 90% 30%; transform: rotate(-6deg) skewX(-18deg); opacity: .8; }
   .stamp { position: absolute; ${spec.rtl ? 'left' : 'right'}: 24px; top: -34px; width: 104px; height: 104px; border: 3px double rgba(125,30,45,.55); border-radius: 50%; display: grid; place-items: center; transform: rotate(-14deg); }
   .stamp span { font: 700 13px Arial, sans-serif; color: rgba(125,30,45,.55); letter-spacing: 2px; }
+  .rbar { display: inline-block; height: 1.05em; vertical-align: -0.15em; background: #000; }
+  .rleak { background: #000; color: #000; }
   .cont { text-align: end; font-size: .9em; color: #333; margin-bottom: 12px; }
   .foot { position: absolute; left: 56px; right: 56px; bottom: 22px; text-align: center; font: 8px Arial, sans-serif; color: #555; letter-spacing: .4px; }
   </style></head><body>${body}</body></html>`;

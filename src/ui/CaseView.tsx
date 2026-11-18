@@ -13,6 +13,7 @@ import { Confidence, fmtDateTime, Icon, Source, Stamp } from './bits.tsx';
 import { CourseTable } from './CourseTable.tsx';
 import { DocViewer } from './DocViewer.tsx';
 import { FlagList } from './FlagList.tsx';
+import { InstructionNote } from './Instruction.tsx';
 import { TypedTable } from './TypedTable.tsx';
 import { go, useApp } from './state.tsx';
 import { useCase } from './useCase.ts';
@@ -96,7 +97,7 @@ export function CaseView({ id }: { id: string }) {
       <div>
         <div className="case-no">{caseLabel(rec)}</div>
         {/* Never a file name in place of the student's name: a file name can be anything. */}
-        <h1 className={ex?.student.name.value ? '' : 'muted'}>{ex?.student.name.value || (ex ? 'Student name not found' : 'Not read yet')}</h1>
+        <h1 className={ex?.student.name.value ? '' : 'muted'}>{ex?.student.name.value || (ex ? (ex.student.name.redacted ? 'Student name redacted' : 'Student name not found') : 'Not read yet')}</h1>
       </div>
       <Stamp status={rec.status} />
       <div className="case-actions">
@@ -217,7 +218,7 @@ export function CaseView({ id }: { id: string }) {
       {!locked && doc.tokens && (ex.reader ?? 1) < READER_VERSION && (
         <div className="notice check" role="status" style={{ marginBottom: 14, display: 'flex', gap: 12, alignItems: 'center' }}>
           <span style={{ flex: 1 }}>
-            This case was read by an earlier version of evalua. Reading has improved since: when a record is made of several reports, each report's grade level, school year and term are now read on their own. Read it again to update the courses. Your corrections, decisions and notes are kept.
+            This case was read by an earlier version of evalua. Reading has improved since (among other things, it now looks for a printed language of instruction and a translator's note, and reads rows under a watermark). Read it again to update the case. Your corrections, decisions and notes are kept.
           </span>
           <button className="btn small primary" onClick={() => reread({ reuseTokens: true, keepWork: true, action: 'Read again with the updated reader' })}>
             Read again
@@ -365,6 +366,7 @@ export function CaseView({ id }: { id: string }) {
                 </button>
               </dd>
             </dl>
+            {evaluation && <InstructionNote ex={ex} evaluation={evaluation} district={district} />}
           </section>
 
           {/* ── courses ── */}
@@ -661,7 +663,7 @@ function FieldRow({ label, f, onChange, onShow, locked, type = 'text' }: { label
         {f.original && f.original !== f.value && <span className="orig">as printed: {f.original}</span>}
       </dd>
       <dd className="row" style={{ gap: 4, flexWrap: 'nowrap' }}>
-        {f.edited ? <span className="tag ok">edited</span> : f.value ? <Confidence value={f.confidence} quiet /> : <span className="tag check">not found</span>}
+        {f.edited ? <span className="tag ok">edited</span> : f.redacted ? <span className="tag">redacted</span> : f.value ? <Confidence value={f.confidence} quiet /> : <span className="tag check">not found</span>}
         {f.source && (
           <button className="locate" onClick={() => onShow(f.source)} aria-label={`Show ${label} on the document`} title="Show on the document">
             <Icon name="locate" />

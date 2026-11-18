@@ -200,6 +200,9 @@ export function useCase(id: string, kb: KnowledgeBase, who: string): CaseState {
               tokens: [...d.tokens.tokens, ...ing.doc.tokens.map((t) => ({ ...t, page: t.page + offset }))],
               engine: [...new Set([...d.tokens.engine.split(' + '), ...ing.doc.engine.split(' + ')])].filter(Boolean).join(' + '),
               warnings: [...d.tokens.warnings, ...ing.doc.warnings],
+              hiddenText: d.tokens.hiddenText || ing.doc.hiddenText
+                ? { pages: [...(d.tokens.hiddenText?.pages ?? []), ...(ing.doc.hiddenText?.pages ?? []).map((x) => x + offset)], count: (d.tokens.hiddenText?.count ?? 0) + (ing.doc.hiddenText?.count ?? 0) }
+                : undefined,
               // Where each file starts, so one report's grade, year and term never leak into the next.
               parts: [
                 ...(d.tokens.parts ?? [{ name: d.files[0]?.name ?? 'earlier file', firstPage: 0 }]),

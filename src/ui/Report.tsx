@@ -7,6 +7,7 @@ import { caseFlags } from '../core/verify.ts';
 import type { SourceInfo } from '../core/types.ts';
 import { caseLabel, DEFAULT_DISTRICT, getCase, STATUS_LABEL, type CaseRecord } from '../store/db.ts';
 import { fmtDate, Icon } from './bits.tsx';
+import { InstructionNote } from './Instruction.tsx';
 import { useApp } from './state.tsx';
 
 export function Report({ id }: { id: string }) {
@@ -77,15 +78,17 @@ export function Report({ id }: { id: string }) {
         </header>
 
         <dl className="meta">
-          <div><dt>Student</dt><dd>{ex.student.name.value || 'Not found on the document'}</dd></div>
-          <div><dt>Date of birth</dt><dd>{ex.student.dob.value || '—'}</dd></div>
-          <div><dt>Student ID</dt><dd>{ex.student.id.value || '—'}</dd></div>
+          <div><dt>Student</dt><dd>{ex.student.name.value || (ex.student.name.redacted ? 'Redacted' : 'Not found on the document')}</dd></div>
+          <div><dt>Date of birth</dt><dd>{ex.student.dob.value || (ex.student.dob.redacted ? 'Redacted' : '—')}</dd></div>
+          <div><dt>Student ID</dt><dd>{ex.student.id.value || (ex.student.id.redacted ? 'Redacted' : '—')}</dd></div>
           <div><dt>Sending school</dt><dd lang={ex.language}>{ex.school.name.value || '—'}</dd></div>
           <div><dt>Country</dt><dd>{ex.country.value || '—'}</dd></div>
           <div><dt>Record type</dt><dd>{ex.docType}</dd></div>
           <div><dt>Document</dt><dd>{rec.fileName}</dd></div>
           <div><dt>Prepared by</dt><dd>{settings.counselor || '________________'}</dd></div>
         </dl>
+
+        <InstructionNote ex={ex} evaluation={ev} district={district} print />
 
         <h2>Summary</h2>
         <table>

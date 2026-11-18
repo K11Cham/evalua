@@ -97,7 +97,10 @@
     "concept": "ss.religion",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
   "id": "gm-wassce",
@@ -197,107 +200,114 @@
     "concept": "ss.religion",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
-  "id": "gm-gabece",
-  "file": "gm-gabece.scan.jpg",
-  "format": "scan-jpg",
-  "system": "gabece",
+  "id": "gm-wassce",
+  "file": "gm-wassce.redaction-failed.pdf",
+  "format": "pdf",
+  "system": "waec",
   "country": "The Gambia",
   "lang": "en",
   "pages": 1,
   "student": {
-   "name": "Lamin Ousman Ceesay",
-   "dob": "2007-03-09",
-   "id": "3020417056"
+   "name": "",
+   "dob": "",
+   "id": ""
   },
   "school": {
-   "name": "Tallinding Meadow Upper Basic School"
+   "name": "Kombo Riverside Senior Secondary School"
   },
   "courses": [
    {
     "name": "ENGLISH LANGUAGE",
     "en": "English Language",
-    "grade": "3",
-    "year": "GABECE 2022",
-    "level": 9,
+    "grade": "B3",
+    "year": "WASSCE 2025",
+    "level": 12,
     "concept": "ela.english",
     "us": "B"
    },
    {
     "name": "MATHEMATICS",
     "en": "Mathematics",
-    "grade": "2",
-    "year": "GABECE 2022",
-    "level": 9,
+    "grade": "C4",
+    "year": "WASSCE 2025",
+    "level": 12,
     "concept": "math.general",
-    "us": "A"
-   },
-   {
-    "name": "SCIENCE",
-    "en": "Science",
-    "grade": "4",
-    "year": "GABECE 2022",
-    "level": 9,
-    "concept": "sci.integrated",
     "us": "B"
    },
    {
-    "name": "SOCIAL AND ENVIRONMENTAL STUDIES",
-    "en": "Social And Environmental Studies",
-    "grade": "1",
-    "year": "GABECE 2022",
-    "level": 9,
-    "concept": "ss.social",
+    "name": "BIOLOGY",
+    "en": "Biology",
+    "grade": "B2",
+    "year": "WASSCE 2025",
+    "level": 12,
+    "concept": "sci.biology",
     "us": "A"
+   },
+   {
+    "name": "CHEMISTRY",
+    "en": "Chemistry",
+    "grade": "C5",
+    "year": "WASSCE 2025",
+    "level": 12,
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "PHYSICS",
+    "en": "Physics",
+    "grade": "C6",
+    "year": "WASSCE 2025",
+    "level": 12,
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "GEOGRAPHY",
+    "en": "Geography",
+    "grade": "A1",
+    "year": "WASSCE 2025",
+    "level": 12,
+    "concept": "ss.geography",
+    "us": "A"
+   },
+   {
+    "name": "ECONOMICS",
+    "en": "Economics",
+    "grade": "B3",
+    "year": "WASSCE 2025",
+    "level": 12,
+    "concept": "ss.economics",
+    "us": "B"
    },
    {
     "name": "AGRICULTURAL SCIENCE",
     "en": "Agricultural Science",
-    "grade": "5",
-    "year": "GABECE 2022",
-    "level": 9,
+    "grade": "D7",
+    "year": "WASSCE 2025",
+    "level": 12,
     "concept": "cte.agriculture",
-    "us": "C"
+    "us": "D"
    },
    {
-    "name": "ARABIC",
-    "en": "Arabic",
-    "grade": "2",
-    "year": "GABECE 2022",
-    "level": 9,
-    "concept": "wl.other",
-    "us": "A"
-   },
-   {
-    "name": "ISLAMIC RELIGIOUS KNOWLEDGE",
-    "en": "Islamic Religious Knowledge",
-    "grade": "1",
-    "year": "GABECE 2022",
-    "level": 9,
+    "name": "ISLAMIC STUDIES",
+    "en": "Islamic Studies",
+    "grade": "B2",
+    "year": "WASSCE 2025",
+    "level": 12,
     "concept": "ss.religion",
     "us": "A"
-   },
-   {
-    "name": "FRENCH",
-    "en": "French",
-    "grade": "6",
-    "year": "GABECE 2022",
-    "level": 9,
-    "concept": "wl.other",
-    "us": "C"
-   },
-   {
-    "name": "PHYSICAL AND HEALTH EDUCATION",
-    "en": "Physical And Health Education",
-    "grade": "3",
-    "year": "GABECE 2022",
-    "level": 9,
-    "concept": "pe",
-    "us": "B"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  },
+  "redacted": "leak"
  },
  {
   "id": "gm-gabece",
@@ -397,115 +407,113 @@
     "concept": "pe",
     "us": "B"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
-  "id": "gm-termreport",
-  "file": "gm-termreport.scan.pdf",
-  "format": "scan-pdf",
-  "system": "waec",
+  "id": "gm-gabece",
+  "file": "gm-gabece.scan.jpg",
+  "format": "scan-jpg",
+  "system": "gabece",
   "country": "The Gambia",
   "lang": "en",
   "pages": 1,
   "student": {
-   "name": "Touray M.L Amie",
-   "dob": ""
+   "name": "Lamin Ousman Ceesay",
+   "dob": "2007-03-09",
+   "id": "3020417056"
   },
   "school": {
-   "name": "Brikama Lantern Senior Secondary School"
+   "name": "Tallinding Meadow Upper Basic School"
   },
   "courses": [
    {
+    "name": "ENGLISH LANGUAGE",
+    "en": "English Language",
+    "grade": "3",
+    "year": "GABECE 2022",
+    "level": 9,
+    "concept": "ela.english",
+    "us": "B"
+   },
+   {
     "name": "MATHEMATICS",
     "en": "Mathematics",
-    "grade": "A",
-    "year": "Second Term",
-    "level": 11,
-    "term": "2",
+    "grade": "2",
+    "year": "GABECE 2022",
+    "level": 9,
     "concept": "math.general",
     "us": "A"
    },
    {
-    "name": "ENGLISH LANGUAGE",
-    "en": "English Language",
-    "grade": "B",
-    "year": "Second Term",
-    "level": 11,
-    "term": "2",
-    "concept": "ela.english",
-    "us": "A"
-   },
-   {
-    "name": "BIOLOGY",
-    "en": "Biology",
-    "grade": "B",
-    "year": "Second Term",
-    "level": 11,
-    "term": "2",
-    "concept": "sci.biology",
-    "us": "A"
-   },
-   {
-    "name": "CHEMISTRY",
-    "en": "Chemistry",
-    "grade": "C",
-    "year": "Second Term",
-    "level": 11,
-    "term": "2",
-    "concept": "sci.chemistry",
+    "name": "SCIENCE",
+    "en": "Science",
+    "grade": "4",
+    "year": "GABECE 2022",
+    "level": 9,
+    "concept": "sci.integrated",
     "us": "B"
    },
    {
-    "name": "PHYSICS",
-    "en": "Physics",
-    "grade": "C",
-    "year": "Second Term",
-    "level": 11,
-    "term": "2",
-    "concept": "sci.physics",
+    "name": "SOCIAL AND ENVIRONMENTAL STUDIES",
+    "en": "Social And Environmental Studies",
+    "grade": "1",
+    "year": "GABECE 2022",
+    "level": 9,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "AGRICULTURAL SCIENCE",
+    "en": "Agricultural Science",
+    "grade": "5",
+    "year": "GABECE 2022",
+    "level": 9,
+    "concept": "cte.agriculture",
     "us": "C"
    },
    {
-    "name": "FURTHER MATHEMATICS",
-    "en": "Further Mathematics",
-    "grade": "B",
-    "year": "Second Term",
-    "level": 11,
-    "term": "2",
-    "concept": "math.advanced",
-    "us": "B"
-   },
-   {
-    "name": "ECONOMICS",
-    "en": "Economics",
-    "grade": "A",
-    "year": "Second Term",
-    "level": 11,
-    "term": "2",
-    "concept": "ss.economics",
+    "name": "ARABIC",
+    "en": "Arabic",
+    "grade": "2",
+    "year": "GABECE 2022",
+    "level": 9,
+    "concept": "wl.other",
     "us": "A"
    },
    {
-    "name": "PHYSICAL EDUCATION",
-    "en": "Physical Education",
-    "grade": "E",
-    "year": "Second Term",
-    "level": 11,
-    "term": "2",
+    "name": "ISLAMIC RELIGIOUS KNOWLEDGE",
+    "en": "Islamic Religious Knowledge",
+    "grade": "1",
+    "year": "GABECE 2022",
+    "level": 9,
+    "concept": "ss.religion",
+    "us": "A"
+   },
+   {
+    "name": "FRENCH",
+    "en": "French",
+    "grade": "6",
+    "year": "GABECE 2022",
+    "level": 9,
+    "concept": "wl.other",
+    "us": "C"
+   },
+   {
+    "name": "PHYSICAL AND HEALTH EDUCATION",
+    "en": "Physical And Health Education",
+    "grade": "3",
+    "year": "GABECE 2022",
+    "level": 9,
     "concept": "pe",
-    "us": "D"
-   },
-   {
-    "name": "INFORMATION & COMMUNICATION TECHNOLOGY",
-    "en": "Information & Communication Technology",
-    "grade": "A",
-    "year": "Second Term",
-    "level": 11,
-    "term": "2",
-    "concept": "cs",
-    "us": "A"
+    "us": "B"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
   "id": "gm-termreport",
@@ -613,7 +621,10 @@
     "concept": "cs",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
   "id": "gm-termreport",
@@ -721,7 +732,347 @@
     "concept": "cs",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
+ },
+ {
+  "id": "gm-termreport",
+  "file": "gm-termreport.redacted.pdf",
+  "format": "pdf",
+  "system": "waec",
+  "country": "The Gambia",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "",
+   "dob": "",
+   "id": ""
+  },
+  "school": {
+   "name": "Brikama Lantern Senior Secondary School"
+  },
+  "courses": [
+   {
+    "name": "MATHEMATICS",
+    "en": "Mathematics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "ENGLISH LANGUAGE",
+    "en": "English Language",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.english",
+    "us": "A"
+   },
+   {
+    "name": "BIOLOGY",
+    "en": "Biology",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "CHEMISTRY",
+    "en": "Chemistry",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "PHYSICS",
+    "en": "Physics",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "FURTHER MATHEMATICS",
+    "en": "Further Mathematics",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.advanced",
+    "us": "B"
+   },
+   {
+    "name": "ECONOMICS",
+    "en": "Economics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.economics",
+    "us": "A"
+   },
+   {
+    "name": "PHYSICAL EDUCATION",
+    "en": "Physical Education",
+    "grade": "E",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "pe",
+    "us": "D"
+   },
+   {
+    "name": "INFORMATION & COMMUNICATION TECHNOLOGY",
+    "en": "Information & Communication Technology",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "cs",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": true
+  },
+  "redacted": "bar"
+ },
+ {
+  "id": "gm-termreport",
+  "file": "gm-termreport.redacted.scan.pdf",
+  "format": "scan-pdf",
+  "system": "waec",
+  "country": "The Gambia",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "",
+   "dob": "",
+   "id": ""
+  },
+  "school": {
+   "name": "Brikama Lantern Senior Secondary School"
+  },
+  "courses": [
+   {
+    "name": "MATHEMATICS",
+    "en": "Mathematics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "ENGLISH LANGUAGE",
+    "en": "English Language",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.english",
+    "us": "A"
+   },
+   {
+    "name": "BIOLOGY",
+    "en": "Biology",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "CHEMISTRY",
+    "en": "Chemistry",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "PHYSICS",
+    "en": "Physics",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "FURTHER MATHEMATICS",
+    "en": "Further Mathematics",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.advanced",
+    "us": "B"
+   },
+   {
+    "name": "ECONOMICS",
+    "en": "Economics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.economics",
+    "us": "A"
+   },
+   {
+    "name": "PHYSICAL EDUCATION",
+    "en": "Physical Education",
+    "grade": "E",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "pe",
+    "us": "D"
+   },
+   {
+    "name": "INFORMATION & COMMUNICATION TECHNOLOGY",
+    "en": "Information & Communication Technology",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "cs",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": true
+  },
+  "redacted": "bar"
+ },
+ {
+  "id": "gm-termreport",
+  "file": "gm-termreport.scan.pdf",
+  "format": "scan-pdf",
+  "system": "waec",
+  "country": "The Gambia",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "Touray M.L Amie",
+   "dob": ""
+  },
+  "school": {
+   "name": "Brikama Lantern Senior Secondary School"
+  },
+  "courses": [
+   {
+    "name": "MATHEMATICS",
+    "en": "Mathematics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "ENGLISH LANGUAGE",
+    "en": "English Language",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.english",
+    "us": "A"
+   },
+   {
+    "name": "BIOLOGY",
+    "en": "Biology",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "CHEMISTRY",
+    "en": "Chemistry",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "PHYSICS",
+    "en": "Physics",
+    "grade": "C",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "FURTHER MATHEMATICS",
+    "en": "Further Mathematics",
+    "grade": "B",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "math.advanced",
+    "us": "B"
+   },
+   {
+    "name": "ECONOMICS",
+    "en": "Economics",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.economics",
+    "us": "A"
+   },
+   {
+    "name": "PHYSICAL EDUCATION",
+    "en": "Physical Education",
+    "grade": "E",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "pe",
+    "us": "D"
+   },
+   {
+    "name": "INFORMATION & COMMUNICATION TECHNOLOGY",
+    "en": "Information & Communication Technology",
+    "grade": "A",
+    "year": "Second Term",
+    "level": 11,
+    "term": "2",
+    "concept": "cs",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
   "id": "ng-sss",
@@ -1038,7 +1389,10 @@
     "concept": "wl.native",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
   "id": "ng-jamb",
@@ -1093,7 +1447,10 @@
     "concept": "sci.chemistry",
     "us": "NC"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
   "id": "ng-jamb",
@@ -1148,7 +1505,124 @@
     "concept": "sci.chemistry",
     "us": "NC"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
+ },
+ {
+  "id": "ng-neco",
+  "file": "ng-neco.redacted.scan.jpg",
+  "format": "scan-jpg",
+  "system": "waec",
+  "country": "Nigeria",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "",
+   "dob": "",
+   "id": ""
+  },
+  "school": {
+   "name": "Sardauna Crescent Model Secondary School",
+   "city": "Kaduna"
+  },
+  "courses": [
+   {
+    "name": "ENGLISH LANGUAGE",
+    "en": "English Language",
+    "grade": "C4",
+    "year": "SSCE 2024",
+    "level": 12,
+    "concept": "ela.english",
+    "us": "B"
+   },
+   {
+    "name": "GENERAL MATHEMATICS",
+    "en": "General Mathematics",
+    "grade": "B3",
+    "year": "SSCE 2024",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "CIVIC EDUCATION",
+    "en": "Civic Education",
+    "grade": "A1",
+    "year": "SSCE 2024",
+    "level": 12,
+    "concept": "ss.civics",
+    "us": "A"
+   },
+   {
+    "name": "BIOLOGY",
+    "en": "Biology",
+    "grade": "B2",
+    "year": "SSCE 2024",
+    "level": 12,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "CHEMISTRY",
+    "en": "Chemistry",
+    "grade": "C6",
+    "year": "SSCE 2024",
+    "level": 12,
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "PHYSICS",
+    "en": "Physics",
+    "grade": "E8",
+    "year": "SSCE 2024",
+    "level": 12,
+    "concept": "sci.physics",
+    "us": "D"
+   },
+   {
+    "name": "GOVERNMENT",
+    "en": "Government",
+    "grade": "B3",
+    "year": "SSCE 2024",
+    "level": 12,
+    "concept": "ss.civics",
+    "us": "B"
+   },
+   {
+    "name": "LITERATURE IN ENGLISH",
+    "en": "Literature In English",
+    "grade": "C5",
+    "year": "SSCE 2024",
+    "level": 12,
+    "concept": "ela.literature",
+    "us": "C"
+   },
+   {
+    "name": "HAUSA LANGUAGE",
+    "en": "Hausa Language",
+    "grade": "A1",
+    "year": "SSCE 2024",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "DATA PROCESSING",
+    "en": "Data Processing",
+    "grade": "F9",
+    "year": "SSCE 2024",
+    "level": 12,
+    "concept": "cs",
+    "us": "F"
+   }
+  ],
+  "instruction": {
+   "english": true
+  },
+  "redacted": "blank"
  },
  {
   "id": "ng-neco",
@@ -1258,7 +1732,10 @@
     "concept": "cs",
     "us": "F"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
   "id": "gh-shs",
@@ -1530,7 +2007,10 @@
     "concept": "sci.biology",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
   "id": "ib-dp",
@@ -1622,7 +2102,10 @@
     "concept": "elective.other",
     "us": "C"
    }
-  ]
+  ],
+  "instruction": {
+   "english": null
+  }
  },
  {
   "id": "uk-gcse",
@@ -1759,81 +2242,10 @@
     "concept": "cs",
     "us": "A"
    }
-  ]
- },
- {
-  "id": "in-cbse",
-  "file": "in-cbse.scan.png",
-  "format": "scan-png",
-  "system": "in-cbse",
-  "country": "India",
-  "lang": "en",
-  "pages": 1,
-  "student": {
-   "name": "Ananya Raghunathan",
-   "dob": "2007-12-05",
-   "id": "26148830"
-  },
-  "school": {
-   "name": "Saraswati Vidya Niketan Sr Sec School",
-   "city": "Coimbatore"
-  },
-  "courses": [
-   {
-    "name": "ENGLISH CORE",
-    "en": "English Core",
-    "grade": "090",
-    "year": "Class XII",
-    "level": 12,
-    "concept": "ela.english",
-    "us": "A"
-   },
-   {
-    "name": "MATHEMATICS",
-    "en": "Mathematics",
-    "grade": "082",
-    "year": "Class XII",
-    "level": 12,
-    "concept": "math.general",
-    "us": "A"
-   },
-   {
-    "name": "PHYSICS",
-    "en": "Physics",
-    "grade": "077",
-    "year": "Class XII",
-    "level": 12,
-    "concept": "sci.physics",
-    "us": "B"
-   },
-   {
-    "name": "CHEMISTRY",
-    "en": "Chemistry",
-    "grade": "081",
-    "year": "Class XII",
-    "level": 12,
-    "concept": "sci.chemistry",
-    "us": "A"
-   },
-   {
-    "name": "COMPUTER SCIENCE",
-    "en": "Computer Science",
-    "grade": "095",
-    "year": "Class XII",
-    "level": 12,
-    "concept": "cs",
-    "us": "A"
-   },
-   {
-    "name": "PHYSICAL EDUCATION",
-    "en": "Physical Education",
-    "grade": "088",
-    "year": "Class XII",
-    "level": 12,
-    "concept": "pe",
-    "us": "A"
-   }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
   "id": "in-cbse",
@@ -1907,186 +2319,87 @@
     "concept": "pe",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
-  "id": "ph-sf10",
-  "file": "ph-sf10.photo.jpg",
-  "format": "photo-jpg",
-  "system": "ph-k12",
-  "country": "Philippines",
+  "id": "in-cbse",
+  "file": "in-cbse.scan.png",
+  "format": "scan-png",
+  "system": "in-cbse",
+  "country": "India",
   "lang": "en",
   "pages": 1,
   "student": {
-   "name": "Maria Liezel Santos Dela Cruz",
-   "dob": "2008-04-26",
-   "id": "108834170092"
+   "name": "Ananya Raghunathan",
+   "dob": "2007-12-05",
+   "id": "26148830"
   },
   "school": {
-   "name": "San Isidro Integrated National High School"
+   "name": "Saraswati Vidya Niketan Sr Sec School",
+   "city": "Coimbatore"
   },
   "courses": [
    {
-    "name": "Oral Communication",
-    "en": "Oral Communication",
-    "grade": "89",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
-    "level": 11,
-    "term": "1",
+    "name": "ENGLISH CORE",
+    "en": "English Core",
+    "grade": "090",
+    "year": "Class XII",
+    "level": 12,
     "concept": "ela.english",
-    "us": "B"
-   },
-   {
-    "name": "Komunikasyon at Pananaliksik sa Wika at Kulturang Pilipino",
-    "en": "Communication and Research in Filipino Language and Culture",
-    "grade": "92",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
-    "level": 11,
-    "term": "1",
-    "concept": "wl.native",
-    "us": "B"
-   },
-   {
-    "name": "General Mathematics",
-    "en": "General Mathematics",
-    "grade": "85",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
-    "level": 11,
-    "term": "1",
-    "concept": "math.general",
-    "us": "B"
-   },
-   {
-    "name": "Earth Science",
-    "en": "Earth Science",
-    "grade": "86",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
-    "level": 11,
-    "term": "1",
-    "concept": "sci.earth",
-    "us": "B"
-   },
-   {
-    "name": "Understanding Culture, Society and Politics",
-    "en": "Understanding Culture, Society and Politics",
-    "grade": "93",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
-    "level": 11,
-    "term": "1",
-    "concept": "ss.social",
-    "us": "B"
-   },
-   {
-    "name": "Physical Education and Health",
-    "en": "Physical Education and Health",
-    "grade": "96",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
-    "level": 11,
-    "term": "1",
-    "concept": "pe",
     "us": "A"
    },
    {
-    "name": "Pre-Calculus",
-    "en": "Pre-Calculus",
-    "grade": "81",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
-    "level": 11,
-    "term": "1",
-    "concept": "math.precalc",
-    "us": "C"
+    "name": "MATHEMATICS",
+    "en": "Mathematics",
+    "grade": "082",
+    "year": "Class XII",
+    "level": 12,
+    "concept": "math.general",
+    "us": "A"
    },
    {
-    "name": "General Biology 1",
-    "en": "General Biology 1",
-    "grade": "87",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
-    "level": 11,
-    "term": "1",
-    "concept": "sci.biology",
+    "name": "PHYSICS",
+    "en": "Physics",
+    "grade": "077",
+    "year": "Class XII",
+    "level": 12,
+    "concept": "sci.physics",
     "us": "B"
    },
    {
-    "name": "Reading and Writing",
-    "en": "Reading and Writing",
-    "grade": "90",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
-    "level": 11,
-    "term": "2",
-    "concept": "ela.english",
-    "us": "B"
-   },
-   {
-    "name": "Pagbasa at Pagsusuri ng Iba’t Ibang Teksto Tungo sa Pananaliksik",
-    "en": "Reading and Analysis of Various Texts Toward Research (Filipino)",
-    "grade": "91",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
-    "level": 11,
-    "term": "2",
-    "concept": "wl.native",
-    "us": "B"
-   },
-   {
-    "name": "Statistics and Probability",
-    "en": "Statistics and Probability",
-    "grade": "81",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
-    "level": 11,
-    "term": "2",
-    "concept": "math.statistics",
-    "us": "C"
-   },
-   {
-    "name": "Personal Development",
-    "en": "Personal Development",
-    "grade": "94",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
-    "level": 11,
-    "term": "2",
-    "concept": "health",
-    "us": "B"
-   },
-   {
-    "name": "Empowerment Technologies",
-    "en": "Empowerment Technologies",
-    "grade": "93",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
-    "level": 11,
-    "term": "2",
-    "concept": "cs",
-    "us": "B"
-   },
-   {
-    "name": "Basic Calculus",
-    "en": "Basic Calculus",
-    "grade": "77",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
-    "level": 11,
-    "term": "2",
-    "concept": "math.calculus",
-    "us": "C"
-   },
-   {
-    "name": "General Chemistry 1",
-    "en": "General Chemistry 1",
-    "grade": "83",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
-    "level": 11,
-    "term": "2",
+    "name": "CHEMISTRY",
+    "en": "Chemistry",
+    "grade": "081",
+    "year": "Class XII",
+    "level": 12,
     "concept": "sci.chemistry",
-    "us": "C"
+    "us": "A"
    },
    {
-    "name": "General Biology 2",
-    "en": "General Biology 2",
-    "grade": "89",
-    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
-    "level": 11,
-    "term": "2",
-    "concept": "sci.biology",
-    "us": "B"
+    "name": "COMPUTER SCIENCE",
+    "en": "Computer Science",
+    "grade": "095",
+    "year": "Class XII",
+    "level": 12,
+    "concept": "cs",
+    "us": "A"
+   },
+   {
+    "name": "PHYSICAL EDUCATION",
+    "en": "Physical Education",
+    "grade": "088",
+    "year": "Class XII",
+    "level": 12,
+    "concept": "pe",
+    "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": true
+  }
  },
  {
   "id": "ph-sf10",
@@ -2265,7 +2578,192 @@
     "concept": "sci.biology",
     "us": "B"
    }
-  ]
+  ],
+  "instruction": {
+   "english": null
+  }
+ },
+ {
+  "id": "ph-sf10",
+  "file": "ph-sf10.photo.jpg",
+  "format": "photo-jpg",
+  "system": "ph-k12",
+  "country": "Philippines",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "Maria Liezel Santos Dela Cruz",
+   "dob": "2008-04-26",
+   "id": "108834170092"
+  },
+  "school": {
+   "name": "San Isidro Integrated National High School"
+  },
+  "courses": [
+   {
+    "name": "Oral Communication",
+    "en": "Oral Communication",
+    "grade": "89",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
+    "level": 11,
+    "term": "1",
+    "concept": "ela.english",
+    "us": "B"
+   },
+   {
+    "name": "Komunikasyon at Pananaliksik sa Wika at Kulturang Pilipino",
+    "en": "Communication and Research in Filipino Language and Culture",
+    "grade": "92",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
+    "level": 11,
+    "term": "1",
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "General Mathematics",
+    "en": "General Mathematics",
+    "grade": "85",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
+    "level": 11,
+    "term": "1",
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Earth Science",
+    "en": "Earth Science",
+    "grade": "86",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.earth",
+    "us": "B"
+   },
+   {
+    "name": "Understanding Culture, Society and Politics",
+    "en": "Understanding Culture, Society and Politics",
+    "grade": "93",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
+    "level": 11,
+    "term": "1",
+    "concept": "ss.social",
+    "us": "B"
+   },
+   {
+    "name": "Physical Education and Health",
+    "en": "Physical Education and Health",
+    "grade": "96",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
+    "level": 11,
+    "term": "1",
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Pre-Calculus",
+    "en": "Pre-Calculus",
+    "grade": "81",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
+    "level": 11,
+    "term": "1",
+    "concept": "math.precalc",
+    "us": "C"
+   },
+   {
+    "name": "General Biology 1",
+    "en": "General Biology 1",
+    "grade": "87",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 1st",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.biology",
+    "us": "B"
+   },
+   {
+    "name": "Reading and Writing",
+    "en": "Reading and Writing",
+    "grade": "90",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.english",
+    "us": "B"
+   },
+   {
+    "name": "Pagbasa at Pagsusuri ng Iba’t Ibang Teksto Tungo sa Pananaliksik",
+    "en": "Reading and Analysis of Various Texts Toward Research (Filipino)",
+    "grade": "91",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
+    "level": 11,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Statistics and Probability",
+    "en": "Statistics and Probability",
+    "grade": "81",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
+    "level": 11,
+    "term": "2",
+    "concept": "math.statistics",
+    "us": "C"
+   },
+   {
+    "name": "Personal Development",
+    "en": "Personal Development",
+    "grade": "94",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
+    "level": 11,
+    "term": "2",
+    "concept": "health",
+    "us": "B"
+   },
+   {
+    "name": "Empowerment Technologies",
+    "en": "Empowerment Technologies",
+    "grade": "93",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
+    "level": 11,
+    "term": "2",
+    "concept": "cs",
+    "us": "B"
+   },
+   {
+    "name": "Basic Calculus",
+    "en": "Basic Calculus",
+    "grade": "77",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
+    "level": 11,
+    "term": "2",
+    "concept": "math.calculus",
+    "us": "C"
+   },
+   {
+    "name": "General Chemistry 1",
+    "en": "General Chemistry 1",
+    "grade": "83",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "General Biology 2",
+    "en": "General Biology 2",
+    "grade": "89",
+    "year": "GRADE LEVEL: 11   SY: 2024-2025   SEM: 2nd",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "B"
+   }
+  ],
+  "instruction": {
+   "english": null
+  }
  },
  {
   "id": "cn-gaozhong",
@@ -2845,7 +3343,10 @@
     "concept": "pe",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "cn-gaozhong",
@@ -3425,7 +3926,10 @@
     "concept": "pe",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "mx-sep",
@@ -3841,7 +4345,10 @@
     "concept": "math.statistics",
     "us": "B"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "mx-sep",
@@ -4257,7 +4764,430 @@
     "concept": "math.statistics",
     "us": "B"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "mx-sep",
+  "file": "mx-sep.redacted.pdf",
+  "format": "pdf",
+  "system": "mx-sep",
+  "country": "Mexico",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "",
+   "dob": "",
+   "id": ""
+  },
+  "school": {
+   "name": "Preparatoria Valle de Atemajac",
+   "city": "Zapopan"
+  },
+  "courses": [
+   {
+    "name": "Matemáticas I",
+    "en": "Mathematics I",
+    "grade": "8",
+    "credits": 10,
+    "year": "PRIMER SEMESTRE",
+    "level": 10,
+    "term": "1",
+    "concept": "math.algebra1",
+    "us": "B"
+   },
+   {
+    "name": "Química I",
+    "en": "Chemistry I",
+    "grade": "7",
+    "credits": 10,
+    "year": "PRIMER SEMESTRE",
+    "level": 10,
+    "term": "1",
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "Ética I",
+    "en": "Ethics I",
+    "grade": "9",
+    "credits": 6,
+    "year": "PRIMER SEMESTRE",
+    "level": 10,
+    "term": "1",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Metodología de la Investigación",
+    "en": "Research Methodology",
+    "grade": "9",
+    "credits": 6,
+    "year": "PRIMER SEMESTRE",
+    "level": 10,
+    "term": "1",
+    "concept": "elective.other",
+    "us": "A"
+   },
+   {
+    "name": "Taller de Lectura y Redacción I",
+    "en": "Reading and Writing Workshop I",
+    "grade": "8",
+    "credits": 8,
+    "year": "PRIMER SEMESTRE",
+    "level": 10,
+    "term": "1",
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Inglés I",
+    "en": "English I",
+    "grade": "10",
+    "credits": 6,
+    "year": "PRIMER SEMESTRE",
+    "level": 10,
+    "term": "1",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Informática I",
+    "en": "Computer Science I",
+    "grade": "10",
+    "credits": 6,
+    "year": "PRIMER SEMESTRE",
+    "level": 10,
+    "term": "1",
+    "concept": "cs",
+    "us": "A"
+   },
+   {
+    "name": "Matemáticas II",
+    "en": "Mathematics II",
+    "grade": "7",
+    "credits": 10,
+    "year": "SEGUNDO SEMESTRE",
+    "level": 10,
+    "term": "2",
+    "concept": "math.geometry",
+    "us": "C"
+   },
+   {
+    "name": "Química II",
+    "en": "Chemistry II",
+    "grade": "8",
+    "credits": 10,
+    "year": "SEGUNDO SEMESTRE",
+    "level": 10,
+    "term": "2",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Ética II",
+    "en": "Ethics II",
+    "grade": "9",
+    "credits": 6,
+    "year": "SEGUNDO SEMESTRE",
+    "level": 10,
+    "term": "2",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Introducción a las Ciencias Sociales",
+    "en": "Introduction to Social Sciences",
+    "grade": "8",
+    "credits": 6,
+    "year": "SEGUNDO SEMESTRE",
+    "level": 10,
+    "term": "2",
+    "concept": "ss.social",
+    "us": "B"
+   },
+   {
+    "name": "Taller de Lectura y Redacción II",
+    "en": "Reading and Writing Workshop II",
+    "grade": "9",
+    "credits": 8,
+    "year": "SEGUNDO SEMESTRE",
+    "level": 10,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Inglés II",
+    "en": "English II",
+    "grade": "10",
+    "credits": 6,
+    "year": "SEGUNDO SEMESTRE",
+    "level": 10,
+    "term": "2",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Informática II",
+    "en": "Computer Science II",
+    "grade": "9",
+    "credits": 6,
+    "year": "SEGUNDO SEMESTRE",
+    "level": 10,
+    "term": "2",
+    "concept": "cs",
+    "us": "A"
+   },
+   {
+    "name": "Matemáticas III",
+    "en": "Mathematics III",
+    "grade": "6",
+    "credits": 10,
+    "year": "TERCER SEMESTRE",
+    "level": 11,
+    "term": "1",
+    "concept": "math.algebra2",
+    "us": "C"
+   },
+   {
+    "name": "Biología I",
+    "en": "Biology I",
+    "grade": "8",
+    "credits": 8,
+    "year": "TERCER SEMESTRE",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.biology",
+    "us": "B"
+   },
+   {
+    "name": "Física I",
+    "en": "Physics I",
+    "grade": "7",
+    "credits": 10,
+    "year": "TERCER SEMESTRE",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Historia de México I",
+    "en": "History of Mexico I",
+    "grade": "9",
+    "credits": 6,
+    "year": "TERCER SEMESTRE",
+    "level": 11,
+    "term": "1",
+    "concept": "ss.history.national",
+    "us": "A"
+   },
+   {
+    "name": "Literatura I",
+    "en": "Literature I",
+    "grade": "8",
+    "credits": 6,
+    "year": "TERCER SEMESTRE",
+    "level": 11,
+    "term": "1",
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Inglés III",
+    "en": "English III",
+    "grade": "9",
+    "credits": 6,
+    "year": "TERCER SEMESTRE",
+    "level": 11,
+    "term": "1",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Matemáticas IV",
+    "en": "Mathematics IV",
+    "grade": "7",
+    "credits": 10,
+    "year": "CUARTO SEMESTRE",
+    "level": 11,
+    "term": "2",
+    "concept": "math.precalc",
+    "us": "C"
+   },
+   {
+    "name": "Biología II",
+    "en": "Biology II",
+    "grade": "9",
+    "credits": 8,
+    "year": "CUARTO SEMESTRE",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Física II",
+    "en": "Physics II",
+    "grade": "6",
+    "credits": 10,
+    "year": "CUARTO SEMESTRE",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Historia de México II",
+    "en": "History of Mexico II",
+    "grade": "8",
+    "credits": 6,
+    "year": "CUARTO SEMESTRE",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.history.national",
+    "us": "B"
+   },
+   {
+    "name": "Literatura II",
+    "en": "Literature II",
+    "grade": "9",
+    "credits": 6,
+    "year": "CUARTO SEMESTRE",
+    "level": 11,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Inglés IV",
+    "en": "English IV",
+    "grade": "10",
+    "credits": 6,
+    "year": "CUARTO SEMESTRE",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Geografía",
+    "en": "Geography",
+    "grade": "9",
+    "credits": 6,
+    "year": "QUINTO SEMESTRE",
+    "level": 12,
+    "term": "1",
+    "concept": "ss.geography",
+    "us": "A"
+   },
+   {
+    "name": "Estructura Socioeconómica de México",
+    "en": "Socioeconomic Structure of Mexico",
+    "grade": "8",
+    "credits": 6,
+    "year": "QUINTO SEMESTRE",
+    "level": 12,
+    "term": "1",
+    "concept": "ss.economics",
+    "us": "B"
+   },
+   {
+    "name": "Cálculo Diferencial",
+    "en": "Differential Calculus",
+    "grade": "7",
+    "credits": 6,
+    "year": "QUINTO SEMESTRE",
+    "level": 12,
+    "term": "1",
+    "concept": "math.calculus",
+    "us": "C"
+   },
+   {
+    "name": "Temas Selectos de Química I",
+    "en": "Selected Topics in Chemistry I",
+    "grade": "8",
+    "credits": 6,
+    "year": "QUINTO SEMESTRE",
+    "level": 12,
+    "term": "1",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Probabilidad y Estadística I",
+    "en": "Probability and Statistics I",
+    "grade": "9",
+    "credits": 6,
+    "year": "QUINTO SEMESTRE",
+    "level": 12,
+    "term": "1",
+    "concept": "math.statistics",
+    "us": "A"
+   },
+   {
+    "name": "Filosofía",
+    "en": "Philosophy",
+    "grade": "9",
+    "credits": 6,
+    "year": "SEXTO SEMESTRE",
+    "level": 12,
+    "term": "2",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Ecología y Medio Ambiente",
+    "en": "Ecology and Environment",
+    "grade": "10",
+    "credits": 6,
+    "year": "SEXTO SEMESTRE",
+    "level": 12,
+    "term": "2",
+    "concept": "sci.environmental",
+    "us": "A"
+   },
+   {
+    "name": "Historia Universal Contemporánea",
+    "en": "Contemporary World History",
+    "grade": "8",
+    "credits": 6,
+    "year": "SEXTO SEMESTRE",
+    "level": 12,
+    "term": "2",
+    "concept": "ss.history.world",
+    "us": "B"
+   },
+   {
+    "name": "Cálculo Integral",
+    "en": "Integral Calculus",
+    "grade": "6",
+    "credits": 6,
+    "year": "SEXTO SEMESTRE",
+    "level": 12,
+    "term": "2",
+    "concept": "math.calculus",
+    "us": "C"
+   },
+   {
+    "name": "Probabilidad y Estadística II",
+    "en": "Probability and Statistics II",
+    "grade": "8",
+    "credits": 6,
+    "year": "SEXTO SEMESTRE",
+    "level": 12,
+    "term": "2",
+    "concept": "math.statistics",
+    "us": "B"
+   }
+  ],
+  "instruction": {
+   "english": false
+  },
+  "redacted": "xxxx"
  },
  {
   "id": "fr-lycee",
@@ -4538,224 +5468,10 @@
     "concept": "sci.biology",
     "us": "A"
    }
-  ]
- },
- {
-  "id": "de-gymnasium",
-  "file": "de-gymnasium.pdf",
-  "format": "pdf",
-  "system": "de",
-  "country": "Germany",
-  "lang": "de",
-  "pages": 2,
-  "student": {
-   "name": "Jonas Maximilian Wiśniewski",
-   "dob": "2007-10-19",
-   "id": "2019-0417"
-  },
-  "school": {
-   "name": "Gymnasium am Lindenhof"
-  },
-  "courses": [
-   {
-    "name": "Deutsch",
-    "en": "German",
-    "grade": "gut",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "wl.native",
-    "us": "A"
-   },
-   {
-    "name": "Englisch",
-    "en": "English",
-    "grade": "sehr gut",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "ela.efl",
-    "us": "A"
-   },
-   {
-    "name": "Französisch",
-    "en": "French",
-    "grade": "befriedigend",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "wl.other",
-    "us": "B"
-   },
-   {
-    "name": "Mathematik",
-    "en": "Mathematics",
-    "grade": "befriedigend",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "math.general",
-    "us": "B"
-   },
-   {
-    "name": "Biologie",
-    "en": "Biology",
-    "grade": "gut",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "sci.biology",
-    "us": "A"
-   },
-   {
-    "name": "Chemie",
-    "en": "Chemistry",
-    "grade": "ausreichend",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "sci.chemistry",
-    "us": "C"
-   },
-   {
-    "name": "Physik",
-    "en": "Physics",
-    "grade": "befriedigend",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "sci.physics",
-    "us": "B"
-   },
-   {
-    "name": "Geschichte",
-    "en": "History",
-    "grade": "gut",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "ss.history.world",
-    "us": "A"
-   },
-   {
-    "name": "Erdkunde",
-    "en": "Geography",
-    "grade": "gut",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "ss.geography",
-    "us": "A"
-   },
-   {
-    "name": "Politik und Wirtschaft",
-    "en": "Politics and Economics",
-    "grade": "sehr gut",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "ss.civics",
-    "us": "A"
-   },
-   {
-    "name": "Kunst",
-    "en": "Art",
-    "grade": "gut",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "arts.visual",
-    "us": "A"
-   },
-   {
-    "name": "Sport",
-    "en": "Physical Education",
-    "grade": "sehr gut",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "pe",
-    "us": "A"
-   },
-   {
-    "name": "Ethik",
-    "en": "Ethics",
-    "grade": "gut",
-    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
-    "level": 10,
-    "concept": "ss.philosophy",
-    "us": "A"
-   },
-   {
-    "name": "Deutsch",
-    "en": "German",
-    "grade": "11",
-    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
-    "level": 11,
-    "concept": "wl.native",
-    "us": "A"
-   },
-   {
-    "name": "Englisch (Leistungskurs)",
-    "en": "English (advanced course)",
-    "grade": "13",
-    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
-    "level": 11,
-    "concept": "ela.efl",
-    "us": "A"
-   },
-   {
-    "name": "Mathematik",
-    "en": "Mathematics",
-    "grade": "08",
-    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
-    "level": 11,
-    "concept": "math.general",
-    "us": "B"
-   },
-   {
-    "name": "Biologie (Leistungskurs)",
-    "en": "Biology (advanced course)",
-    "grade": "12",
-    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
-    "level": 11,
-    "concept": "sci.biology",
-    "us": "A"
-   },
-   {
-    "name": "Chemie",
-    "en": "Chemistry",
-    "grade": "05",
-    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
-    "level": 11,
-    "concept": "sci.chemistry",
-    "us": "C"
-   },
-   {
-    "name": "Geschichte",
-    "en": "History",
-    "grade": "10",
-    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
-    "level": 11,
-    "concept": "ss.history.world",
-    "us": "A"
-   },
-   {
-    "name": "Politik und Wirtschaft",
-    "en": "Politics and Economics",
-    "grade": "14",
-    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
-    "level": 11,
-    "concept": "ss.civics",
-    "us": "A"
-   },
-   {
-    "name": "Informatik",
-    "en": "Computer Science",
-    "grade": "09",
-    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
-    "level": 11,
-    "concept": "cs",
-    "us": "B"
-   },
-   {
-    "name": "Sport",
-    "en": "Physical Education",
-    "grade": "13",
-    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
-    "level": 11,
-    "concept": "pe",
-    "us": "A"
-   }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "de-gymnasium",
@@ -4972,377 +5688,230 @@
     "concept": "pe",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
-  "id": "br-historico",
-  "file": "br-historico.scan.jpg",
-  "format": "scan-jpg",
-  "system": "br",
-  "country": "Brazil",
-  "lang": "pt-BR",
-  "pages": 1,
+  "id": "de-gymnasium",
+  "file": "de-gymnasium.pdf",
+  "format": "pdf",
+  "system": "de",
+  "country": "Germany",
+  "lang": "de",
+  "pages": 2,
   "student": {
-   "name": "Rafaela Cristina Nogueira de Almeida",
-   "dob": "2007-05-08",
-   "id": "14.882.073-5"
+   "name": "Jonas Maximilian Wiśniewski",
+   "dob": "2007-10-19",
+   "id": "2019-0417"
   },
   "school": {
-   "name": "Colégio Estadual Serra do Ipê",
-   "city": "Londrina"
+   "name": "Gymnasium am Lindenhof"
   },
   "courses": [
    {
-    "name": "Língua Portuguesa",
-    "en": "Portuguese Language",
-    "grade": "7,5",
-    "hours": 160,
-    "year": "1ª Série — 2022",
+    "name": "Deutsch",
+    "en": "German",
+    "grade": "gut",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "wl.native",
-    "us": "B"
-   },
-   {
-    "name": "Matemática",
-    "en": "Mathematics",
-    "grade": "6,0",
-    "hours": 160,
-    "year": "1ª Série — 2022",
-    "level": 10,
-    "concept": "math.general",
-    "us": "C"
-   },
-   {
-    "name": "Biologia",
-    "en": "Biology",
-    "grade": "8,5",
-    "hours": 80,
-    "year": "1ª Série — 2022",
-    "level": 10,
-    "concept": "sci.biology",
-    "us": "B"
-   },
-   {
-    "name": "Física",
-    "en": "Physics",
-    "grade": "5,5",
-    "hours": 80,
-    "year": "1ª Série — 2022",
-    "level": 10,
-    "concept": "sci.physics",
-    "us": "D"
-   },
-   {
-    "name": "Química",
-    "en": "Chemistry",
-    "grade": "7,0",
-    "hours": 80,
-    "year": "1ª Série — 2022",
-    "level": 10,
-    "concept": "sci.chemistry",
-    "us": "B"
-   },
-   {
-    "name": "História",
-    "en": "History",
-    "grade": "9,0",
-    "hours": 80,
-    "year": "1ª Série — 2022",
-    "level": 10,
-    "concept": "ss.history.world",
     "us": "A"
    },
    {
-    "name": "Geografia",
-    "en": "Geography",
-    "grade": "8,0",
-    "hours": 80,
-    "year": "1ª Série — 2022",
-    "level": 10,
-    "concept": "ss.geography",
-    "us": "B"
-   },
-   {
-    "name": "Sociologia",
-    "en": "Sociology",
-    "grade": "9,5",
-    "hours": 40,
-    "year": "1ª Série — 2022",
-    "level": 10,
-    "concept": "ss.sociology",
-    "us": "A"
-   },
-   {
-    "name": "Filosofia",
-    "en": "Philosophy",
-    "grade": "8,0",
-    "hours": 40,
-    "year": "1ª Série — 2022",
-    "level": 10,
-    "concept": "ss.philosophy",
-    "us": "B"
-   },
-   {
-    "name": "Língua Inglesa",
-    "en": "English Language",
-    "grade": "10,0",
-    "hours": 80,
-    "year": "1ª Série — 2022",
+    "name": "Englisch",
+    "en": "English",
+    "grade": "sehr gut",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "ela.efl",
     "us": "A"
    },
    {
-    "name": "Arte",
+    "name": "Französisch",
+    "en": "French",
+    "grade": "befriedigend",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
+    "level": 10,
+    "concept": "wl.other",
+    "us": "B"
+   },
+   {
+    "name": "Mathematik",
+    "en": "Mathematics",
+    "grade": "befriedigend",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
+    "level": 10,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Biologie",
+    "en": "Biology",
+    "grade": "gut",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
+    "level": 10,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Chemie",
+    "en": "Chemistry",
+    "grade": "ausreichend",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
+    "level": 10,
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "Physik",
+    "en": "Physics",
+    "grade": "befriedigend",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
+    "level": 10,
+    "concept": "sci.physics",
+    "us": "B"
+   },
+   {
+    "name": "Geschichte",
+    "en": "History",
+    "grade": "gut",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
+    "level": 10,
+    "concept": "ss.history.world",
+    "us": "A"
+   },
+   {
+    "name": "Erdkunde",
+    "en": "Geography",
+    "grade": "gut",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
+    "level": 10,
+    "concept": "ss.geography",
+    "us": "A"
+   },
+   {
+    "name": "Politik und Wirtschaft",
+    "en": "Politics and Economics",
+    "grade": "sehr gut",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
+    "level": 10,
+    "concept": "ss.civics",
+    "us": "A"
+   },
+   {
+    "name": "Kunst",
     "en": "Art",
-    "grade": "9,0",
-    "hours": 40,
-    "year": "1ª Série — 2022",
+    "grade": "gut",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "arts.visual",
     "us": "A"
    },
    {
-    "name": "Educação Física",
+    "name": "Sport",
     "en": "Physical Education",
-    "grade": "10,0",
-    "hours": 80,
-    "year": "1ª Série — 2022",
+    "grade": "sehr gut",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
     "level": 10,
     "concept": "pe",
     "us": "A"
    },
    {
-    "name": "Língua Portuguesa",
-    "en": "Portuguese Language",
-    "grade": "8,0",
-    "hours": 160,
-    "year": "2ª Série — 2023",
+    "name": "Ethik",
+    "en": "Ethics",
+    "grade": "gut",
+    "year": "Jahreszeugnis Klasse 10 (Einführungsphase) — Schuljahr 2022/2023",
+    "level": 10,
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Deutsch",
+    "en": "German",
+    "grade": "11",
+    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
     "level": 11,
     "concept": "wl.native",
-    "us": "B"
-   },
-   {
-    "name": "Matemática",
-    "en": "Mathematics",
-    "grade": "6,5",
-    "hours": 160,
-    "year": "2ª Série — 2023",
-    "level": 11,
-    "concept": "math.general",
-    "us": "C"
-   },
-   {
-    "name": "Biologia",
-    "en": "Biology",
-    "grade": "9,0",
-    "hours": 80,
-    "year": "2ª Série — 2023",
-    "level": 11,
-    "concept": "sci.biology",
     "us": "A"
    },
    {
-    "name": "Física",
-    "en": "Physics",
-    "grade": "6,0",
-    "hours": 80,
-    "year": "2ª Série — 2023",
-    "level": 11,
-    "concept": "sci.physics",
-    "us": "C"
-   },
-   {
-    "name": "Química",
-    "en": "Chemistry",
-    "grade": "6,5",
-    "hours": 80,
-    "year": "2ª Série — 2023",
-    "level": 11,
-    "concept": "sci.chemistry",
-    "us": "C"
-   },
-   {
-    "name": "História",
-    "en": "History",
-    "grade": "8,5",
-    "hours": 80,
-    "year": "2ª Série — 2023",
-    "level": 11,
-    "concept": "ss.history.world",
-    "us": "B"
-   },
-   {
-    "name": "Geografia",
-    "en": "Geography",
-    "grade": "8,5",
-    "hours": 80,
-    "year": "2ª Série — 2023",
-    "level": 11,
-    "concept": "ss.geography",
-    "us": "B"
-   },
-   {
-    "name": "Sociologia",
-    "en": "Sociology",
-    "grade": "9,0",
-    "hours": 40,
-    "year": "2ª Série — 2023",
-    "level": 11,
-    "concept": "ss.sociology",
-    "us": "A"
-   },
-   {
-    "name": "Filosofia",
-    "en": "Philosophy",
-    "grade": "7,5",
-    "hours": 40,
-    "year": "2ª Série — 2023",
-    "level": 11,
-    "concept": "ss.philosophy",
-    "us": "B"
-   },
-   {
-    "name": "Língua Inglesa",
-    "en": "English Language",
-    "grade": "9,5",
-    "hours": 80,
-    "year": "2ª Série — 2023",
+    "name": "Englisch (Leistungskurs)",
+    "en": "English (advanced course)",
+    "grade": "13",
+    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
     "level": 11,
     "concept": "ela.efl",
     "us": "A"
    },
    {
-    "name": "Arte",
-    "en": "Art",
-    "grade": "9,5",
-    "hours": 40,
-    "year": "2ª Série — 2023",
-    "level": 11,
-    "concept": "arts.visual",
-    "us": "A"
-   },
-   {
-    "name": "Educação Física",
-    "en": "Physical Education",
-    "grade": "10,0",
-    "hours": 80,
-    "year": "2ª Série — 2023",
-    "level": 11,
-    "concept": "pe",
-    "us": "A"
-   },
-   {
-    "name": "Língua Portuguesa",
-    "en": "Portuguese Language",
-    "grade": "8,5",
-    "hours": 120,
-    "year": "3ª Série — 2024",
-    "level": 12,
-    "concept": "wl.native",
-    "us": "B"
-   },
-   {
-    "name": "Matemática",
+    "name": "Mathematik",
     "en": "Mathematics",
-    "grade": "7,0",
-    "hours": 120,
-    "year": "3ª Série — 2024",
-    "level": 12,
+    "grade": "08",
+    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
+    "level": 11,
     "concept": "math.general",
     "us": "B"
    },
    {
-    "name": "Biologia",
-    "en": "Biology",
-    "grade": "9,5",
-    "hours": 80,
-    "year": "3ª Série — 2024",
-    "level": 12,
+    "name": "Biologie (Leistungskurs)",
+    "en": "Biology (advanced course)",
+    "grade": "12",
+    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
+    "level": 11,
     "concept": "sci.biology",
     "us": "A"
    },
    {
-    "name": "Física",
-    "en": "Physics",
-    "grade": "7,5",
-    "hours": 80,
-    "year": "3ª Série — 2024",
-    "level": 12,
-    "concept": "sci.physics",
-    "us": "B"
-   },
-   {
-    "name": "Química",
+    "name": "Chemie",
     "en": "Chemistry",
-    "grade": "8,0",
-    "hours": 80,
-    "year": "3ª Série — 2024",
-    "level": 12,
+    "grade": "05",
+    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
+    "level": 11,
     "concept": "sci.chemistry",
-    "us": "B"
+    "us": "C"
    },
    {
-    "name": "História",
+    "name": "Geschichte",
     "en": "History",
-    "grade": "9,0",
-    "hours": 40,
-    "year": "3ª Série — 2024",
-    "level": 12,
+    "grade": "10",
+    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
+    "level": 11,
     "concept": "ss.history.world",
     "us": "A"
    },
    {
-    "name": "Geografia",
-    "en": "Geography",
-    "grade": "9,5",
-    "hours": 40,
-    "year": "3ª Série — 2024",
-    "level": 12,
-    "concept": "ss.geography",
+    "name": "Politik und Wirtschaft",
+    "en": "Politics and Economics",
+    "grade": "14",
+    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
+    "level": 11,
+    "concept": "ss.civics",
     "us": "A"
    },
    {
-    "name": "Sociologia",
-    "en": "Sociology",
-    "grade": "10,0",
-    "hours": 40,
-    "year": "3ª Série — 2024",
-    "level": 12,
-    "concept": "ss.sociology",
-    "us": "A"
+    "name": "Informatik",
+    "en": "Computer Science",
+    "grade": "09",
+    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
+    "level": 11,
+    "concept": "cs",
+    "us": "B"
    },
    {
-    "name": "Filosofia",
-    "en": "Philosophy",
-    "grade": "9,0",
-    "hours": 40,
-    "year": "3ª Série — 2024",
-    "level": 12,
-    "concept": "ss.philosophy",
-    "us": "A"
-   },
-   {
-    "name": "Língua Inglesa",
-    "en": "English Language",
-    "grade": "10,0",
-    "hours": 80,
-    "year": "3ª Série — 2024",
-    "level": 12,
-    "concept": "ela.efl",
-    "us": "A"
-   },
-   {
-    "name": "Educação Física",
+    "name": "Sport",
     "en": "Physical Education",
-    "grade": "9,5",
-    "hours": 40,
-    "year": "3ª Série — 2024",
-    "level": 12,
+    "grade": "13",
+    "year": "Qualifikationsphase 1 (Jahrgangsstufe 11) — Schuljahr 2023/2024",
+    "level": 11,
     "concept": "pe",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "br-historico",
@@ -5712,312 +6281,757 @@
     "concept": "pe",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
-  "id": "kr-record",
-  "file": "kr-record.scan.jpg",
-  "format": "scan-jpg",
-  "system": "kr",
-  "country": "South Korea",
-  "lang": "ko",
+  "id": "br-historico",
+  "file": "br-historico.redacted.docx",
+  "format": "docx",
+  "system": "br",
+  "country": "Brazil",
+  "lang": "pt-BR",
   "pages": 1,
   "student": {
-   "name": "박서윤",
-   "dob": "2008-07-03",
-   "id": "20231107"
+   "name": "",
+   "dob": "",
+   "id": ""
   },
   "school": {
-   "name": "한빛누리고등학교"
+   "name": "Colégio Estadual Serra do Ipê",
+   "city": "Londrina"
   },
   "courses": [
    {
-    "name": "국어",
-    "en": "Korean Language",
-    "grade": "B",
-    "credits": 4,
-    "year": "1학년 1학기",
+    "name": "Língua Portuguesa",
+    "en": "Portuguese Language",
+    "grade": "7,5",
+    "hours": 160,
+    "year": "1ª Série — 2022",
     "level": 10,
-    "term": "1",
     "concept": "wl.native",
-    "us": "A"
-   },
-   {
-    "name": "수학",
-    "en": "Mathematics",
-    "grade": "A",
-    "credits": 4,
-    "year": "1학년 1학기",
-    "level": 10,
-    "term": "1",
-    "concept": "math.general",
-    "us": "A"
-   },
-   {
-    "name": "영어",
-    "en": "English",
-    "grade": "A",
-    "credits": 4,
-    "year": "1학년 1학기",
-    "level": 10,
-    "term": "1",
-    "concept": "ela.efl",
-    "us": "A"
-   },
-   {
-    "name": "한국사",
-    "en": "Korean History",
-    "grade": "B",
-    "credits": 3,
-    "year": "1학년 1학기",
-    "level": 10,
-    "term": "1",
-    "concept": "ss.history.national",
-    "us": "A"
-   },
-   {
-    "name": "통합사회",
-    "en": "Integrated Social Studies",
-    "grade": "C",
-    "credits": 4,
-    "year": "1학년 1학기",
-    "level": 10,
-    "term": "1",
-    "concept": "ss.social",
     "us": "B"
    },
    {
-    "name": "통합과학",
-    "en": "Integrated Science",
-    "grade": "A",
-    "credits": 4,
-    "year": "1학년 1학기",
-    "level": 10,
-    "term": "1",
-    "concept": "sci.integrated",
-    "us": "A"
-   },
-   {
-    "name": "체육",
-    "en": "Physical Education",
-    "grade": "A",
-    "credits": 2,
-    "year": "1학년 1학기",
-    "level": 10,
-    "term": "1",
-    "concept": "pe",
-    "us": "A"
-   },
-   {
-    "name": "음악",
-    "en": "Music",
-    "grade": "A",
-    "credits": 2,
-    "year": "1학년 1학기",
-    "level": 10,
-    "term": "1",
-    "concept": "arts.music",
-    "us": "A"
-   },
-   {
-    "name": "국어",
-    "en": "Korean Language",
-    "grade": "B",
-    "credits": 4,
-    "year": "1학년 2학기",
-    "level": 10,
-    "term": "2",
-    "concept": "wl.native",
-    "us": "A"
-   },
-   {
-    "name": "수학",
+    "name": "Matemática",
     "en": "Mathematics",
-    "grade": "A",
-    "credits": 4,
-    "year": "1학년 2학기",
+    "grade": "6,0",
+    "hours": 160,
+    "year": "1ª Série — 2022",
     "level": 10,
-    "term": "2",
     "concept": "math.general",
-    "us": "A"
+    "us": "C"
    },
    {
-    "name": "영어",
-    "en": "English",
-    "grade": "A",
-    "credits": 4,
-    "year": "1학년 2학기",
+    "name": "Biologia",
+    "en": "Biology",
+    "grade": "8,5",
+    "hours": 80,
+    "year": "1ª Série — 2022",
     "level": 10,
-    "term": "2",
-    "concept": "ela.efl",
-    "us": "A"
+    "concept": "sci.biology",
+    "us": "B"
    },
    {
-    "name": "한국사",
-    "en": "Korean History",
-    "grade": "B",
-    "credits": 3,
-    "year": "1학년 2학기",
+    "name": "Física",
+    "en": "Physics",
+    "grade": "5,5",
+    "hours": 80,
+    "year": "1ª Série — 2022",
     "level": 10,
-    "term": "2",
-    "concept": "ss.history.national",
-    "us": "A"
+    "concept": "sci.physics",
+    "us": "D"
    },
    {
-    "name": "통합사회",
-    "en": "Integrated Social Studies",
-    "grade": "B",
-    "credits": 4,
-    "year": "1학년 2학기",
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "7,0",
+    "hours": 80,
+    "year": "1ª Série — 2022",
     "level": 10,
-    "term": "2",
-    "concept": "ss.social",
-    "us": "A"
+    "concept": "sci.chemistry",
+    "us": "B"
    },
    {
-    "name": "통합과학",
-    "en": "Integrated Science",
-    "grade": "A",
-    "credits": 4,
-    "year": "1학년 2학기",
+    "name": "História",
+    "en": "History",
+    "grade": "9,0",
+    "hours": 80,
+    "year": "1ª Série — 2022",
     "level": 10,
-    "term": "2",
-    "concept": "sci.integrated",
+    "concept": "ss.history.world",
     "us": "A"
    },
    {
-    "name": "과학탐구실험",
-    "en": "Science Inquiry Experiments",
-    "grade": "A",
-    "credits": 1,
-    "year": "1학년 2학기",
+    "name": "Geografia",
+    "en": "Geography",
+    "grade": "8,0",
+    "hours": 80,
+    "year": "1ª Série — 2022",
     "level": 10,
-    "term": "2",
-    "concept": "sci.integrated",
-    "us": "A"
-   },
-   {
-    "name": "체육",
-    "en": "Physical Education",
-    "grade": "A",
-    "credits": 2,
-    "year": "1학년 2학기",
-    "level": 10,
-    "term": "2",
-    "concept": "pe",
-    "us": "A"
-   },
-   {
-    "name": "미술",
-    "en": "Art",
-    "grade": "B",
-    "credits": 2,
-    "year": "1학년 2학기",
-    "level": 10,
-    "term": "2",
-    "concept": "arts.visual",
-    "us": "A"
-   },
-   {
-    "name": "문학",
-    "en": "Literature",
-    "grade": "B",
-    "credits": 4,
-    "year": "2학년 1학기",
-    "level": 11,
-    "term": "1",
-    "concept": "wl.native",
-    "us": "A"
-   },
-   {
-    "name": "수학Ⅰ",
-    "en": "Mathematics I",
-    "grade": "B",
-    "credits": 4,
-    "year": "2학년 1학기",
-    "level": 11,
-    "term": "1",
-    "concept": "math.algebra2",
-    "us": "A"
-   },
-   {
-    "name": "영어Ⅰ",
-    "en": "English I",
-    "grade": "A",
-    "credits": 4,
-    "year": "2학년 1학기",
-    "level": 11,
-    "term": "1",
-    "concept": "ela.efl",
-    "us": "A"
-   },
-   {
-    "name": "세계지리",
-    "en": "World Geography",
-    "grade": "C",
-    "credits": 3,
-    "year": "2학년 1학기",
-    "level": 11,
-    "term": "1",
     "concept": "ss.geography",
     "us": "B"
    },
    {
-    "name": "물리학Ⅰ",
-    "en": "Physics I",
-    "grade": "A",
-    "credits": 3,
-    "year": "2학년 1학기",
-    "level": 11,
-    "term": "1",
-    "concept": "sci.physics",
+    "name": "Sociologia",
+    "en": "Sociology",
+    "grade": "9,5",
+    "hours": 40,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "ss.sociology",
     "us": "A"
    },
    {
-    "name": "화학Ⅰ",
-    "en": "Chemistry I",
-    "grade": "D",
-    "credits": 3,
-    "year": "2학년 1학기",
+    "name": "Filosofia",
+    "en": "Philosophy",
+    "grade": "8,0",
+    "hours": 40,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Língua Inglesa",
+    "en": "English Language",
+    "grade": "10,0",
+    "hours": 80,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Arte",
+    "en": "Art",
+    "grade": "9,0",
+    "hours": 40,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "arts.visual",
+    "us": "A"
+   },
+   {
+    "name": "Educação Física",
+    "en": "Physical Education",
+    "grade": "10,0",
+    "hours": 80,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Língua Portuguesa",
+    "en": "Portuguese Language",
+    "grade": "8,0",
+    "hours": 160,
+    "year": "2ª Série — 2023",
     "level": 11,
-    "term": "1",
-    "concept": "sci.chemistry",
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "6,5",
+    "hours": 160,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "math.general",
     "us": "C"
    },
    {
-    "name": "생명과학Ⅰ",
-    "en": "Life Science I",
-    "grade": "A",
-    "credits": 3,
-    "year": "2학년 1학기",
+    "name": "Biologia",
+    "en": "Biology",
+    "grade": "9,0",
+    "hours": 80,
+    "year": "2ª Série — 2023",
     "level": 11,
-    "term": "1",
     "concept": "sci.biology",
     "us": "A"
    },
    {
-    "name": "일본어Ⅰ",
-    "en": "Japanese I",
-    "grade": "A",
-    "credits": 3,
-    "year": "2학년 1학기",
+    "name": "Física",
+    "en": "Physics",
+    "grade": "6,0",
+    "hours": 80,
+    "year": "2ª Série — 2023",
     "level": 11,
-    "term": "1",
-    "concept": "wl.other",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "6,5",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "História",
+    "en": "History",
+    "grade": "8,5",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "ss.history.world",
+    "us": "B"
+   },
+   {
+    "name": "Geografia",
+    "en": "Geography",
+    "grade": "8,5",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "ss.geography",
+    "us": "B"
+   },
+   {
+    "name": "Sociologia",
+    "en": "Sociology",
+    "grade": "9,0",
+    "hours": 40,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "ss.sociology",
     "us": "A"
    },
    {
-    "name": "정보",
-    "en": "Informatics",
-    "grade": "A",
-    "credits": 2,
-    "year": "2학년 1학기",
+    "name": "Filosofia",
+    "en": "Philosophy",
+    "grade": "7,5",
+    "hours": 40,
+    "year": "2ª Série — 2023",
     "level": 11,
-    "term": "1",
-    "concept": "cs",
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Língua Inglesa",
+    "en": "English Language",
+    "grade": "9,5",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Arte",
+    "en": "Art",
+    "grade": "9,5",
+    "hours": 40,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "arts.visual",
+    "us": "A"
+   },
+   {
+    "name": "Educação Física",
+    "en": "Physical Education",
+    "grade": "10,0",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Língua Portuguesa",
+    "en": "Portuguese Language",
+    "grade": "8,5",
+    "hours": 120,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "7,0",
+    "hours": 120,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Biologia",
+    "en": "Biology",
+    "grade": "9,5",
+    "hours": 80,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "7,5",
+    "hours": 80,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "sci.physics",
+    "us": "B"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "8,0",
+    "hours": 80,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "História",
+    "en": "History",
+    "grade": "9,0",
+    "hours": 40,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "ss.history.world",
+    "us": "A"
+   },
+   {
+    "name": "Geografia",
+    "en": "Geography",
+    "grade": "9,5",
+    "hours": 40,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "ss.geography",
+    "us": "A"
+   },
+   {
+    "name": "Sociologia",
+    "en": "Sociology",
+    "grade": "10,0",
+    "hours": 40,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "ss.sociology",
+    "us": "A"
+   },
+   {
+    "name": "Filosofia",
+    "en": "Philosophy",
+    "grade": "9,0",
+    "hours": 40,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Língua Inglesa",
+    "en": "English Language",
+    "grade": "10,0",
+    "hours": 80,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Educação Física",
+    "en": "Physical Education",
+    "grade": "9,5",
+    "hours": 40,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "pe",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  },
+  "redacted": "tag"
+ },
+ {
+  "id": "br-historico",
+  "file": "br-historico.scan.jpg",
+  "format": "scan-jpg",
+  "system": "br",
+  "country": "Brazil",
+  "lang": "pt-BR",
+  "pages": 1,
+  "student": {
+   "name": "Rafaela Cristina Nogueira de Almeida",
+   "dob": "2007-05-08",
+   "id": "14.882.073-5"
+  },
+  "school": {
+   "name": "Colégio Estadual Serra do Ipê",
+   "city": "Londrina"
+  },
+  "courses": [
+   {
+    "name": "Língua Portuguesa",
+    "en": "Portuguese Language",
+    "grade": "7,5",
+    "hours": 160,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "6,0",
+    "hours": 160,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "math.general",
+    "us": "C"
+   },
+   {
+    "name": "Biologia",
+    "en": "Biology",
+    "grade": "8,5",
+    "hours": 80,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "sci.biology",
+    "us": "B"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "5,5",
+    "hours": 80,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "sci.physics",
+    "us": "D"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "7,0",
+    "hours": 80,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "História",
+    "en": "History",
+    "grade": "9,0",
+    "hours": 80,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "ss.history.world",
+    "us": "A"
+   },
+   {
+    "name": "Geografia",
+    "en": "Geography",
+    "grade": "8,0",
+    "hours": 80,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "ss.geography",
+    "us": "B"
+   },
+   {
+    "name": "Sociologia",
+    "en": "Sociology",
+    "grade": "9,5",
+    "hours": 40,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "ss.sociology",
+    "us": "A"
+   },
+   {
+    "name": "Filosofia",
+    "en": "Philosophy",
+    "grade": "8,0",
+    "hours": 40,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Língua Inglesa",
+    "en": "English Language",
+    "grade": "10,0",
+    "hours": 80,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Arte",
+    "en": "Art",
+    "grade": "9,0",
+    "hours": 40,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "arts.visual",
+    "us": "A"
+   },
+   {
+    "name": "Educação Física",
+    "en": "Physical Education",
+    "grade": "10,0",
+    "hours": 80,
+    "year": "1ª Série — 2022",
+    "level": 10,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Língua Portuguesa",
+    "en": "Portuguese Language",
+    "grade": "8,0",
+    "hours": 160,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "6,5",
+    "hours": 160,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "math.general",
+    "us": "C"
+   },
+   {
+    "name": "Biologia",
+    "en": "Biology",
+    "grade": "9,0",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "6,0",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "6,5",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "História",
+    "en": "History",
+    "grade": "8,5",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "ss.history.world",
+    "us": "B"
+   },
+   {
+    "name": "Geografia",
+    "en": "Geography",
+    "grade": "8,5",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "ss.geography",
+    "us": "B"
+   },
+   {
+    "name": "Sociologia",
+    "en": "Sociology",
+    "grade": "9,0",
+    "hours": 40,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "ss.sociology",
+    "us": "A"
+   },
+   {
+    "name": "Filosofia",
+    "en": "Philosophy",
+    "grade": "7,5",
+    "hours": 40,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Língua Inglesa",
+    "en": "English Language",
+    "grade": "9,5",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Arte",
+    "en": "Art",
+    "grade": "9,5",
+    "hours": 40,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "arts.visual",
+    "us": "A"
+   },
+   {
+    "name": "Educação Física",
+    "en": "Physical Education",
+    "grade": "10,0",
+    "hours": 80,
+    "year": "2ª Série — 2023",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Língua Portuguesa",
+    "en": "Portuguese Language",
+    "grade": "8,5",
+    "hours": 120,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "7,0",
+    "hours": 120,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Biologia",
+    "en": "Biology",
+    "grade": "9,5",
+    "hours": 80,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "7,5",
+    "hours": 80,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "sci.physics",
+    "us": "B"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "8,0",
+    "hours": 80,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "História",
+    "en": "History",
+    "grade": "9,0",
+    "hours": 40,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "ss.history.world",
+    "us": "A"
+   },
+   {
+    "name": "Geografia",
+    "en": "Geography",
+    "grade": "9,5",
+    "hours": 40,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "ss.geography",
+    "us": "A"
+   },
+   {
+    "name": "Sociologia",
+    "en": "Sociology",
+    "grade": "10,0",
+    "hours": 40,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "ss.sociology",
+    "us": "A"
+   },
+   {
+    "name": "Filosofia",
+    "en": "Philosophy",
+    "grade": "9,0",
+    "hours": 40,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Língua Inglesa",
+    "en": "English Language",
+    "grade": "10,0",
+    "hours": 80,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Educação Física",
+    "en": "Physical Education",
+    "grade": "9,5",
+    "hours": 40,
+    "year": "3ª Série — 2024",
+    "level": 12,
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "kr-record",
@@ -6322,7 +7336,318 @@
     "concept": "cs",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "kr-record",
+  "file": "kr-record.scan.jpg",
+  "format": "scan-jpg",
+  "system": "kr",
+  "country": "South Korea",
+  "lang": "ko",
+  "pages": 1,
+  "student": {
+   "name": "박서윤",
+   "dob": "2008-07-03",
+   "id": "20231107"
+  },
+  "school": {
+   "name": "한빛누리고등학교"
+  },
+  "courses": [
+   {
+    "name": "국어",
+    "en": "Korean Language",
+    "grade": "B",
+    "credits": 4,
+    "year": "1학년 1학기",
+    "level": 10,
+    "term": "1",
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "수학",
+    "en": "Mathematics",
+    "grade": "A",
+    "credits": 4,
+    "year": "1학년 1학기",
+    "level": 10,
+    "term": "1",
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "영어",
+    "en": "English",
+    "grade": "A",
+    "credits": 4,
+    "year": "1학년 1학기",
+    "level": 10,
+    "term": "1",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "한국사",
+    "en": "Korean History",
+    "grade": "B",
+    "credits": 3,
+    "year": "1학년 1학기",
+    "level": 10,
+    "term": "1",
+    "concept": "ss.history.national",
+    "us": "A"
+   },
+   {
+    "name": "통합사회",
+    "en": "Integrated Social Studies",
+    "grade": "C",
+    "credits": 4,
+    "year": "1학년 1학기",
+    "level": 10,
+    "term": "1",
+    "concept": "ss.social",
+    "us": "B"
+   },
+   {
+    "name": "통합과학",
+    "en": "Integrated Science",
+    "grade": "A",
+    "credits": 4,
+    "year": "1학년 1학기",
+    "level": 10,
+    "term": "1",
+    "concept": "sci.integrated",
+    "us": "A"
+   },
+   {
+    "name": "체육",
+    "en": "Physical Education",
+    "grade": "A",
+    "credits": 2,
+    "year": "1학년 1학기",
+    "level": 10,
+    "term": "1",
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "음악",
+    "en": "Music",
+    "grade": "A",
+    "credits": 2,
+    "year": "1학년 1학기",
+    "level": 10,
+    "term": "1",
+    "concept": "arts.music",
+    "us": "A"
+   },
+   {
+    "name": "국어",
+    "en": "Korean Language",
+    "grade": "B",
+    "credits": 4,
+    "year": "1학년 2학기",
+    "level": 10,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "수학",
+    "en": "Mathematics",
+    "grade": "A",
+    "credits": 4,
+    "year": "1학년 2학기",
+    "level": 10,
+    "term": "2",
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "영어",
+    "en": "English",
+    "grade": "A",
+    "credits": 4,
+    "year": "1학년 2학기",
+    "level": 10,
+    "term": "2",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "한국사",
+    "en": "Korean History",
+    "grade": "B",
+    "credits": 3,
+    "year": "1학년 2학기",
+    "level": 10,
+    "term": "2",
+    "concept": "ss.history.national",
+    "us": "A"
+   },
+   {
+    "name": "통합사회",
+    "en": "Integrated Social Studies",
+    "grade": "B",
+    "credits": 4,
+    "year": "1학년 2학기",
+    "level": 10,
+    "term": "2",
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "통합과학",
+    "en": "Integrated Science",
+    "grade": "A",
+    "credits": 4,
+    "year": "1학년 2학기",
+    "level": 10,
+    "term": "2",
+    "concept": "sci.integrated",
+    "us": "A"
+   },
+   {
+    "name": "과학탐구실험",
+    "en": "Science Inquiry Experiments",
+    "grade": "A",
+    "credits": 1,
+    "year": "1학년 2학기",
+    "level": 10,
+    "term": "2",
+    "concept": "sci.integrated",
+    "us": "A"
+   },
+   {
+    "name": "체육",
+    "en": "Physical Education",
+    "grade": "A",
+    "credits": 2,
+    "year": "1학년 2학기",
+    "level": 10,
+    "term": "2",
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "미술",
+    "en": "Art",
+    "grade": "B",
+    "credits": 2,
+    "year": "1학년 2학기",
+    "level": 10,
+    "term": "2",
+    "concept": "arts.visual",
+    "us": "A"
+   },
+   {
+    "name": "문학",
+    "en": "Literature",
+    "grade": "B",
+    "credits": 4,
+    "year": "2학년 1학기",
+    "level": 11,
+    "term": "1",
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "수학Ⅰ",
+    "en": "Mathematics I",
+    "grade": "B",
+    "credits": 4,
+    "year": "2학년 1학기",
+    "level": 11,
+    "term": "1",
+    "concept": "math.algebra2",
+    "us": "A"
+   },
+   {
+    "name": "영어Ⅰ",
+    "en": "English I",
+    "grade": "A",
+    "credits": 4,
+    "year": "2학년 1학기",
+    "level": 11,
+    "term": "1",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "세계지리",
+    "en": "World Geography",
+    "grade": "C",
+    "credits": 3,
+    "year": "2학년 1학기",
+    "level": 11,
+    "term": "1",
+    "concept": "ss.geography",
+    "us": "B"
+   },
+   {
+    "name": "물리학Ⅰ",
+    "en": "Physics I",
+    "grade": "A",
+    "credits": 3,
+    "year": "2학년 1학기",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.physics",
+    "us": "A"
+   },
+   {
+    "name": "화학Ⅰ",
+    "en": "Chemistry I",
+    "grade": "D",
+    "credits": 3,
+    "year": "2학년 1학기",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "생명과학Ⅰ",
+    "en": "Life Science I",
+    "grade": "A",
+    "credits": 3,
+    "year": "2학년 1학기",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "일본어Ⅰ",
+    "en": "Japanese I",
+    "grade": "A",
+    "credits": 3,
+    "year": "2학년 1학기",
+    "level": 11,
+    "term": "1",
+    "concept": "wl.other",
+    "us": "A"
+   },
+   {
+    "name": "정보",
+    "en": "Informatics",
+    "grade": "A",
+    "credits": 2,
+    "year": "2학년 1학기",
+    "level": 11,
+    "term": "1",
+    "concept": "cs",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "vn-hocba",
@@ -6548,7 +7873,10 @@
     "concept": "pe",
     "us": "P"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "vn-hocba",
@@ -6774,7 +8102,10 @@
     "concept": "pe",
     "us": "P"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "eg-thanaweya",
@@ -6856,7 +8187,10 @@
     "concept": "sci.earth",
     "us": "B"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "eg-thanaweya",
@@ -6938,7 +8272,10 @@
     "concept": "sci.earth",
     "us": "B"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "ru-attestat",
@@ -7082,7 +8419,10 @@
     "concept": "health",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
  },
  {
   "id": "ru-attestat",
@@ -7226,7 +8566,159 @@
     "concept": "health",
     "us": "A"
    }
-  ]
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "ru-attestat",
+  "file": "ru-attestat.redacted.photo.jpg",
+  "format": "photo-jpg",
+  "system": "ru",
+  "country": "Russia",
+  "lang": "ru",
+  "pages": 1,
+  "student": {
+   "name": "",
+   "dob": "",
+   "id": ""
+  },
+  "school": {
+   "name": "Средняя общеобразовательная школа № 47"
+  },
+  "courses": [
+   {
+    "name": "Русский язык",
+    "en": "Russian Language",
+    "grade": "4",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Литература",
+    "en": "Literature",
+    "grade": "5",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Иностранный язык (английский)",
+    "en": "Foreign Language (English)",
+    "grade": "5",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Алгебра и начала математического анализа",
+    "en": "Algebra and Introductory Calculus",
+    "grade": "4",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "math.precalc",
+    "us": "B"
+   },
+   {
+    "name": "Геометрия",
+    "en": "Geometry",
+    "grade": "3",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "math.geometry",
+    "us": "C"
+   },
+   {
+    "name": "Информатика",
+    "en": "Informatics",
+    "grade": "5",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "cs",
+    "us": "A"
+   },
+   {
+    "name": "История",
+    "en": "History",
+    "grade": "4",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "ss.history.world",
+    "us": "B"
+   },
+   {
+    "name": "Обществознание",
+    "en": "Social Studies",
+    "grade": "5",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "География",
+    "en": "Geography",
+    "grade": "4",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "ss.geography",
+    "us": "B"
+   },
+   {
+    "name": "Биология",
+    "en": "Biology",
+    "grade": "5",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Физика",
+    "en": "Physics",
+    "grade": "3",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Химия",
+    "en": "Chemistry",
+    "grade": "4",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Физическая культура",
+    "en": "Physical Education",
+    "grade": "5",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Основы безопасности жизнедеятельности",
+    "en": "Fundamentals of Life Safety",
+    "grade": "5",
+    "year": "Сведения о результатах освоения образовательной программы среднего общего образования",
+    "level": 11,
+    "concept": "health",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  },
+  "redacted": "bar"
  },
  {
   "id": "in-hindi-board",
@@ -7299,6 +8791,1270 @@
     "concept": "ss.social",
     "us": "B"
    }
-  ]
+  ],
+  "instruction": {
+   "english": null
+  }
+ },
+ {
+  "id": "mx-sep-translation",
+  "file": "mx-sep-translation.pdf",
+  "format": "pdf",
+  "system": "mx-sep",
+  "country": "Mexico",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "Diego Alejandro Hernández Zavala",
+   "dob": "2007-09-21",
+   "id": "HEZD070921HJCRVG04"
+  },
+  "school": {
+   "name": "Preparatoria Valle de Atemajac",
+   "city": "Zapopan"
+  },
+  "courses": [
+   {
+    "name": "Mathematics I",
+    "en": "Mathematics I",
+    "grade": "8",
+    "credits": 10,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "math.algebra1",
+    "us": "B"
+   },
+   {
+    "name": "Chemistry I",
+    "en": "Chemistry I",
+    "grade": "7",
+    "credits": 10,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "Ethics I",
+    "en": "Ethics I",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Research Methodology",
+    "en": "Research Methodology",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "elective.other",
+    "us": "A"
+   },
+   {
+    "name": "Reading and Writing Workshop I",
+    "en": "Reading and Writing Workshop I",
+    "grade": "8",
+    "credits": 8,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "English I",
+    "en": "English I",
+    "grade": "10",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Computer Science I",
+    "en": "Computer Science I",
+    "grade": "10",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "cs",
+    "us": "A"
+   },
+   {
+    "name": "Mathematics II",
+    "en": "Mathematics II",
+    "grade": "7",
+    "credits": 10,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "math.geometry",
+    "us": "C"
+   },
+   {
+    "name": "Chemistry II",
+    "en": "Chemistry II",
+    "grade": "8",
+    "credits": 10,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Ethics II",
+    "en": "Ethics II",
+    "grade": "9",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Introduction to Social Sciences",
+    "en": "Introduction to Social Sciences",
+    "grade": "8",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "ss.social",
+    "us": "B"
+   },
+   {
+    "name": "Reading and Writing Workshop II",
+    "en": "Reading and Writing Workshop II",
+    "grade": "9",
+    "credits": 8,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "English II",
+    "en": "English II",
+    "grade": "10",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Computer Science II",
+    "en": "Computer Science II",
+    "grade": "9",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "cs",
+    "us": "A"
+   },
+   {
+    "name": "Mathematics III",
+    "en": "Mathematics III",
+    "grade": "6",
+    "credits": 10,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "math.algebra2",
+    "us": "C"
+   },
+   {
+    "name": "Biology I",
+    "en": "Biology I",
+    "grade": "8",
+    "credits": 8,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.biology",
+    "us": "B"
+   },
+   {
+    "name": "Physics I",
+    "en": "Physics I",
+    "grade": "7",
+    "credits": 10,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "History of Mexico I",
+    "en": "History of Mexico I",
+    "grade": "9",
+    "credits": 6,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "ss.history.national",
+    "us": "A"
+   },
+   {
+    "name": "Literature I",
+    "en": "Literature I",
+    "grade": "8",
+    "credits": 6,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "English III",
+    "en": "English III",
+    "grade": "9",
+    "credits": 6,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Mathematics IV",
+    "en": "Mathematics IV",
+    "grade": "7",
+    "credits": 10,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "math.precalc",
+    "us": "C"
+   },
+   {
+    "name": "Biology II",
+    "en": "Biology II",
+    "grade": "9",
+    "credits": 8,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Physics II",
+    "en": "Physics II",
+    "grade": "6",
+    "credits": 10,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "History of Mexico II",
+    "en": "History of Mexico II",
+    "grade": "8",
+    "credits": 6,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.history.national",
+    "us": "B"
+   },
+   {
+    "name": "Literature II",
+    "en": "Literature II",
+    "grade": "9",
+    "credits": 6,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "English IV",
+    "en": "English IV",
+    "grade": "10",
+    "credits": 6,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Geography",
+    "en": "Geography",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "ss.geography",
+    "us": "A"
+   },
+   {
+    "name": "Socioeconomic Structure of Mexico",
+    "en": "Socioeconomic Structure of Mexico",
+    "grade": "8",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "ss.economics",
+    "us": "B"
+   },
+   {
+    "name": "Differential Calculus",
+    "en": "Differential Calculus",
+    "grade": "7",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "math.calculus",
+    "us": "C"
+   },
+   {
+    "name": "Selected Topics in Chemistry I",
+    "en": "Selected Topics in Chemistry I",
+    "grade": "8",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Probability and Statistics I",
+    "en": "Probability and Statistics I",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "math.statistics",
+    "us": "A"
+   },
+   {
+    "name": "Philosophy",
+    "en": "Philosophy",
+    "grade": "9",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Ecology and Environment",
+    "en": "Ecology and Environment",
+    "grade": "10",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "sci.environmental",
+    "us": "A"
+   },
+   {
+    "name": "Contemporary World History",
+    "en": "Contemporary World History",
+    "grade": "8",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "ss.history.world",
+    "us": "B"
+   },
+   {
+    "name": "Integral Calculus",
+    "en": "Integral Calculus",
+    "grade": "6",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "math.calculus",
+    "us": "C"
+   },
+   {
+    "name": "Probability and Statistics II",
+    "en": "Probability and Statistics II",
+    "grade": "8",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "math.statistics",
+    "us": "B"
+   }
+  ],
+  "instruction": {
+   "english": false,
+   "translated": true
+  }
+ },
+ {
+  "id": "mx-sep-translation",
+  "file": "mx-sep-translation.redacted.pdf",
+  "format": "pdf",
+  "system": "mx-sep",
+  "country": "Mexico",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "",
+   "dob": "",
+   "id": ""
+  },
+  "school": {
+   "name": "Preparatoria Valle de Atemajac",
+   "city": "Zapopan"
+  },
+  "courses": [
+   {
+    "name": "Mathematics I",
+    "en": "Mathematics I",
+    "grade": "8",
+    "credits": 10,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "math.algebra1",
+    "us": "B"
+   },
+   {
+    "name": "Chemistry I",
+    "en": "Chemistry I",
+    "grade": "7",
+    "credits": 10,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "Ethics I",
+    "en": "Ethics I",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Research Methodology",
+    "en": "Research Methodology",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "elective.other",
+    "us": "A"
+   },
+   {
+    "name": "Reading and Writing Workshop I",
+    "en": "Reading and Writing Workshop I",
+    "grade": "8",
+    "credits": 8,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "English I",
+    "en": "English I",
+    "grade": "10",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Computer Science I",
+    "en": "Computer Science I",
+    "grade": "10",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "cs",
+    "us": "A"
+   },
+   {
+    "name": "Mathematics II",
+    "en": "Mathematics II",
+    "grade": "7",
+    "credits": 10,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "math.geometry",
+    "us": "C"
+   },
+   {
+    "name": "Chemistry II",
+    "en": "Chemistry II",
+    "grade": "8",
+    "credits": 10,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Ethics II",
+    "en": "Ethics II",
+    "grade": "9",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Introduction to Social Sciences",
+    "en": "Introduction to Social Sciences",
+    "grade": "8",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "ss.social",
+    "us": "B"
+   },
+   {
+    "name": "Reading and Writing Workshop II",
+    "en": "Reading and Writing Workshop II",
+    "grade": "9",
+    "credits": 8,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "English II",
+    "en": "English II",
+    "grade": "10",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Computer Science II",
+    "en": "Computer Science II",
+    "grade": "9",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "cs",
+    "us": "A"
+   },
+   {
+    "name": "Mathematics III",
+    "en": "Mathematics III",
+    "grade": "6",
+    "credits": 10,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "math.algebra2",
+    "us": "C"
+   },
+   {
+    "name": "Biology I",
+    "en": "Biology I",
+    "grade": "8",
+    "credits": 8,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.biology",
+    "us": "B"
+   },
+   {
+    "name": "Physics I",
+    "en": "Physics I",
+    "grade": "7",
+    "credits": 10,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "History of Mexico I",
+    "en": "History of Mexico I",
+    "grade": "9",
+    "credits": 6,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "ss.history.national",
+    "us": "A"
+   },
+   {
+    "name": "Literature I",
+    "en": "Literature I",
+    "grade": "8",
+    "credits": 6,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "English III",
+    "en": "English III",
+    "grade": "9",
+    "credits": 6,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Mathematics IV",
+    "en": "Mathematics IV",
+    "grade": "7",
+    "credits": 10,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "math.precalc",
+    "us": "C"
+   },
+   {
+    "name": "Biology II",
+    "en": "Biology II",
+    "grade": "9",
+    "credits": 8,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Physics II",
+    "en": "Physics II",
+    "grade": "6",
+    "credits": 10,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "History of Mexico II",
+    "en": "History of Mexico II",
+    "grade": "8",
+    "credits": 6,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.history.national",
+    "us": "B"
+   },
+   {
+    "name": "Literature II",
+    "en": "Literature II",
+    "grade": "9",
+    "credits": 6,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "English IV",
+    "en": "English IV",
+    "grade": "10",
+    "credits": 6,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Geography",
+    "en": "Geography",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "ss.geography",
+    "us": "A"
+   },
+   {
+    "name": "Socioeconomic Structure of Mexico",
+    "en": "Socioeconomic Structure of Mexico",
+    "grade": "8",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "ss.economics",
+    "us": "B"
+   },
+   {
+    "name": "Differential Calculus",
+    "en": "Differential Calculus",
+    "grade": "7",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "math.calculus",
+    "us": "C"
+   },
+   {
+    "name": "Selected Topics in Chemistry I",
+    "en": "Selected Topics in Chemistry I",
+    "grade": "8",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Probability and Statistics I",
+    "en": "Probability and Statistics I",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "math.statistics",
+    "us": "A"
+   },
+   {
+    "name": "Philosophy",
+    "en": "Philosophy",
+    "grade": "9",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Ecology and Environment",
+    "en": "Ecology and Environment",
+    "grade": "10",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "sci.environmental",
+    "us": "A"
+   },
+   {
+    "name": "Contemporary World History",
+    "en": "Contemporary World History",
+    "grade": "8",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "ss.history.world",
+    "us": "B"
+   },
+   {
+    "name": "Integral Calculus",
+    "en": "Integral Calculus",
+    "grade": "6",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "math.calculus",
+    "us": "C"
+   },
+   {
+    "name": "Probability and Statistics II",
+    "en": "Probability and Statistics II",
+    "grade": "8",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "math.statistics",
+    "us": "B"
+   }
+  ],
+  "instruction": {
+   "english": false,
+   "translated": true
+  },
+  "redacted": "xxxx"
+ },
+ {
+  "id": "mx-sep-translation",
+  "file": "mx-sep-translation.scan.jpg",
+  "format": "scan-jpg",
+  "system": "mx-sep",
+  "country": "Mexico",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "Diego Alejandro Hernández Zavala",
+   "dob": "2007-09-21",
+   "id": "HEZD070921HJCRVG04"
+  },
+  "school": {
+   "name": "Preparatoria Valle de Atemajac",
+   "city": "Zapopan"
+  },
+  "courses": [
+   {
+    "name": "Mathematics I",
+    "en": "Mathematics I",
+    "grade": "8",
+    "credits": 10,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "math.algebra1",
+    "us": "B"
+   },
+   {
+    "name": "Chemistry I",
+    "en": "Chemistry I",
+    "grade": "7",
+    "credits": 10,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "Ethics I",
+    "en": "Ethics I",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Research Methodology",
+    "en": "Research Methodology",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "elective.other",
+    "us": "A"
+   },
+   {
+    "name": "Reading and Writing Workshop I",
+    "en": "Reading and Writing Workshop I",
+    "grade": "8",
+    "credits": 8,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "English I",
+    "en": "English I",
+    "grade": "10",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Computer Science I",
+    "en": "Computer Science I",
+    "grade": "10",
+    "credits": 6,
+    "year": "FIRST SEMESTER",
+    "level": 10,
+    "term": "1",
+    "concept": "cs",
+    "us": "A"
+   },
+   {
+    "name": "Mathematics II",
+    "en": "Mathematics II",
+    "grade": "7",
+    "credits": 10,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "math.geometry",
+    "us": "C"
+   },
+   {
+    "name": "Chemistry II",
+    "en": "Chemistry II",
+    "grade": "8",
+    "credits": 10,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Ethics II",
+    "en": "Ethics II",
+    "grade": "9",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Introduction to Social Sciences",
+    "en": "Introduction to Social Sciences",
+    "grade": "8",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "ss.social",
+    "us": "B"
+   },
+   {
+    "name": "Reading and Writing Workshop II",
+    "en": "Reading and Writing Workshop II",
+    "grade": "9",
+    "credits": 8,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "English II",
+    "en": "English II",
+    "grade": "10",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Computer Science II",
+    "en": "Computer Science II",
+    "grade": "9",
+    "credits": 6,
+    "year": "SECOND SEMESTER",
+    "level": 10,
+    "term": "2",
+    "concept": "cs",
+    "us": "A"
+   },
+   {
+    "name": "Mathematics III",
+    "en": "Mathematics III",
+    "grade": "6",
+    "credits": 10,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "math.algebra2",
+    "us": "C"
+   },
+   {
+    "name": "Biology I",
+    "en": "Biology I",
+    "grade": "8",
+    "credits": 8,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.biology",
+    "us": "B"
+   },
+   {
+    "name": "Physics I",
+    "en": "Physics I",
+    "grade": "7",
+    "credits": 10,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "History of Mexico I",
+    "en": "History of Mexico I",
+    "grade": "9",
+    "credits": 6,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "ss.history.national",
+    "us": "A"
+   },
+   {
+    "name": "Literature I",
+    "en": "Literature I",
+    "grade": "8",
+    "credits": 6,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "English III",
+    "en": "English III",
+    "grade": "9",
+    "credits": 6,
+    "year": "THIRD SEMESTER",
+    "level": 11,
+    "term": "1",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Mathematics IV",
+    "en": "Mathematics IV",
+    "grade": "7",
+    "credits": 10,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "math.precalc",
+    "us": "C"
+   },
+   {
+    "name": "Biology II",
+    "en": "Biology II",
+    "grade": "9",
+    "credits": 8,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Physics II",
+    "en": "Physics II",
+    "grade": "6",
+    "credits": 10,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "History of Mexico II",
+    "en": "History of Mexico II",
+    "grade": "8",
+    "credits": 6,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.history.national",
+    "us": "B"
+   },
+   {
+    "name": "Literature II",
+    "en": "Literature II",
+    "grade": "9",
+    "credits": 6,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "English IV",
+    "en": "English IV",
+    "grade": "10",
+    "credits": 6,
+    "year": "FOURTH SEMESTER",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Geography",
+    "en": "Geography",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "ss.geography",
+    "us": "A"
+   },
+   {
+    "name": "Socioeconomic Structure of Mexico",
+    "en": "Socioeconomic Structure of Mexico",
+    "grade": "8",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "ss.economics",
+    "us": "B"
+   },
+   {
+    "name": "Differential Calculus",
+    "en": "Differential Calculus",
+    "grade": "7",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "math.calculus",
+    "us": "C"
+   },
+   {
+    "name": "Selected Topics in Chemistry I",
+    "en": "Selected Topics in Chemistry I",
+    "grade": "8",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Probability and Statistics I",
+    "en": "Probability and Statistics I",
+    "grade": "9",
+    "credits": 6,
+    "year": "FIFTH SEMESTER",
+    "level": 12,
+    "term": "1",
+    "concept": "math.statistics",
+    "us": "A"
+   },
+   {
+    "name": "Philosophy",
+    "en": "Philosophy",
+    "grade": "9",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Ecology and Environment",
+    "en": "Ecology and Environment",
+    "grade": "10",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "sci.environmental",
+    "us": "A"
+   },
+   {
+    "name": "Contemporary World History",
+    "en": "Contemporary World History",
+    "grade": "8",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "ss.history.world",
+    "us": "B"
+   },
+   {
+    "name": "Integral Calculus",
+    "en": "Integral Calculus",
+    "grade": "6",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "math.calculus",
+    "us": "C"
+   },
+   {
+    "name": "Probability and Statistics II",
+    "en": "Probability and Statistics II",
+    "grade": "8",
+    "credits": 6,
+    "year": "SIXTH SEMESTER",
+    "level": 12,
+    "term": "2",
+    "concept": "math.statistics",
+    "us": "B"
+   }
+  ],
+  "instruction": {
+   "english": false,
+   "translated": true
+  }
  }
 ]
