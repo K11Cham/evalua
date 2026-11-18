@@ -29,7 +29,8 @@ const ORD: Record<number, string> = {
 };
 /** Rules for "<ordinal> <word>" → US grade, e.g. year 1 of a 5-year secundaria is US grade 8. */
 const years = (word: string, first: number, count: number, usOfFirst: number) =>
-  Array.from({ length: count }, (_, i) => ({ pattern: `\\b${ORD[first + i]}\\s*(?:${word})\\b`, level: usOfFirst + i }));
+  // "Cuarto grado de bachillerato", "4º año de bachillerato": a level word and "de" may sit between the two.
+  Array.from({ length: count }, (_, i) => ({ pattern: `\\b${ORD[first + i]}\\s*(?:(?:grado|a[ñn]o|curso)\\s+)?(?:de\\s+)?(?:${word})\\b`, level: usOfFirst + i }));
 
 // Course names shared across Spanish-speaking systems, from their published curricula.
 const SPANISH: SystemCourse[] = [
@@ -69,7 +70,7 @@ const SPANISH: SystemCourse[] = [
 ];
 
 const WORDS: ScaleEntry[] = [
-  L(['Excelente', 'Sobresaliente', 'Superior'], 'A', 'Excelente'), L(['Distinguido', 'Muy Bueno', 'Muy bueno', 'MB', 'Notable'], 'A', 'Muy bueno'), L(['Bueno', 'B', 'Alto'], 'B', 'Bueno'),
+  L(['Excelente', 'Sobresaliente', 'Superior'], 'A', 'Excelente'), L(['Distinguido', 'Muy Bueno', 'Muy bueno', 'MB', 'Notable'], 'A', 'Muy bueno'), L(['Bueno', 'Alto'], 'B', 'Bueno'),
   L(['Regular', 'Suficiente', 'Aceptable', 'Básico', 'Aprobado'], 'C', 'Aprobado'), L(['Insuficiente', 'Reprobado', 'Desaprobado', 'Deficiente', 'Bajo'], 'F', 'Reprobado'),
 ];
 

@@ -4,7 +4,9 @@ import { asciiDigits, key, similarity, stripDiacritics } from './text.ts';
 
 export type Role =
   | 'name' | 'final' | 'grade' | 'score' | 'component' | 'credits' | 'hours' | 'max' | 'min'
-  | 'words' | 'code' | 'qualifier' | 'area' | 'rank' | 'remark' | 'ignore';
+  | 'words' | 'code' | 'qualifier' | 'area' | 'rank' | 'remark' | 'ignore'
+  // A column that gives each row's year or grade level ("Curso: 3º Año"); or, when its cells are subjects, the subject column.
+  | 'year';
 
 const ROLE_TERMS: Record<Role, string[]> = {
   name: [
@@ -47,6 +49,7 @@ const ROLE_TERMS: Record<Role, string[]> = {
     'remark', 'remarks', 'interpretation', 'observaciones', 'observações', 'appréciations', 'appréciation', 'action taken', 'comment', 'comments',
     'nhận xét', '评语', '备注', '비고', 'ملاحظات', 'примечание', 'bemerkung', 'bemerkungen', 'teacher', 'professeur', 'enseignant', 'signature', 'lehrer',
   ],
+  year: ['curso', 'grado', 'año', 'ano', 'año escolar', 'año lectivo', 'nivel escolar', 'série', 'school year', 'grade level', 'year level', 'année', 'classe'],
   ignore: ['moy classe', 'moyenne classe', 'class average', 'moyenne de la classe', 'média da turma', 'promedio del grupo', '과목평균', 'highest', 'lowest', 'min classe', 'max classe', '班级平均', 'weight', 'coef', 'coefficient', 'coeff'],
 };
 
@@ -71,7 +74,8 @@ export function headerRole(text: string): Role | null {
   if (/%/.test(text) && text.length <= 24 && !/class|classe|turma|grupo/i.test(text)) return 'score';
   const k = key(text);
   if (!k || k.length > 70) return null;
-  for (const { term, role } of TERM_INDEX) if (containsTerm(k, term)) return role;
+  // A year column is headed by the bare word ("Curso", "Año"); "1ª Série" or "Primer grado" heads a matrix column group.
+  for (const { term, role } of TERM_INDEX) if (role === 'year' ? k === term : containsTerm(k, term)) return role;
   // OCR-tolerant fallback for longer terms.
   if (k.length >= 5) {
     for (const { term, role } of TERM_INDEX) {
@@ -89,6 +93,8 @@ const LABELS: Record<Exclude<InfoField, 'other'>, string[]> = {
   name: [
     'name', 'student name', 'name of student', 'candidate name', 'name of candidate', 'candidate', 'student', 'learner', 'pupil name', 'full name',
     'last name first name middle name', 'this is to certify that', 'nombre', 'nombre del alumno', 'nombre del estudiante', 'alumno', 'alumna', 'estudiante',
+    'apellido y nombres', 'apellidos y nombres', 'apellidos y nombre', 'apellido y nombre', 'nombres y apellidos', 'nombre y apellidos', 'nombre y apellido', 'nombre completo',
+    'apellidos nombres', 'nombre del educando', 'educando', 'nombre del participante', 'nom de l élève', 'prénom et nom', 'nom et prénoms', 'candidate name',
     'élève', 'nom', 'nom et prénom', 'nom prénom', 'vor und zuname', 'name vorname', 'schüler', 'schülerin', 'nome', 'nome do a aluno a', 'nome do aluno',
     'aluno', 'aluna', '姓名', '学生姓名', '성명', '이름', 'họ và tên', 'họ tên', 'اسم الطالب', 'الاسم', 'اسم التلميذ', 'фамилия имя отчество', 'фио',
     'परीक्षार्थी का नाम', 'छात्र का नाम', 'नाम', 'प्रमाणित किया जाता है कि', 'nama', 'jina',
@@ -103,9 +109,15 @@ const LABELS: Record<Exclude<InfoField, 'other'>, string[]> = {
     'registration number', 'reg no', 'roll no', 'roll number', 'candidate number', 'personal code', 'lrn', 'curp', 'matrícula', 'matricula', 'ine', 'numéro',
     'schülernummer', 'rg', 'cpf', '学籍号', '学号', '考号', '학번', '수험번호', 'mã học sinh', 'số báo danh', 'رقم الجلوس', 'الرقم القومي', 'अनुक्रमांक',
     'рег номер', 'nis', 'nisn',
+    'dni', 'd n i', 'documento de identidad', 'documento nacional de identidad', 'n de documento', 'tarjeta de identidad', 'ti', 'cédula', 'cedula', 'cédula de identidad',
+    'cédula de ciudadanía', 'c i', 'ci', 'run', 'rut', 'código personal', 'codigo personal', 'código rude', 'rude', 'nie', 'cui', 'código del estudiante', 'número de estudiante',
+    'id sigerd', 'sigerd', 'id del estudiante', 'carné de identidad', 'carnet de identidad', 'matricule', 'n matricule', 'numéro matricule', 'code élève',
+    'número de matrícula', 'nº de matrícula', 'rne',
   ],
   school: [
     'school', 'name of school', 'school name', 'centre', 'center', 'centre name', 'institution', 'plantel', 'escuela', 'institución', 'institucion',
+    'establecimiento', 'establecimiento educativo', 'institución educativa', 'centro educativo', 'centro de estudios', 'unidad educativa', 'nombre del plantel', 'colegio', 'liceo',
+    'nombre de la institución', 'nombre del establecimiento', 'lycée', 'école',
     'établissement', 'etablissement', 'schule', 'estabelecimento de ensino', 'escola', 'colégio', '学校', '就读学校', '학교명', '학교', 'trường', 'المدرسة',
     'образовательная организация', 'школа', 'विद्यालय', 'sekolah', 'shule',
   ],
@@ -173,7 +185,7 @@ export function labelWithoutColon(text: string): { label: string; value: string 
 
 const SCHOOL_WORDS = [
   'school', 'college', 'academy', 'institute', 'lycée', 'lycee', 'collège', 'gymnasium', 'gesamtschule', 'realschule', 'colégio', 'colegio', 'escola',
-  'escuela', 'preparatoria', 'bachillerato', 'instituto', 'liceo', '中学', '高中', '学校', '고등학교', '중학교', 'trường', 'thpt', 'مدرسة', 'школа', 'лицей',
+  'escuela', 'preparatoria', 'bachillerato', 'instituto', 'liceo', 'institución educativa', 'unidad educativa', 'centro educativo', 'u e n', 'unidad escolar', '中学', '高中', '学校', '고등학교', '중학교', 'trường', 'thpt', 'مدرسة', 'школа', 'лицей',
   'гимназия', 'विद्यालय', 'sekolah', 'madrasah', 'secondary',
 ].map(key);
 

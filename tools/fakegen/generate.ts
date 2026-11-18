@@ -10,11 +10,12 @@ import * as docx from 'docx';
 import { specsA } from './specs-a.ts';
 import { specsB } from './specs-b.ts';
 import { specsC } from './specs-c.ts';
+import { specsD } from './specs-d.ts';
 import { BAR, buildTables, LEAK, pagesOf, photoSceneHtml, scanPdfHtml, specHtml } from './render.ts';
 import type { FakeSpec, Format, Redaction, Truth, TruthCourse } from './types.ts';
 
 const OUT = path.resolve('fixtures/fake');
-export const allSpecs: FakeSpec[] = [...specsA, ...specsB, ...specsC];
+export const allSpecs: FakeSpec[] = [...specsA, ...specsB, ...specsC, ...specsD];
 
 function rng(seed: string): () => number {
   let h = 1779033703 ^ seed.length;
@@ -51,7 +52,8 @@ async function noise(width: number, height: number, sigma: number, rand: () => n
 }
 
 async function pagePngs(browser: Browser, spec: FakeSpec): Promise<Buffer[]> {
-  const ctx = await browser.newContext({ viewport: { width: 794, height: 1123 }, deviceScaleFactor: 2 });
+  const land = !!spec.page?.landscape;
+  const ctx = await browser.newContext({ viewport: { width: land ? 1123 : 794, height: land ? 794 : 1123 }, deviceScaleFactor: 2 });
   const out: Buffer[] = [];
   const n = pagesOf(spec).length;
   for (let i = 0; i < n; i++) {
@@ -185,7 +187,7 @@ async function main() {
         const ctx = await browser.newContext();
         const page = await ctx.newPage();
         await page.setContent(specHtml(spec), { waitUntil: 'load' });
-        data = await page.pdf({ format: 'A4', printBackground: true });
+        data = await page.pdf({ format: 'A4', printBackground: true, landscape: !!spec.page?.landscape });
         await ctx.close();
       } else if (format === 'scan-jpg') {
         data = await (await degradeScan(pngs[0], rand)).jpeg({ quality: 72 }).toBuffer();

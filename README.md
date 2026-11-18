@@ -26,7 +26,7 @@ More screenshots: [case list](docs/screenshots/cases.png), [report](docs/screens
 
 ### Systems it knows
 
-WAEC (WASSCE, NECO SSCE and school transcripts from The Gambia, Nigeria, Ghana, Sierra Leone, Liberia), GABECE/BECE, JAMB UTME, International Baccalaureate, UK GCSE and A level, India CBSE and CISCE, China, Mexico (SEP), France, Germany, Philippines K to 12, Brazil, South Korea, Vietnam, Russia, Egypt, plus generic rules for anything not profiled. Open **Reference** in the app to see each profile, its grading tables, and where every fact came from.
+WAEC (WASSCE, NECO SSCE and school transcripts from The Gambia, Nigeria, Ghana, Sierra Leone, Liberia), GABECE/BECE, JAMB UTME, International Baccalaureate, UK GCSE and A level, India CBSE and CISCE, China, Mexico (SEP), France, Germany, Philippines K to 12, Brazil, South Korea, Vietnam, Russia, Egypt, Argentina, Colombia, Venezuela, the Dominican Republic, Peru, Chile, Ecuador, Bolivia, Paraguay, Uruguay, Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panama, Cuba, Puerto Rico, Senegal, plus generic rules for anything not profiled. Open **Reference** in the app to see each profile, its grading tables, and where every fact came from.
 
 **Jefferson County Public Schools (Louisville, Kentucky)** ships as a full district profile: Kentucky's 22-credit minimum (704 KAR 3:305), JCPS's own rules (Algebra II, U.S. History and World History by name, the senior Defense of Learning, the civics test), half-credit steps, 120 hours per credit, a catalog of Kentucky state course codes, and JCPS's rules on international transcripts, all linked to their sources. State-minimum templates cover Texas, California, New York, Florida and Washington. A counselor copies a profile, edits the requirements, and adds the district's course catalog by pasting, uploading, or linking it.
 
@@ -77,22 +77,23 @@ To try the app, use the fictitious transcripts in [`fixtures/fake/`](fixtures/fa
 
 ## Accuracy
 
-`npm run eval` runs 46 files, rendered from 22 fictitious records, through the pipeline and compares against known answers. They include a certified English translation of a Spanish-medium record and eight anonymized copies of other fakes (black bars, "XXXX", "[REDACTED]", blank fields, and a PDF whose "redaction" only drew a box over the text). Full results, including every miss, are in [`docs/ACCURACY.md`](docs/ACCURACY.md).
+`npm run eval` runs 66 files, rendered from 34 fictitious records, through the pipeline and compares against known answers. Twelve of the records are built to look unlike the rest: a register with the year in its own column, a certificate that names the student in a sentence and lists grades on dotted leaders with no table heading, the grade printed before the subject, a landscape matrix, a matrix that changes scale halfway (0–20 marks, then AD/A/B/C), term columns beside a final grade, two tables side by side, borderless tables, a phone photo with glare, and grading keys, attendance tables, conduct notes and verification codes placed around the grades. They come from Latin America, the Caribbean, Senegal and a GABECE online result-checker printout. The set also includes a certified English translation of a Spanish-medium record and eight anonymized copies of other fakes (black bars, "XXXX", "[REDACTED]", blank fields, and a PDF whose "redaction" only drew a box over the text). Full results, including every miss, are in [`docs/ACCURACY.md`](docs/ACCURACY.md).
 
-| Measure | All 46 files |
+| Measure | All 66 files |
 |---|---|
-| Education system identified | 46/46 |
-| Courses found | 98.8% (899/910) |
+| Education system identified | 66/66 |
+| Courses found | 99.3% (1159/1167) |
+| Rows that are not real courses | 4 |
 | Grade correct | 99.3% |
 | US grade level correct | 100% |
-| Subject matched | 99.6% |
-| US letter grade correct | 98.9% |
-| Language of instruction (English-medium or not) | 46/46 |
+| Subject matched | 99.7% |
+| US letter grade correct | 99.0% |
+| Language of instruction (English-medium or not) | 66/66 |
 | Anonymized files: student details kept out, never read as text | 8/8 |
 
-The 36 files that were already in the set read exactly as before; the new translation accounts for most of the change.
+On the 20 new files, evalua first found 80.5% of the courses (207 of 257); the layout fixes brought that to 99.2% (255 of 257), with no false rows. The 46 files already in the set read the same or better: one fewer false row, and the last row of the two-up Mexican translation, lost under a wrapped heading, is now found.
 
-**Records made of several files.** A counselor often has one report per term or per year. `npm run eval:split` splits every multi-year fake (11 records, 11 systems) into one file per period, in two styles (the period as a heading over each table, or printed once in the page header), recombines them, and checks every course: 100% of courses found, and 100% of grade levels, terms and school years right in both styles ([`docs/ACCURACY_COMBINED.md`](docs/ACCURACY_COMBINED.md)). Each file's grade, year and term are read from that file only, and terms are recognised in every supported language ("Second Term", "2e trimestre", "PRIMER SEMESTRE", "Học kỳ II", "2학기", "第二学期", "2 четверть", "الفصل الدراسي الثاني").
+**Records made of several files.** A counselor often has one report per term or per year. `npm run eval:split` splits every multi-year fake (20 records, 20 systems) into one file per period, in two styles (the period as a heading over each table, or printed once in the page header), recombines them, and checks every course: 100% of courses found, and 100% of grade levels, terms and school years right in both styles ([`docs/ACCURACY_COMBINED.md`](docs/ACCURACY_COMBINED.md)). Each file's grade, year and term are read from that file only, and terms are recognised in every supported language ("Second Term", "2e trimestre", "PRIMER SEMESTRE", "Học kỳ II", "2학기", "第二学期", "2 четверть", "الفصل الدراسي الثاني").
 
 **The optional local model.** A model in Ollama only suggests English names for courses the dictionaries cannot translate; reading, grades, credits and subjects are the same with or without it. On the golden set only 4 real course names (all damaged by OCR) were left for it, so “English name close to the reference” moves from 96.1% to 96.3%. Head to head on all 276 non-English course names, the model named the right US subject for 85% (qwen2.5-coder:7b) and 89% (:14b, about 6× slower), against 99% for evalua's rules, and its mistakes are confident ones. So it is a fallback for names the dictionaries do not know, and it never chooses the subject or the credit ([`docs/ACCURACY_MODEL.md`](docs/ACCURACY_MODEL.md)).
 

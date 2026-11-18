@@ -37,3 +37,38 @@ describe('layouts with term or year columns', () => {
     expect(read('do-grade-first').rows).toEqual([['Lengua Española', '88', 11], ['Matemática', '92', 11], ['Ciencias Sociales', '79', 11]]);
   });
 });
+
+const rowsOf = (cells: string[][]) => `<table>${cells.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;
+
+describe('layouts without the usual heading row', () => {
+  it('reads a certificate that names the student in a sentence and lists grades with no heading row', () => {
+    const html =
+      '<p>REPÚBLICA DE GUATEMALA — MINISTERIO DE EDUCACIÓN</p><p>CERTIFICACIÓN DE ESTUDIOS — Ciclo Diversificado</p>' +
+      '<p>El infrascrito Director del Instituto Nacional Mixto Las Cumbres, CERTIFICA: que Carlos Enrique Xicará López, con código personal A123BCD, nacido(a) el 2 de marzo de 2006, cursó y aprobó los grados siguientes:</p>' +
+      '<p>QUINTO GRADO DE BACHILLERATO — CICLO 2024</p>' +
+      rowsOf([['Matemática', '71', 'setenta y uno'], ['Biología', '86', 'ochenta y seis'], ['Psicología', '93', 'noventa y tres'], ['Estadística', '62', 'sesenta y dos']]);
+    const r = runExtraction(docxHtmlToDoc(html), kb);
+    expect(r.student.name.value).toBe('Carlos Enrique Xicará López');
+    expect(r.student.dob.value).toBe('2006-03-02');
+    expect(r.student.id.value).toBe('A123BCD');
+    expect(r.school.name.value).toBe('Instituto Nacional Mixto Las Cumbres');
+    expect(r.courses.map((c) => [c.name.original, c.grade.value, c.level])).toEqual([['Matemática', '71', 12], ['Biología', '86', 12], ['Psicología', '93', 12], ['Estadística', '62', 12]]);
+  });
+  it('two stray label-and-number lines are not courses', () => {
+    const r = runExtraction(docxHtmlToDoc('<p>Ministerio de Educación del Perú</p>' + rowsOf([['Asistencia', '96'], ['Tardanzas', '2']])), kb);
+    expect(r.courses).toHaveLength(0);
+  });
+  it('reads a register with the year in its own column, and a "Curso" column that holds the courses', () => {
+    const ar = runExtraction(docxHtmlToDoc('<p>Provincia de Buenos Aires — Dirección General de Cultura y Educación</p><p>Certificado Analítico</p>' +
+      t(['Curso', 'Espacio Curricular', 'Calificación'], [['3º Año', 'Matemática', '7'], ['', 'Biología', '9'], ['5º Año', 'Física', '6']])), kb);
+    expect(ar.courses.map((c) => [c.name.original, c.grade.value, c.level])).toEqual([['Matemática', '7', 10], ['Biología', '9', 10], ['Física', '6', 12]]);
+    const pr = runExtraction(docxHtmlToDoc('<p>Departamento de Educación de Puerto Rico</p><p>Transcripción de Créditos — Escuela Superior</p>' +
+      t(['Grado', 'Curso', 'Nota', 'Créditos'], [['10mo Grado', 'Español', 'A', '1'], ['10mo Grado', 'Matemáticas', 'B', '1'], ['11mo Grado', 'Química', 'C', '1']])), kb);
+    expect(pr.courses.map((c) => [c.name.original, c.grade.value, c.level, c.credits?.value])).toEqual([['Español', 'A', 10, 1], ['Matemáticas', 'B', 10, 1], ['Química', 'C', 11, 1]]);
+  });
+  it('reads two tables side by side headed "Área | Nota"', () => {
+    const r = runExtraction(docxHtmlToDoc('<p>Estado Plurinacional de Bolivia — Ministerio de Educación</p><p>Secundaria Comunitaria Productiva</p>' +
+      t(['Área', 'Nota', 'Área', 'Nota'], [['Matemática', '66', 'Matemática', '70'], ['Física', '59', 'Física', '62'], ['Química', '72', 'Química', '77']])), kb);
+    expect(r.courses.map((c) => [c.name.original, c.grade.value]).sort()).toEqual([['Física', '59'], ['Física', '62'], ['Matemática', '66'], ['Matemática', '70'], ['Química', '72'], ['Química', '77']]);
+  });
+});

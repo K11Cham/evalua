@@ -44,7 +44,7 @@ export function detectSystem(text: string, systems: SystemProfile[]): SystemGues
 }
 
 const OTHER_LABEL =
-  /\b(father|mother|guardian|parent|padre|madre|tutor|pere|mere|vater|mutter|pai|mae|centre number|center number|school code|centre no|clave del centro|examination centre|exam centre|test centre|class teacher|adviser)\b|父|母|보호자|ولي|الأب|الأم|पिता|माता|отец|мать|отца|матери/u;
+  /\b(father|mother|guardian|parent|padre|madre|tutor|pere|mere|vater|mutter|pai|mae|centre number|center number|school code|centre no|clave del centro|c[óo]digo del plantel|c[óo]digo del centro|c[óo]digo de la instituci[óo]n|c[óo]digo dane|c[óo]digo modular|rbd|examination centre|exam centre|test centre|class teacher|adviser)\b|父|母|보호자|ولي|الأب|الأم|पिता|माता|отец|мать|отца|матери/u;
 
 interface Pair {
   field: InfoField;
@@ -106,6 +106,43 @@ function readInfo(rows: Row[], rtl: boolean): Pair[] {
     else if (!continued) lastRowPairs = [];
   }
   return pairs;
+}
+
+// A certifying sentence: "El infrascrito Director del Instituto X, CERTIFICA: que Carlos Pérez, con código personal A1,
+// nacido el 2 de marzo de 2006, cursó…", "This is to certify that Ama Mensah, born on 3 May 2007, …".
+const PROSE_NAME = /(?:certific[ao]|certificamos|certifican|hace[n]?\s+constar|certif(?:y|ies)|atteste|certifie)\s*:?\s*(?:que|that|qu['’]?)\s*:?\s+(?:(?:el|la)\s+(?:\(la\)\s+)?(?:alumn[oa]|estudiante)\s+|(?:el|la)\s+(?:se[ñn]or(?:ita)?|joven)\s+|(?:mr|ms|miss|m|mme|mlle)\.?\s+)?([\p{Lu}][\p{L}'’.-]+(?:\s+(?:de\s+(?:la\s+|los\s+)?|del\s+|y\s+)?[\p{Lu}][\p{L}'’.-]+){1,6})(?=\s*,|\s+(?:con|identificad[oa]|portador[a]?|nacid[oa]|born|holder|with|né|née|de\s+nacionalidad)\b)/u;
+const PROSE_DOB = /\b(?:nacid[oa](?:\s*\(a\))?|born(?:\s+on)?|n[ée]\(?e?\)?\s+le)\s+(?:el\s+)?(?:d[íi]a\s+)?(\d{1,2}(?:\s+de\s+|\s+|[/.-])[\p{L}\d]+(?:\s+de\s+|\s+|[/.-])\d{2,4})/iu;
+const PROSE_ID = /\b(?:c[óo]digo\s+personal|documento\s+(?:nacional\s+)?de\s+identidad|c[ée]dula(?:\s+de\s+identidad)?|dni|run|rut|curp|cui|matr[íi]cula)\s*(?:n[º°o.]*\s*)?:?\s*([A-Z0-9][A-Z0-9.-]{3,20})\b/u;
+const PROSE_SCHOOL = /\b(?:director[a]?|rector[a]?|secretari[oa]|principal)(?:\s*\(a\))?\s+(?:del?|de\s+la|of(?:\s+the)?)\s+(.{5,90}?)\s*,?\s+(?:certific|hace|hereby|certif)/iu;
+
+function prosePairs(rows: Row[]): Pair[] {
+  const lines = rows.slice(0, 40).filter((r) => r.page === rows[0]?.page);
+  // The trigger words are often in capitals ("CERTIFICA: QUE"); the name after them must still start with a capital.
+  const text = lines
+    .map(rowText)
+    .join(' ')
+    .replace(/(certific[ao]|certificamos|certifican|hacen?\s+constar|certif(?:y|ies)|atteste|certifie)(\s*:?\s*)(que|that|qu['’]?)(?![\p{L}])/giu, (m) => m.toLowerCase());
+  if (!/certific|constar|certify|atteste/i.test(text)) return [];
+  const at = (index: number) => {
+    let off = 0;
+    for (const r of lines) {
+      off += rowText(r).length + 1;
+      if (index < off) return r;
+    }
+    return lines[lines.length - 1];
+  };
+  const out: Pair[] = [];
+  const add = (field: InfoField, label: string, re: RegExp) => {
+    const m = re.exec(text);
+    if (!m) return;
+    const row = at(m.index + m[0].indexOf(m[1]));
+    out.push({ field, label, value: m[1].trim(), cell: row.cells.find((c) => c.text.includes(m[1].split(/\s+/)[0])) ?? row.cells[0], row });
+  };
+  add('name', 'certifica que', PROSE_NAME);
+  add('dob', 'nacido el', PROSE_DOB);
+  add('id', 'identificación', PROSE_ID);
+  add('school', 'establecimiento', PROSE_SCHOOL);
+  return out;
 }
 
 function resolveLevel(label: string, profile: SystemProfile | undefined): { level: number | null; term?: string } {
@@ -386,6 +423,8 @@ export function extract(doc: DocTokens, kb: KnowledgeBase, opts: ExtractOptions 
 
   // ── student / school ──
   const pairs = readInfo(tables.freeRows, rtl);
+  // Certificates often name the student in a sentence rather than a labelled field.
+  for (const p of prosePairs(tables.freeRows)) if (!pairs.some((x) => x.field === p.field)) pairs.push(p);
   const first = (f: InfoField) => pairs.find((p) => p.field === f);
   const nameP = first('name');
   const dobP = first('dob');
@@ -411,7 +450,9 @@ export function extract(doc: DocTokens, kb: KnowledgeBase, opts: ExtractOptions 
   if (rId) student.id = rId;
   else if (idP) student.id = { value: asciiDigits(idP.value).trim(), original: idP.value, confidence: conf(idP), source: src(idP.cell) };
   let school: Field<string> = empty('');
-  if (schoolP) school = { value: schoolP.value.trim(), original: schoolP.value, confidence: conf(schoolP), source: src(schoolP.cell) };
+  // "INSTITUCIÓN EDUCATIVA ALTOS DEL OCASO" with no colon: the school type is part of the name, not a label before it.
+  const wholeLine = schoolP && !/[:：]/.test(schoolP.cell.text) && looksLikeSchool(schoolP.label) && !schoolP.cell.text.trim().startsWith(schoolP.value.trim()) ? `${schoolP.label} ${schoolP.value}` : undefined;
+  if (schoolP) school = { value: (wholeLine ?? schoolP.value).trim(), original: wholeLine ?? schoolP.value, confidence: conf(schoolP), source: src(schoolP.cell) };
   else {
     const cell = tables.freeRows.slice(0, 10).flatMap((r) => r.cells).find((c) => looksLikeSchool(c.text) && !/[:：]/.test(c.text) && c.text.length < 100);
     if (cell) school = { value: cell.text.trim(), original: cell.text, confidence: Math.min(0.7, cell.conf), source: src(cell) };

@@ -10056,5 +10056,2820 @@
    "english": false,
    "translated": true
   }
+ },
+ {
+  "id": "ar-analitico",
+  "file": "ar-analitico.pdf",
+  "format": "pdf",
+  "system": "ar",
+  "country": "Argentina",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Lucía Belén Giménez",
+   "dob": "2006-02-14",
+   "id": "45.678.123"
+  },
+  "school": {
+   "name": "Escuela de Educación Secundaria N.º 47 “Los Ceibos”",
+   "city": "Bahía Blanca"
+  },
+  "courses": [
+   {
+    "name": "Prácticas del Lenguaje",
+    "en": "Spanish Language Arts",
+    "grade": "8",
+    "year": "3º Año",
+    "level": 10,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "7",
+    "year": "3º Año",
+    "level": 10,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Biología",
+    "en": "Biology",
+    "grade": "9",
+    "year": "3º Año",
+    "level": 10,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Historia",
+    "en": "History",
+    "grade": "6",
+    "year": "3º Año",
+    "level": 10,
+    "concept": "ss.history.world",
+    "us": "B"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "10",
+    "year": "3º Año",
+    "level": 10,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Literatura",
+    "en": "Literature",
+    "grade": "7",
+    "year": "4º Año",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "6",
+    "year": "4º Año",
+    "level": 11,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "8",
+    "year": "4º Año",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "A"
+   },
+   {
+    "name": "Geografía",
+    "en": "Geography",
+    "grade": "9",
+    "year": "4º Año",
+    "level": 11,
+    "concept": "ss.geography",
+    "us": "A"
+   },
+   {
+    "name": "Educación Física",
+    "en": "Physical Education",
+    "grade": "10",
+    "year": "4º Año",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Literatura",
+    "en": "Literature",
+    "grade": "8",
+    "year": "5º Año",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "7",
+    "year": "5º Año",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "6",
+    "year": "5º Año",
+    "level": 12,
+    "concept": "sci.physics",
+    "us": "B"
+   },
+   {
+    "name": "Filosofía",
+    "en": "Philosophy",
+    "grade": "9",
+    "year": "5º Año",
+    "level": 12,
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "9",
+    "year": "5º Año",
+    "level": 12,
+    "concept": "ela.efl",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "ar-analitico",
+  "file": "ar-analitico.scan.jpg",
+  "format": "scan-jpg",
+  "system": "ar",
+  "country": "Argentina",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Lucía Belén Giménez",
+   "dob": "2006-02-14",
+   "id": "45.678.123"
+  },
+  "school": {
+   "name": "Escuela de Educación Secundaria N.º 47 “Los Ceibos”",
+   "city": "Bahía Blanca"
+  },
+  "courses": [
+   {
+    "name": "Prácticas del Lenguaje",
+    "en": "Spanish Language Arts",
+    "grade": "8",
+    "year": "3º Año",
+    "level": 10,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "7",
+    "year": "3º Año",
+    "level": 10,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Biología",
+    "en": "Biology",
+    "grade": "9",
+    "year": "3º Año",
+    "level": 10,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Historia",
+    "en": "History",
+    "grade": "6",
+    "year": "3º Año",
+    "level": 10,
+    "concept": "ss.history.world",
+    "us": "B"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "10",
+    "year": "3º Año",
+    "level": 10,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Literatura",
+    "en": "Literature",
+    "grade": "7",
+    "year": "4º Año",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "6",
+    "year": "4º Año",
+    "level": 11,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "8",
+    "year": "4º Año",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "A"
+   },
+   {
+    "name": "Geografía",
+    "en": "Geography",
+    "grade": "9",
+    "year": "4º Año",
+    "level": 11,
+    "concept": "ss.geography",
+    "us": "A"
+   },
+   {
+    "name": "Educación Física",
+    "en": "Physical Education",
+    "grade": "10",
+    "year": "4º Año",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Literatura",
+    "en": "Literature",
+    "grade": "8",
+    "year": "5º Año",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "7",
+    "year": "5º Año",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "6",
+    "year": "5º Año",
+    "level": 12,
+    "concept": "sci.physics",
+    "us": "B"
+   },
+   {
+    "name": "Filosofía",
+    "en": "Philosophy",
+    "grade": "9",
+    "year": "5º Año",
+    "level": 12,
+    "concept": "ss.philosophy",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "9",
+    "year": "5º Año",
+    "level": 12,
+    "concept": "ela.efl",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "co-boletin",
+  "file": "co-boletin.pdf",
+  "format": "pdf",
+  "system": "co",
+  "country": "Colombia",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Valentina Restrepo Osorio",
+   "dob": "2008-07-03",
+   "id": "1.020.304.050"
+  },
+  "school": {
+   "name": "Institución Educativa Altos del Ocaso",
+   "city": "Medellín"
+  },
+  "courses": [
+   {
+    "name": "Matemáticas",
+    "en": "Mathematics",
+    "grade": "4.1",
+    "hours": 4,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "3.5",
+    "hours": 3,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "sci.physics",
+    "us": "B"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "4.8",
+    "hours": 3,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "A"
+   },
+   {
+    "name": "Lengua Castellana",
+    "en": "Spanish Language Arts",
+    "grade": "4.0",
+    "hours": 4,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "3.2",
+    "hours": 3,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "C"
+   },
+   {
+    "name": "Ciencias Sociales",
+    "en": "Social Studies",
+    "grade": "4.5",
+    "hours": 3,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "Filosofía",
+    "en": "Philosophy",
+    "grade": "3.8",
+    "hours": 2,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física",
+    "en": "Physical Education",
+    "grade": "4.9",
+    "hours": 2,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Tecnología e Informática",
+    "en": "Computer Science",
+    "grade": "4.2",
+    "hours": 2,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "cs",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "co-boletin",
+  "file": "co-boletin.photo.jpg",
+  "format": "photo-jpg",
+  "system": "co",
+  "country": "Colombia",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Valentina Restrepo Osorio",
+   "dob": "2008-07-03",
+   "id": "1.020.304.050"
+  },
+  "school": {
+   "name": "Institución Educativa Altos del Ocaso",
+   "city": "Medellín"
+  },
+  "courses": [
+   {
+    "name": "Matemáticas",
+    "en": "Mathematics",
+    "grade": "4.1",
+    "hours": 4,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "3.5",
+    "hours": 3,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "sci.physics",
+    "us": "B"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "4.8",
+    "hours": 3,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "A"
+   },
+   {
+    "name": "Lengua Castellana",
+    "en": "Spanish Language Arts",
+    "grade": "4.0",
+    "hours": 4,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "3.2",
+    "hours": 3,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "C"
+   },
+   {
+    "name": "Ciencias Sociales",
+    "en": "Social Studies",
+    "grade": "4.5",
+    "hours": 3,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "Filosofía",
+    "en": "Philosophy",
+    "grade": "3.8",
+    "hours": 2,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física",
+    "en": "Physical Education",
+    "grade": "4.9",
+    "hours": 2,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Tecnología e Informática",
+    "en": "Computer Science",
+    "grade": "4.2",
+    "hours": 2,
+    "year": "Grado Décimo (10º) — Año lectivo 2024",
+    "level": 11,
+    "concept": "cs",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "ve-certificacion",
+  "file": "ve-certificacion.scan.pdf",
+  "format": "scan-pdf",
+  "system": "ve",
+  "country": "Venezuela",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "José Gregorio Mendoza Perdomo",
+   "dob": "2006-10-22",
+   "id": "V-30.111.222"
+  },
+  "school": {
+   "name": "U.E.N. “Cerro Pintado”",
+   "city": "Barquisimeto"
+  },
+  "courses": [
+   {
+    "name": "Castellano",
+    "en": "Spanish Language",
+    "grade": "15",
+    "year": "3er Año",
+    "level": 10,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "12",
+    "year": "3er Año",
+    "level": 10,
+    "concept": "math.general",
+    "us": "C"
+   },
+   {
+    "name": "Biología",
+    "en": "Biology",
+    "grade": "17",
+    "year": "3er Año",
+    "level": 10,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Historia de Venezuela",
+    "en": "History of Venezuela",
+    "grade": "14",
+    "year": "3er Año",
+    "level": 10,
+    "concept": "ss.history.national",
+    "us": "B"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "18",
+    "year": "3er Año",
+    "level": 10,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Castellano",
+    "en": "Spanish Language",
+    "grade": "16",
+    "year": "4to Año",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "11",
+    "year": "4to Año",
+    "level": 11,
+    "concept": "math.general",
+    "us": "C"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "13",
+    "year": "4to Año",
+    "level": 11,
+    "concept": "sci.physics",
+    "us": "B"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "14",
+    "year": "4to Año",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física",
+    "en": "Physical Education",
+    "grade": "19",
+    "year": "4to Año",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Castellano y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "17",
+    "year": "5to Año",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "13",
+    "year": "5to Año",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "10",
+    "year": "5to Año",
+    "level": 12,
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Ciencias de la Tierra",
+    "en": "Earth Sciences",
+    "grade": "15",
+    "year": "5to Año",
+    "level": 12,
+    "concept": "sci.earth",
+    "us": "B"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "18",
+    "year": "5to Año",
+    "level": 12,
+    "concept": "ela.efl",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "cl-concentracion",
+  "file": "cl-concentracion.pdf",
+  "format": "pdf",
+  "system": "cl",
+  "country": "Chile",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Javiera Andrea Rojas Pizarro",
+   "dob": "2007-05-05",
+   "id": "22.333.444-K"
+  },
+  "school": {
+   "name": "Liceo Bicentenario Los Aromos",
+   "city": "Valparaíso"
+  },
+  "courses": [
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "6,2",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "6,8",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "5,9",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "ela.efl",
+    "us": "B"
+   },
+   {
+    "name": "Historia, Geografía y Ciencias Sociales",
+    "en": "History, Geography and Social Sciences",
+    "grade": "6,0",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "Ciencias Naturales",
+    "en": "Natural Sciences",
+    "grade": "5,4",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "sci.integrated",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física y Salud",
+    "en": "Physical Education and Health",
+    "grade": "7,0",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "5,8",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "6,5",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "6,1",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Historia, Geografía y Ciencias Sociales",
+    "en": "History, Geography and Social Sciences",
+    "grade": "5,5",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "ss.social",
+    "us": "B"
+   },
+   {
+    "name": "Ciencias Naturales",
+    "en": "Natural Sciences",
+    "grade": "4,9",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "sci.integrated",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física y Salud",
+    "en": "Physical Education and Health",
+    "grade": "6,9",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "6,0",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "6,3",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "6,4",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Educación Ciudadana",
+    "en": "Civic Education",
+    "grade": "6,6",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "ss.civics",
+    "us": "A"
+   },
+   {
+    "name": "Filosofía",
+    "en": "Philosophy",
+    "grade": "5,7",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física y Salud",
+    "en": "Physical Education and Health",
+    "grade": "6,8",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "6,3",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "4,2",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "math.general",
+    "us": "C"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "6,7",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Educación Ciudadana",
+    "en": "Civic Education",
+    "grade": "6,1",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "ss.civics",
+    "us": "A"
+   },
+   {
+    "name": "Filosofía",
+    "en": "Philosophy",
+    "grade": "5,9",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física y Salud",
+    "en": "Physical Education and Health",
+    "grade": "7,0",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "cl-concentracion",
+  "file": "cl-concentracion.scan.png",
+  "format": "scan-png",
+  "system": "cl",
+  "country": "Chile",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Javiera Andrea Rojas Pizarro",
+   "dob": "2007-05-05",
+   "id": "22.333.444-K"
+  },
+  "school": {
+   "name": "Liceo Bicentenario Los Aromos",
+   "city": "Valparaíso"
+  },
+  "courses": [
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "6,2",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "6,8",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "5,9",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "ela.efl",
+    "us": "B"
+   },
+   {
+    "name": "Historia, Geografía y Ciencias Sociales",
+    "en": "History, Geography and Social Sciences",
+    "grade": "6,0",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "Ciencias Naturales",
+    "en": "Natural Sciences",
+    "grade": "5,4",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "sci.integrated",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física y Salud",
+    "en": "Physical Education and Health",
+    "grade": "7,0",
+    "year": "1º Medio",
+    "level": 9,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "5,8",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "6,5",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "6,1",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Historia, Geografía y Ciencias Sociales",
+    "en": "History, Geography and Social Sciences",
+    "grade": "5,5",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "ss.social",
+    "us": "B"
+   },
+   {
+    "name": "Ciencias Naturales",
+    "en": "Natural Sciences",
+    "grade": "4,9",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "sci.integrated",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física y Salud",
+    "en": "Physical Education and Health",
+    "grade": "6,9",
+    "year": "2º Medio",
+    "level": 10,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "6,0",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "6,3",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "6,4",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Educación Ciudadana",
+    "en": "Civic Education",
+    "grade": "6,6",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "ss.civics",
+    "us": "A"
+   },
+   {
+    "name": "Filosofía",
+    "en": "Philosophy",
+    "grade": "5,7",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física y Salud",
+    "en": "Physical Education and Health",
+    "grade": "6,8",
+    "year": "3º Medio",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "6,3",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "4,2",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "math.general",
+    "us": "C"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "6,7",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Educación Ciudadana",
+    "en": "Civic Education",
+    "grade": "6,1",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "ss.civics",
+    "us": "A"
+   },
+   {
+    "name": "Filosofía",
+    "en": "Philosophy",
+    "grade": "5,9",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física y Salud",
+    "en": "Physical Education and Health",
+    "grade": "7,0",
+    "year": "4º Medio",
+    "level": 12,
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "pe-certificado",
+  "file": "pe-certificado.scan.jpg",
+  "format": "scan-jpg",
+  "system": "pe",
+  "country": "Peru",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Rosa Elena Quispe Huamán",
+   "dob": "2003-01-11",
+   "id": "76543210"
+  },
+  "school": {
+   "name": "I.E. N.º 0000 “Santa Rosa de los Andes”",
+   "city": "Lima"
+  },
+  "courses": [
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "14",
+    "year": "Primer grado",
+    "level": 8,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Comunicación",
+    "en": "Communication (Spanish language arts)",
+    "grade": "16",
+    "year": "Primer grado",
+    "level": 8,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "13",
+    "year": "Primer grado",
+    "level": 8,
+    "concept": "ela.efl",
+    "us": "B"
+   },
+   {
+    "name": "Ciencia, Tecnología y Ambiente",
+    "en": "Science and Technology",
+    "grade": "12",
+    "year": "Primer grado",
+    "level": 8,
+    "concept": "sci.integrated",
+    "us": "B"
+   },
+   {
+    "name": "Historia, Geografía y Economía",
+    "en": "History, Geography and Economics",
+    "grade": "15",
+    "year": "Primer grado",
+    "level": 8,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "15",
+    "year": "Segundo grado",
+    "level": 9,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Comunicación",
+    "en": "Communication (Spanish language arts)",
+    "grade": "14",
+    "year": "Segundo grado",
+    "level": 9,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "11",
+    "year": "Segundo grado",
+    "level": 9,
+    "concept": "ela.efl",
+    "us": "C"
+   },
+   {
+    "name": "Ciencia, Tecnología y Ambiente",
+    "en": "Science and Technology",
+    "grade": "13",
+    "year": "Segundo grado",
+    "level": 9,
+    "concept": "sci.integrated",
+    "us": "B"
+   },
+   {
+    "name": "Historia, Geografía y Economía",
+    "en": "History, Geography and Economics",
+    "grade": "17",
+    "year": "Segundo grado",
+    "level": 9,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "13",
+    "year": "Tercer grado",
+    "level": 10,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Comunicación",
+    "en": "Communication (Spanish language arts)",
+    "grade": "15",
+    "year": "Tercer grado",
+    "level": 10,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "14",
+    "year": "Tercer grado",
+    "level": 10,
+    "concept": "ela.efl",
+    "us": "B"
+   },
+   {
+    "name": "Ciencia, Tecnología y Ambiente",
+    "en": "Science and Technology",
+    "grade": "16",
+    "year": "Tercer grado",
+    "level": 10,
+    "concept": "sci.integrated",
+    "us": "A"
+   },
+   {
+    "name": "Historia, Geografía y Economía",
+    "en": "History, Geography and Economics",
+    "grade": "12",
+    "year": "Tercer grado",
+    "level": 10,
+    "concept": "ss.social",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "A",
+    "year": "Cuarto grado",
+    "level": 11,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Comunicación",
+    "en": "Communication (Spanish language arts)",
+    "grade": "AD",
+    "year": "Cuarto grado",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "B",
+    "year": "Cuarto grado",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "C"
+   },
+   {
+    "name": "Ciencia, Tecnología y Ambiente",
+    "en": "Science and Technology",
+    "grade": "A",
+    "year": "Cuarto grado",
+    "level": 11,
+    "concept": "sci.integrated",
+    "us": "B"
+   },
+   {
+    "name": "Historia, Geografía y Economía",
+    "en": "History, Geography and Economics",
+    "grade": "AD",
+    "year": "Cuarto grado",
+    "level": 11,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "AD",
+    "year": "Quinto grado",
+    "level": 12,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Comunicación",
+    "en": "Communication (Spanish language arts)",
+    "grade": "A",
+    "year": "Quinto grado",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "A",
+    "year": "Quinto grado",
+    "level": 12,
+    "concept": "ela.efl",
+    "us": "B"
+   },
+   {
+    "name": "Ciencia, Tecnología y Ambiente",
+    "en": "Science and Technology",
+    "grade": "B",
+    "year": "Quinto grado",
+    "level": 12,
+    "concept": "sci.integrated",
+    "us": "C"
+   },
+   {
+    "name": "Historia, Geografía y Economía",
+    "en": "History, Geography and Economics",
+    "grade": "A",
+    "year": "Quinto grado",
+    "level": 12,
+    "concept": "ss.social",
+    "us": "B"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "sn-bulletin",
+  "file": "sn-bulletin.pdf",
+  "format": "pdf",
+  "system": "sn",
+  "country": "Senegal",
+  "lang": "fr",
+  "pages": 1,
+  "student": {
+   "name": "Aïssatou Ndiaye",
+   "dob": "2008-06-19",
+   "id": "TH-2021-00417"
+  },
+  "school": {
+   "name": "Lycée des Baobabs",
+   "city": "Thiès"
+  },
+  "courses": [
+   {
+    "name": "Mathématiques",
+    "en": "Mathematics",
+    "grade": "14,50",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Sciences Physiques",
+    "en": "Physical Sciences (Physics and Chemistry)",
+    "grade": "12,75",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physical",
+    "us": "B"
+   },
+   {
+    "name": "SVT",
+    "en": "Life and Earth Sciences",
+    "grade": "15,00",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Français",
+    "en": "French Language and Literature",
+    "grade": "11,25",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "C"
+   },
+   {
+    "name": "Anglais",
+    "en": "English (foreign language)",
+    "grade": "13,50",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.efl",
+    "us": "B"
+   },
+   {
+    "name": "Histoire-Géographie",
+    "en": "History and Geography",
+    "grade": "10,50",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.social",
+    "us": "C"
+   },
+   {
+    "name": "Philosophie",
+    "en": "Philosophy",
+    "grade": "9,00",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.philosophy",
+    "us": "F"
+   },
+   {
+    "name": "EPS",
+    "en": "Physical Education",
+    "grade": "16,00",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "sn-bulletin",
+  "file": "sn-bulletin.photo.jpg",
+  "format": "photo-jpg",
+  "system": "sn",
+  "country": "Senegal",
+  "lang": "fr",
+  "pages": 1,
+  "student": {
+   "name": "Aïssatou Ndiaye",
+   "dob": "2008-06-19",
+   "id": "TH-2021-00417"
+  },
+  "school": {
+   "name": "Lycée des Baobabs",
+   "city": "Thiès"
+  },
+  "courses": [
+   {
+    "name": "Mathématiques",
+    "en": "Mathematics",
+    "grade": "14,50",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Sciences Physiques",
+    "en": "Physical Sciences (Physics and Chemistry)",
+    "grade": "12,75",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.physical",
+    "us": "B"
+   },
+   {
+    "name": "SVT",
+    "en": "Life and Earth Sciences",
+    "grade": "15,00",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Français",
+    "en": "French Language and Literature",
+    "grade": "11,25",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "wl.native",
+    "us": "C"
+   },
+   {
+    "name": "Anglais",
+    "en": "English (foreign language)",
+    "grade": "13,50",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "ela.efl",
+    "us": "B"
+   },
+   {
+    "name": "Histoire-Géographie",
+    "en": "History and Geography",
+    "grade": "10,50",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.social",
+    "us": "C"
+   },
+   {
+    "name": "Philosophie",
+    "en": "Philosophy",
+    "grade": "9,00",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "ss.philosophy",
+    "us": "F"
+   },
+   {
+    "name": "EPS",
+    "en": "Physical Education",
+    "grade": "16,00",
+    "year": "Première S2 — 2e trimestre",
+    "level": 11,
+    "term": "2",
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "gt-certificado",
+  "file": "gt-certificado.pdf",
+  "format": "pdf",
+  "system": "gt",
+  "country": "Guatemala",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Carlos Enrique Xicará López",
+   "dob": "2006-03-02",
+   "id": "A123BCD"
+  },
+  "school": {
+   "name": "Instituto Nacional Mixto Las Cumbres",
+   "city": "Quetzaltenango"
+  },
+  "courses": [
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "78",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "65",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "82",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "A"
+   },
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "88",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Idioma Extranjero",
+    "en": "Foreign Language (English)",
+    "grade": "91",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Filosofía",
+    "en": "Philosophy",
+    "grade": "74",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "71",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Biología",
+    "en": "Biology",
+    "grade": "86",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Psicología",
+    "en": "Psychology",
+    "grade": "93",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "ss.psychology",
+    "us": "A"
+   },
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "84",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Estadística",
+    "en": "Statistics",
+    "grade": "62",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "math.statistics",
+    "us": "C"
+   },
+   {
+    "name": "Educación Física",
+    "en": "Physical Education",
+    "grade": "95",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "gt-certificado",
+  "file": "gt-certificado.scan.jpg",
+  "format": "scan-jpg",
+  "system": "gt",
+  "country": "Guatemala",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Carlos Enrique Xicará López",
+   "dob": "2006-03-02",
+   "id": "A123BCD"
+  },
+  "school": {
+   "name": "Instituto Nacional Mixto Las Cumbres",
+   "city": "Quetzaltenango"
+  },
+  "courses": [
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "78",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "65",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "82",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "A"
+   },
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "88",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Idioma Extranjero",
+    "en": "Foreign Language (English)",
+    "grade": "91",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Filosofía",
+    "en": "Philosophy",
+    "grade": "74",
+    "year": "CUARTO GRADO DE BACHILLERATO — CICLO 2023",
+    "level": 11,
+    "concept": "ss.philosophy",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "71",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Biología",
+    "en": "Biology",
+    "grade": "86",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Psicología",
+    "en": "Psychology",
+    "grade": "93",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "ss.psychology",
+    "us": "A"
+   },
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "84",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Estadística",
+    "en": "Statistics",
+    "grade": "62",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "math.statistics",
+    "us": "C"
+   },
+   {
+    "name": "Educación Física",
+    "en": "Physical Education",
+    "grade": "95",
+    "year": "QUINTO GRADO DE BACHILLERATO — CICLO 2024",
+    "level": 12,
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "do-record",
+  "file": "do-record.docx",
+  "format": "docx",
+  "system": "do",
+  "country": "Dominican Republic",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Yarisa Peña Almonte",
+   "dob": "2007-08-30",
+   "id": "0012345678"
+  },
+  "school": {
+   "name": "Liceo Científico Las Palmeras",
+   "city": "Santiago de los Caballeros"
+  },
+  "courses": [
+   {
+    "name": "Lengua Española",
+    "en": "Spanish Language",
+    "grade": "88",
+    "year": "5to de Secundaria — 2022-2023",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "92",
+    "year": "5to de Secundaria — 2022-2023",
+    "level": 11,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Ciencias Sociales",
+    "en": "Social Studies",
+    "grade": "79",
+    "year": "5to de Secundaria — 2022-2023",
+    "level": 11,
+    "concept": "ss.social",
+    "us": "C"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "84",
+    "year": "5to de Secundaria — 2022-2023",
+    "level": 11,
+    "concept": "sci.physics",
+    "us": "B"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "95",
+    "year": "5to de Secundaria — 2022-2023",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Lengua Española",
+    "en": "Spanish Language",
+    "grade": "90",
+    "year": "6to de Secundaria — 2023-2024",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "86",
+    "year": "6to de Secundaria — 2023-2024",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "74",
+    "year": "6to de Secundaria — 2023-2024",
+    "level": 12,
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "Biología",
+    "en": "Biology",
+    "grade": "81",
+    "year": "6to de Secundaria — 2023-2024",
+    "level": 12,
+    "concept": "sci.biology",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física",
+    "en": "Physical Education",
+    "grade": "97",
+    "year": "6to de Secundaria — 2023-2024",
+    "level": 12,
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "do-record",
+  "file": "do-record.pdf",
+  "format": "pdf",
+  "system": "do",
+  "country": "Dominican Republic",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Yarisa Peña Almonte",
+   "dob": "2007-08-30",
+   "id": "0012345678"
+  },
+  "school": {
+   "name": "Liceo Científico Las Palmeras",
+   "city": "Santiago de los Caballeros"
+  },
+  "courses": [
+   {
+    "name": "Lengua Española",
+    "en": "Spanish Language",
+    "grade": "88",
+    "year": "5to de Secundaria — 2022-2023",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "92",
+    "year": "5to de Secundaria — 2022-2023",
+    "level": 11,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "Ciencias Sociales",
+    "en": "Social Studies",
+    "grade": "79",
+    "year": "5to de Secundaria — 2022-2023",
+    "level": 11,
+    "concept": "ss.social",
+    "us": "C"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "84",
+    "year": "5to de Secundaria — 2022-2023",
+    "level": 11,
+    "concept": "sci.physics",
+    "us": "B"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "95",
+    "year": "5to de Secundaria — 2022-2023",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Lengua Española",
+    "en": "Spanish Language",
+    "grade": "90",
+    "year": "6to de Secundaria — 2023-2024",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "86",
+    "year": "6to de Secundaria — 2023-2024",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "74",
+    "year": "6to de Secundaria — 2023-2024",
+    "level": 12,
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "Biología",
+    "en": "Biology",
+    "grade": "81",
+    "year": "6to de Secundaria — 2023-2024",
+    "level": 12,
+    "concept": "sci.biology",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física",
+    "en": "Physical Education",
+    "grade": "97",
+    "year": "6to de Secundaria — 2023-2024",
+    "level": 12,
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "ec-libreta",
+  "file": "ec-libreta.scan.jpg",
+  "format": "scan-jpg",
+  "system": "ec",
+  "country": "Ecuador",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Mateo Sebastián Chalco Andrango",
+   "dob": "2006-04-17",
+   "id": "1712345678"
+  },
+  "school": {
+   "name": "Unidad Educativa Fiscal “Volcán Pasochoa”",
+   "city": "Quito"
+  },
+  "courses": [
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "8.40",
+    "year": "3º BGU — Año lectivo 2023-2024",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "7.07",
+    "year": "3º BGU — Año lectivo 2023-2024",
+    "level": 12,
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "9.27",
+    "year": "3º BGU — Año lectivo 2023-2024",
+    "level": 12,
+    "concept": "sci.chemistry",
+    "us": "A"
+   },
+   {
+    "name": "Lengua y Literatura",
+    "en": "Spanish Language and Literature",
+    "grade": "8.20",
+    "year": "3º BGU — Año lectivo 2023-2024",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Inglés",
+    "en": "English (foreign language)",
+    "grade": "9.70",
+    "year": "3º BGU — Año lectivo 2023-2024",
+    "level": 12,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Historia",
+    "en": "History",
+    "grade": "6.83",
+    "year": "3º BGU — Año lectivo 2023-2024",
+    "level": 12,
+    "concept": "ss.history.world",
+    "us": "C"
+   },
+   {
+    "name": "Emprendimiento y Gestión",
+    "en": "Entrepreneurship and Management",
+    "grade": "8.87",
+    "year": "3º BGU — Año lectivo 2023-2024",
+    "level": 12,
+    "concept": "cte.business",
+    "us": "B"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "bo-libreta",
+  "file": "bo-libreta.pdf",
+  "format": "pdf",
+  "system": "bo",
+  "country": "Bolivia",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Wilmer Mamani Condori",
+   "dob": "2006-12-08",
+   "id": "80800001200042"
+  },
+  "school": {
+   "name": "Unidad Educativa “Tunari Alto”",
+   "city": "Cochabamba"
+  },
+  "courses": [
+   {
+    "name": "Comunicación y Lenguajes",
+    "en": "Communication and Languages",
+    "grade": "78",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Lengua Extranjera",
+    "en": "Foreign Language (English)",
+    "grade": "88",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "66",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "math.general",
+    "us": "C"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "59",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "72",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Ciencias Sociales",
+    "en": "Social Studies",
+    "grade": "81",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "ss.social",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física y Deportes",
+    "en": "Physical Education and Sport",
+    "grade": "93",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Comunicación y Lenguajes",
+    "en": "Communication and Languages",
+    "grade": "84",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Lengua Extranjera",
+    "en": "Foreign Language (English)",
+    "grade": "90",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "70",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "62",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "77",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Ciencias Sociales",
+    "en": "Social Studies",
+    "grade": "86",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "Educación Física y Deportes",
+    "en": "Physical Education and Sport",
+    "grade": "95",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "bo-libreta",
+  "file": "bo-libreta.scan.jpg",
+  "format": "scan-jpg",
+  "system": "bo",
+  "country": "Bolivia",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Wilmer Mamani Condori",
+   "dob": "2006-12-08",
+   "id": "80800001200042"
+  },
+  "school": {
+   "name": "Unidad Educativa “Tunari Alto”",
+   "city": "Cochabamba"
+  },
+  "courses": [
+   {
+    "name": "Comunicación y Lenguajes",
+    "en": "Communication and Languages",
+    "grade": "78",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Lengua Extranjera",
+    "en": "Foreign Language (English)",
+    "grade": "88",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "66",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "math.general",
+    "us": "C"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "59",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "72",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Ciencias Sociales",
+    "en": "Social Studies",
+    "grade": "81",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "ss.social",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física y Deportes",
+    "en": "Physical Education and Sport",
+    "grade": "93",
+    "year": "5to de Secundaria — 2023",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   },
+   {
+    "name": "Comunicación y Lenguajes",
+    "en": "Communication and Languages",
+    "grade": "84",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Lengua Extranjera",
+    "en": "Foreign Language (English)",
+    "grade": "90",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Matemática",
+    "en": "Mathematics",
+    "grade": "70",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Física",
+    "en": "Physics",
+    "grade": "62",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "sci.physics",
+    "us": "C"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "77",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "sci.chemistry",
+    "us": "B"
+   },
+   {
+    "name": "Ciencias Sociales",
+    "en": "Social Studies",
+    "grade": "86",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "Educación Física y Deportes",
+    "en": "Physical Education and Sport",
+    "grade": "95",
+    "year": "6to de Secundaria — 2024",
+    "level": 12,
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": false
+  }
+ },
+ {
+  "id": "pr-transcripcion",
+  "file": "pr-transcripcion.pdf",
+  "format": "pdf",
+  "system": "pr",
+  "country": "Puerto Rico",
+  "lang": "es",
+  "pages": 1,
+  "student": {
+   "name": "Gabriel Antonio Rivera Colón",
+   "dob": "2007-09-25",
+   "id": "0000123456"
+  },
+  "school": {
+   "name": "Escuela Superior Vocacional Los Flamboyanes",
+   "city": "Bayamón"
+  },
+  "courses": [
+   {
+    "name": "Español",
+    "en": "Spanish",
+    "grade": "A",
+    "credits": 1,
+    "year": "10mo Grado",
+    "level": 10,
+    "concept": "wl.native",
+    "us": "A"
+   },
+   {
+    "name": "Inglés",
+    "en": "English",
+    "grade": "B",
+    "credits": 1,
+    "year": "10mo Grado",
+    "level": 10,
+    "concept": "ela.efl",
+    "us": "B"
+   },
+   {
+    "name": "Matemáticas",
+    "en": "Mathematics",
+    "grade": "B",
+    "credits": 1,
+    "year": "10mo Grado",
+    "level": 10,
+    "concept": "math.general",
+    "us": "B"
+   },
+   {
+    "name": "Biología",
+    "en": "Biology",
+    "grade": "A",
+    "credits": 1,
+    "year": "10mo Grado",
+    "level": 10,
+    "concept": "sci.biology",
+    "us": "A"
+   },
+   {
+    "name": "Historia de Puerto Rico",
+    "en": "History of Puerto Rico",
+    "grade": "C",
+    "credits": 1,
+    "year": "10mo Grado",
+    "level": 10,
+    "concept": "ss.history.national",
+    "us": "C"
+   },
+   {
+    "name": "Español",
+    "en": "Spanish",
+    "grade": "B",
+    "credits": 1,
+    "year": "11mo Grado",
+    "level": 11,
+    "concept": "wl.native",
+    "us": "B"
+   },
+   {
+    "name": "Inglés",
+    "en": "English",
+    "grade": "A",
+    "credits": 1,
+    "year": "11mo Grado",
+    "level": 11,
+    "concept": "ela.efl",
+    "us": "A"
+   },
+   {
+    "name": "Química",
+    "en": "Chemistry",
+    "grade": "C",
+    "credits": 1,
+    "year": "11mo Grado",
+    "level": 11,
+    "concept": "sci.chemistry",
+    "us": "C"
+   },
+   {
+    "name": "Historia de los Estados Unidos",
+    "en": "US History",
+    "grade": "B",
+    "credits": 1,
+    "year": "11mo Grado",
+    "level": 11,
+    "concept": "ss.history.us",
+    "us": "B"
+   },
+   {
+    "name": "Educación Física",
+    "en": "Physical Education",
+    "grade": "A",
+    "credits": 0.5,
+    "year": "11mo Grado",
+    "level": 11,
+    "concept": "pe",
+    "us": "A"
+   }
+  ],
+  "instruction": {
+   "english": null
+  }
+ },
+ {
+  "id": "gm-gabece-checker",
+  "file": "gm-gabece-checker.pdf",
+  "format": "pdf",
+  "system": "gabece",
+  "country": "The Gambia",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "Fatoumata Binta Jallow",
+   "dob": "2008-11-21",
+   "id": "3020519033"
+  },
+  "school": {
+   "name": "Brikama Sunrise Upper Basic School"
+  },
+  "courses": [
+   {
+    "name": "ENGLISH LANGUAGE",
+    "en": "English Language",
+    "grade": "2",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "ela.english",
+    "us": "A"
+   },
+   {
+    "name": "MATHEMATICS",
+    "en": "Mathematics",
+    "grade": "1",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "SCIENCE",
+    "en": "Science",
+    "grade": "1",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "sci.integrated",
+    "us": "A"
+   },
+   {
+    "name": "SOCIAL AND ENVIRONMENTAL STUDIES",
+    "en": "Social And Environmental Studies",
+    "grade": "1",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "FRENCH",
+    "en": "French",
+    "grade": "4",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "wl.other",
+    "us": "B"
+   },
+   {
+    "name": "AGRICULTURAL SCIENCE",
+    "en": "Agricultural Science",
+    "grade": "2",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "cte.agriculture",
+    "us": "A"
+   },
+   {
+    "name": "CHRISTIAN RELIGIOUS KNOWLEDGE",
+    "en": "Christian Religious Knowledge",
+    "grade": "1",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "ss.religion",
+    "us": "A"
+   },
+   {
+    "name": "PHYSICAL AND HEALTH EDUCATION",
+    "en": "Physical And Health Education",
+    "grade": "3",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "pe",
+    "us": "B"
+   }
+  ],
+  "instruction": {
+   "english": true
+  }
+ },
+ {
+  "id": "gm-gabece-checker",
+  "file": "gm-gabece-checker.scan.jpg",
+  "format": "scan-jpg",
+  "system": "gabece",
+  "country": "The Gambia",
+  "lang": "en",
+  "pages": 1,
+  "student": {
+   "name": "Fatoumata Binta Jallow",
+   "dob": "2008-11-21",
+   "id": "3020519033"
+  },
+  "school": {
+   "name": "Brikama Sunrise Upper Basic School"
+  },
+  "courses": [
+   {
+    "name": "ENGLISH LANGUAGE",
+    "en": "English Language",
+    "grade": "2",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "ela.english",
+    "us": "A"
+   },
+   {
+    "name": "MATHEMATICS",
+    "en": "Mathematics",
+    "grade": "1",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "math.general",
+    "us": "A"
+   },
+   {
+    "name": "SCIENCE",
+    "en": "Science",
+    "grade": "1",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "sci.integrated",
+    "us": "A"
+   },
+   {
+    "name": "SOCIAL AND ENVIRONMENTAL STUDIES",
+    "en": "Social And Environmental Studies",
+    "grade": "1",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "ss.social",
+    "us": "A"
+   },
+   {
+    "name": "FRENCH",
+    "en": "French",
+    "grade": "4",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "wl.other",
+    "us": "B"
+   },
+   {
+    "name": "AGRICULTURAL SCIENCE",
+    "en": "Agricultural Science",
+    "grade": "2",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "cte.agriculture",
+    "us": "A"
+   },
+   {
+    "name": "CHRISTIAN RELIGIOUS KNOWLEDGE",
+    "en": "Christian Religious Knowledge",
+    "grade": "1",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "ss.religion",
+    "us": "A"
+   },
+   {
+    "name": "PHYSICAL AND HEALTH EDUCATION",
+    "en": "Physical And Health Education",
+    "grade": "3",
+    "year": "GABECE 2023",
+    "level": 9,
+    "concept": "pe",
+    "us": "B"
+   }
+  ],
+  "instruction": {
+   "english": true
+  }
  }
 ]

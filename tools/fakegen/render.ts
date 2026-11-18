@@ -1,5 +1,5 @@
 // Turns a FakeSpec into table blocks, then HTML (for PDF / scans / photos).
-import type { FakeCourse, FakeSpec, FakeYear } from './types.ts';
+import type { Clutter, FakeCourse, FakeSpec, FakeYear } from './types.ts';
 
 export interface Cell {
   t: string;
@@ -11,6 +11,8 @@ export interface TableBlock {
   head: Cell[][];
   body: Cell[][];
   pageBreak?: boolean;
+  /** Certificate lines with dotted leaders instead of a ruled table. */
+  leaders?: boolean;
 }
 
 function field(course: FakeCourse | undefined, f: string): string {
@@ -42,7 +44,13 @@ export function buildTables(spec: FakeSpec): TableBlock[] {
     ]);
     return [{ head, body }];
   }
+  if (spec.layout === 'register') {
+    const head: Cell[][] = [[{ t: spec.yearCol ?? 'Año' }, ...spec.cols.map((c): Cell => ({ t: c.h, align: c.align }))]];
+    const body = spec.years.flatMap((y) => y.courses.map((course): Cell[] => [{ t: y.short ?? y.label }, ...spec.cols.map((c): Cell => ({ t: field(course, c.f), align: c.align }))]));
+    return [{ head, body }];
+  }
   return spec.years.map((y: FakeYear): TableBlock => ({
+    leaders: spec.layout === 'leaders',
     heading: spec.layout === 'slip' && spec.years.length === 1 ? undefined : y.label,
     pageBreak: y.pageBreak,
     head: [spec.cols.map((c): Cell => ({ t: c.h, align: c.align }))],
@@ -65,6 +73,11 @@ function valueHtml(v: string): string {
 }
 
 function tableHtml(t: TableBlock): string {
+  if (t.leaders) {
+    // "Matemática ............ 85   ochenta y cinco": the name, a dotted leader, then the other cells.
+    const lines = t.body.map((r) => `<div class="lrow"><span class="ln">${esc(r[0].t)}</span><span class="dots"></span>${r.slice(1).map((c) => `<span class="lv">${esc(c.t)}</span>`).join('')}</div>`);
+    return `<div class="tblock leaders">${t.heading ? `<div class="theading">${esc(t.heading)}</div>` : ''}${lines.join('')}</div>`;
+  }
   const row = (cells: Cell[], tag: 'th' | 'td') =>
     `<tr>${cells
       .map((c) => `<${tag}${c.span && c.span > 1 ? ` colspan="${c.span}"` : ''} class="a-${c.align ?? 'l'}">${esc(c.t)}</${tag}>`)
@@ -95,21 +108,47 @@ export interface HtmlOpts {
   onlyPage?: number;
 }
 
+function clutterHtml(c: Clutter): string {
+  const table = c.table ? `<table class="ctable">${c.table.map((r, i) => `<tr>${r.map((x) => `<${i ? 'td' : 'th'}>${esc(x)}</${i ? 'td' : 'th'}>`).join('')}</tr>`).join('')}</table>` : '';
+  return `<div class="clutter c-${c.at}">${c.title ? `<div class="ctitle">${esc(c.title)}</div>` : ''}${(c.lines ?? []).map((l) => `<div>${esc(l)}</div>`).join('')}${table}</div>`;
+}
+
+/** The certifying sentence, with each {role} filled from the info block (bold, as certificates print it). */
+function proseHtml(spec: FakeSpec, template: string): string {
+  const byRole = (r: string) => spec.info.find((i) => i.role === r)?.value ?? '';
+  const filled = esc(template).replace(/\{(name|dob|id|school|city|issued)\}/g, (_, r: string) => `<b>${valueHtml(byRole(r))}</b>`);
+  const rest = spec.info.filter((i) => !i.role || !template.includes(`{${i.role}}`));
+  return `<section class="prose"><p>${filled}</p>${rest.map((i) => `<div class="irow"><span class="ilabel">${esc(i.label)}:</span> <span class="ivalue">${valueHtml(i.value)}</span></div>`).join('')}</section>`;
+}
+
 export function specHtml(spec: FakeSpec, opts: HtmlOpts = {}): string {
   const pages = pagesOf(spec);
   const font = FONT[spec.style ?? 'sans'];
   const dense = spec.layout === 'matrix' || spec.twoUp || spec.cols.length > 5;
+  const ps = spec.page ?? {};
+  const W = ps.landscape ? 1123 : 794;
+  const H = ps.landscape ? 794 : 1123;
+  const clutter = (at: Clutter['at']) => (ps.clutter ?? []).filter((c) => c.at === at).map(clutterHtml).join('');
   const header = `
-    <header>
+    <header class="${ps.header === 'left' ? 'left' : ''}">
       <div class="seal" aria-hidden="true"><span>${esc(spec.country.toUpperCase())}</span></div>
       <div class="issuer">${spec.issuer.map((l, i) => `<div class="i${i}">${esc(l)}</div>`).join('')}</div>
       <h1${spec.titleColor ? ` style="color:${spec.titleColor};text-decoration:underline"` : ''}>${esc(spec.title)}</h1>
       ${spec.subtitle ? `<h2>${esc(spec.subtitle)}</h2>` : ''}
     </header>
-    <section class="info">${spec.info
+    ${clutter('top')}
+    ${ps.prose ? proseHtml(spec, ps.prose) : `<section class="info">${spec.info
       .map((i) => `<div class="irow"><span class="ilabel">${esc(i.label)}:</span> <span class="ivalue">${valueHtml(i.value)}</span></div>`)
-      .join('')}</section>`;
+      .join('')}</section>`}`;
+  const tablesHtml = (tables: TableBlock[]) => {
+    const parts = tables.map(tableHtml);
+    const between = clutter('between');
+    if (between && parts.length > 1) parts.splice(1, 0, between);
+    else if (between) parts.push(between);
+    return parts.join('');
+  };
   const footer = `
+    ${clutter('bottom')}
     <section class="notes">${(spec.notes ?? []).map((n) => `<p>${esc(n)}</p>`).join('')}</section>
     <section class="sigs">${(spec.signatures ?? [])
       .map((s) => `<div class="sig"><div class="scribble"></div><div class="line"></div><div>${esc(s)}</div></div>`)
@@ -118,18 +157,31 @@ export function specHtml(spec: FakeSpec, opts: HtmlOpts = {}): string {
     <div class="page${idx > 0 ? ' later' : ''}">
       <div class="specimen">SPECIMEN</div>
       ${idx === 0 ? header : `<div class="cont">${valueHtml(spec.student.name)} — ${idx + 1}/${pages.length}</div>`}
-      <div class="tables${spec.twoUp ? ' twoup' : ''}">${tables.map(tableHtml).join('')}</div>
+      ${idx === 0 ? clutter('side') : ''}
+      <div class="tables${spec.twoUp ? ' twoup' : ''}">${tablesHtml(tables)}</div>
       ${idx === pages.length - 1 ? footer : ''}
       <div class="foot">${esc(spec.specimen)}</div>
     </div>`;
   const body =
     opts.onlyPage == null ? pages.map(pageHtml).join('') : pageHtml(pages[opts.onlyPage], opts.onlyPage);
   return `<!doctype html><html lang="${spec.lang}" dir="${spec.rtl ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><style>
-  @page { size: A4; margin: 0; }
+  @page { size: A4${ps.landscape ? ' landscape' : ''}; margin: 0; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #fff; }
   body { font-family: ${font}; color: #111; font-size: ${dense ? 10.5 : 12}px; line-height: 1.35; }
-  .page { position: relative; width: 794px; min-height: 1123px; padding: 52px 56px 60px; overflow: hidden; }
+  .page { position: relative; width: ${W}px; min-height: ${H}px; padding: 52px 56px 60px; overflow: hidden; }
+  header.left { text-align: start; padding-inline-start: 84px; min-height: 64px; }
+  .prose { border-top: 1.5px solid #222; border-bottom: 1.5px solid #222; padding: 9px 2px; margin-bottom: 14px; }
+  .prose p { margin: 0 0 6px; text-align: justify; }
+  .clutter { border: 1px solid #555; padding: 5px 8px; margin: 0 0 12px; font-size: .88em; }
+  .clutter.c-side { float: ${spec.rtl ? 'left' : 'right'}; width: 190px; margin: 0 0 10px 14px; }
+  .ctitle { font-weight: 700; margin-bottom: 3px; }
+  .ctable { width: auto; margin-top: 3px; } .ctable th, .ctable td { padding: 1px 6px; font-size: .95em; }
+  .tables { overflow: hidden; }
+  .leaders .lrow { display: flex; align-items: baseline; gap: 8px; margin: 3px 0; }
+  .leaders .dots { flex: 1; border-bottom: 1.5px dotted #333; transform: translateY(-3px); min-width: 30px; }
+  .leaders .lv { min-width: 34px; text-align: end; font-weight: 700; }
+  .leaders .lv + .lv { min-width: 150px; text-align: start; font-weight: 400; }
   .page.later { break-before: page; }
   .specimen { position: absolute; left: 50%; top: 46%; transform: translate(-50%,-50%) rotate(-32deg); font: 700 120px Arial, sans-serif; letter-spacing: 12px; color: rgba(0,0,0,0.045); pointer-events: none; white-space: nowrap; }
   header { text-align: center; position: relative; margin-bottom: 14px; }
@@ -151,6 +203,8 @@ export function specHtml(spec: FakeSpec, opts: HtmlOpts = {}): string {
   th, td { border: 1px solid #333; padding: ${dense ? '3px 5px' : '5px 8px'}; vertical-align: middle; }
   th { background: #ececec; font-weight: 700; font-size: .93em; }
   .a-l { text-align: start; } .a-c { text-align: center; } .a-r { text-align: end; }
+  ${ps.rules === 'rows' ? '.tblock th, .tblock td { border: 0; border-bottom: 1px solid #888; } .tblock th { background: none; border-bottom: 2px solid #222; }' : ''}
+  ${ps.rules === 'none' ? '.tblock th, .tblock td { border: 0; } .tblock th { background: none; text-decoration: underline; }' : ''}
   .notes { margin-top: 10px; font-size: .92em; }
   .notes p { margin: 3px 0; }
   .sigs { display: flex; gap: 40px; margin-top: 34px; position: relative; font-size: .92em; }

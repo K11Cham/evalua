@@ -55,8 +55,15 @@ export interface FakeSpec {
   lang: string;
   rtl?: boolean;
   formats: Format[];
-  /** Visual family. */
-  layout: 'stacked' | 'matrix' | 'slip';
+  /**
+   * Visual family: tables one per year (stacked), one table with a column group per year (matrix), a results slip,
+   * certificate lines with dotted leaders and no ruling (leaders), or one table with the year in a column (register).
+   */
+  layout: 'stacked' | 'matrix' | 'slip' | 'leaders' | 'register';
+  /** Register layout: heading of the year column (the cell shows the year's `short` label, else its label). */
+  yearCol?: string;
+  /** Page design beyond the defaults, so the golden set is not all one look. */
+  page?: PageStyle;
   /** Two table columns side by side (stacked layout only). */
   twoUp?: boolean;
   style?: 'serif' | 'sans' | 'typewriter';
@@ -83,6 +90,29 @@ export interface FakeSpec {
   instruction?: { english: boolean | null; translated?: boolean };
   /** Extra files of the same record with the student's details redacted (anonymized test documents). */
   variants?: Variant[];
+}
+
+export interface PageStyle {
+  landscape?: boolean;
+  /** Table ruling: full grid (default), horizontal lines only, or none at all. */
+  rules?: 'grid' | 'rows' | 'none';
+  /** Letterhead centred (default) or ranged left beside the seal. */
+  header?: 'center' | 'left';
+  /**
+   * The student's details as a certifying sentence instead of "Label: value" lines. Placeholders {name}, {dob}, {id},
+   * {school}, {city} and {issued} are filled from `info` by role; info items without a role are listed after it.
+   */
+  prose?: string;
+  /** Unrelated text placed around the tables: grading keys, attendance, conduct, fees, verification codes. */
+  clutter?: Clutter[];
+}
+
+export interface Clutter {
+  at: 'top' | 'side' | 'between' | 'bottom';
+  title?: string;
+  lines?: string[];
+  /** A small table (first row is its heading). */
+  table?: string[][];
 }
 
 /**

@@ -5,7 +5,8 @@ import { detectTerm, gradeFromWords, headerRole, isGradeLike, isPeriodLabel, isS
 import { key } from './text.ts';
 import type { DocTokens } from './types.ts';
 
-export type ColRole = Role | 'period' | null;
+/** `rowperiod`: a column whose cells give each row's year ("3º Año"), in a register with one row per course. */
+export type ColRole = Role | 'period' | 'rowperiod' | null;
 
 export interface HCol {
   x0: number;
@@ -52,7 +53,8 @@ const GRADE_ROLES: ColRole[] = ['final', 'grade', 'score', 'component', 'period'
 const PRIORITY: Record<string, number> = { final: 4, grade: 3, period: 3, score: 2, component: 1 };
 
 const letters = (s: string) => (s.match(/\p{L}/gu) ?? []).length;
-const isBlank = (c?: Cell) => !c || /^[\s\-–—_.·*一ー―]*$/.test(c.text);
+// A dash in an empty cell can come back from OCR as 一, ー, ― or 二 (two strokes); none of them is a grade on its own.
+const isBlank = (c?: Cell) => !c || /^[\s\-–—_.·*一ー―二=]*$/.test(c.text);
 const short = (c: Cell) => c.text.length <= 64;
 
 function isHeaderCandidate(row: Row): boolean {
@@ -123,6 +125,7 @@ function buildColumns(bandRows: Row[]): HCol[] {
     if (col.role === 'period') col.group = col.text;
   }
   cols.sort((a, b) => a.x0 - b.x0);
+  areasAsNames(cols);
   if (parents.length) {
     parents.sort((a, b) => a.x - b.x);
     const subs = cols.filter((c) => c.role && ['final', 'grade', 'score', 'component', 'credits', 'hours', 'max', 'rank'].includes(c.role));
@@ -170,7 +173,8 @@ function findBands(rows: Row[]): Band[] {
           anchor.some((a) => overlap(a.x, a.x + a.w, c.x, c.x + c.w) > 0.3 * Math.min(a.w, c.w)),
       );
     // Lines closer together than one line height belong to the same multi-line header cell row.
-    const tight = (r: Row, ref: Row) => r.page === ref.page && Math.abs(r.y - ref.y) < Math.min(r.h, ref.h) * 0.8 && r.cells.every((c) => c.text.length <= 60 && !/[:：]\s*\S/.test(c.text));
+    // A subject line ("Philosophy 9 NINE 6") right under a wrapped heading is the first row of the body, not more heading.
+    const tight = (r: Row, ref: Row) => r.page === ref.page && Math.abs(r.y - ref.y) < Math.min(r.h, ref.h) * 0.8 && !isDataRow(r) && r.cells.every((c) => c.text.length <= 60 && !/[:：]\s*\S/.test(c.text));
     for (let k = 0; k < 3 && start - 1 >= 0 && tight(rows[start - 1], rows[start]); k++) start--;
     for (let k = 0; k < 3 && end + 1 < rows.length && tight(rows[end + 1], rows[end]); k++) end++;
     for (let k = 0; k < 2 && start - 1 >= 0 && !cand[start - 1] && fits(rows[start - 1], rows[start]); k++) start--;
@@ -363,6 +367,26 @@ function reconcile(cols: HCol[], body: Row[]): HCol[] {
   return out;
 }
 
+/**
+ * A column headed "Curso", "Grado" or "Año" holds each row's year when its cells are year labels ("3º Año",
+ * "10mo Grado"); otherwise (Puerto Rico's "Curso" is the course) it is left for the content to decide.
+ */
+function resolveYearColumns(cols: HCol[], grid: (Cell | undefined)[][]) {
+  cols.forEach((c, i) => {
+    if (c.role !== 'year') return;
+    const cells = grid.map((r) => r[i]).filter((x): x is Cell => !isBlank(x));
+    const years = cells.filter((x) => isPeriodLabel(x.text)).length;
+    c.role = cells.length && years >= cells.length * 0.6 ? 'rowperiod' : null;
+  });
+}
+
+/** Side-by-side tables headed "Área | Nota | Área | Nota": with no subject heading, each "Área" heads a subject column. */
+function areasAsNames(cols: HCol[]) {
+  if (cols.some((c) => c.role === 'name')) return;
+  const areas = cols.map((c, i) => (c.role === 'area' && cols[i + 1] && GRADE_ROLES.includes(cols[i + 1].role) ? i : -1)).filter((i) => i >= 0);
+  if (areas.length >= 2) for (const i of areas) cols[i].role = 'name';
+}
+
 /** Guesses roles for columns the header vocabulary did not recognise, from the body content. */
 function inferRoles(cols: HCol[], grid: (Cell | undefined)[][]): boolean {
   const stats = cols.map((_, i) => {
@@ -373,8 +397,11 @@ function inferRoles(cols: HCol[], grid: (Cell | undefined)[][]): boolean {
   let guessed = false;
   if (!cols.some((c) => c.role === 'name')) {
     let best = -1;
+    // The subject column is filled on (nearly) every row; a box beside the table that lines up with it is not.
+    const most = Math.max(0, ...stats.map((s, i) => (!cols[i].role || cols[i].role === 'area' ? s.n : 0)));
     for (let i = 0; i < cols.length; i++) {
       if (cols[i].role && cols[i].role !== 'area') continue;
+      if (stats[i].n < most * 0.6) continue;
       if (stats[i].gradeFrac < 0.3 && stats[i].avgLetters >= 2 && (best < 0 || stats[i].avgLetters > stats[best].avgLetters)) best = i;
     }
     if (best >= 0) ((cols[best].role = 'name'), (guessed = true));
@@ -445,6 +472,8 @@ function coursesFromGroup(cols: HCol[], idx: number[], grid: (Cell | undefined)[
 
   const out: RawCourse[] = [];
   const groups = [...new Set(others.filter((i) => cols[i].group).map((i) => cols[i].group!))];
+  const rowYear = others.find((i) => cols[i].role === 'rowperiod');
+  let lastYear: Cell | undefined;
   for (const e of merged) {
     const name = e.cells[nameIdx];
     if (isBlank(name) || letters(name!.text) < 1) {
@@ -523,10 +552,18 @@ function coursesFromGroup(cols: HCol[], idx: number[], grid: (Cell | undefined)[
       }
     } else {
       const c = pick(others);
+      if (rowYear != null && !isBlank(e.cells[rowYear])) lastYear = e.cells[rowYear];
       if (!c) continue;
       const h = headingFor();
-      c.period = h.text;
-      c.periodCell = h.cell;
+      // A register gives each row's year in its own column; a blank cell repeats the year above it.
+      if (lastYear) {
+        c.period = lastYear.text;
+        c.periodCell = lastYear;
+        c.context = h.text;
+      } else {
+        c.period = h.text;
+        c.periodCell = h.cell;
+      }
       out.push(c);
     }
   }
@@ -622,6 +659,8 @@ export function readTables(doc: DocTokens): TableResult {
       }
       // Page furniture (a printed web address, "1/2", a print timestamp) is never part of a table.
       const furniture = r.cells.some((c) => /https?:\/\/|www\./i.test(c.text)) || r.cells.every((c) => /^\s*(page\s*)?\d{1,3}\s*(\/|of)\s*\d{1,3}\s*$/i.test(c.text));
+      // A box beside the table ("Índice: 3.42 / 4.00") can put a line between two of its rows; it does not end the table.
+      if (prose && count && r.cells[0].x > left + (right - left) * 0.5 && next && next.page === r.page && isDataRow(next)) continue;
       if (prose || outside || furniture) {
         if (count) break;
         continue;
@@ -669,6 +708,7 @@ export function readTables(doc: DocTokens): TableResult {
 
     band.cols = reconcile(splitMergedHeadings(band.cols, body), body);
     const grid = assign(band.cols, body);
+    resolveYearColumns(band.cols, grid);
     const guessedRoles = inferRoles(band.cols, grid);
     const coursesBefore = courses.length;
 
@@ -727,7 +767,84 @@ export function readTables(doc: DocTokens): TableResult {
     prevTableEnd = lastIdx;
   });
 
+  courses.push(...headerless(rows, used));
   return { courses, rows, freeRows: rows.filter((_, i) => !used.has(i)), notes };
+}
+
+/** A line that reads "subject … grade [grade in words]" with nothing else on it. */
+function subjectLine(r: Row): { name: Cell; grade: Cell; words?: Cell } | null {
+  // Dotted leaders read as text: cells of dots only are dropped, and dots trailing a name are not part of it.
+  const cells = r.cells.filter((c) => !/^[\s.…·_‥]+$/u.test(c.text));
+  if (cells.length < 2 || cells.length > 4) return null;
+  const name = { ...cells[0], text: cells[0].text.replace(/[\s.…·_‥]{2,}$|[.…‥]+$/u, '').trim() };
+  let [, grade, words] = cells;
+  // A number glued to its words by OCR ("82ochenta y dos").
+  const glued = /^(\d{1,3}(?:[.,]\d{1,2})?)\s*(\p{L}[\p{L}\s'’-]{2,40})$/u.exec(grade.text.trim());
+  if (glued && !words) ((words = { ...grade, text: glued[2] }), (grade = { ...grade, text: glued[1] }));
+  const t = name.text;
+  if (letters(t) < 3 || /[:：]/.test(t) || t.length > 70 || isPeriodLabel(t) || isSummaryLabel(t) || headerRole(t) || labelWithoutColon(t)) return null;
+  // The grade may be printed alone ("78") or with its words in the same cell ("78 setenta y ocho").
+  // Grades in words go past ten ("setenta y ocho"), so any short run of words beside the number is accepted.
+  const inWords = (s: string) => gradeFromWords(s) != null || /^[\p{L}\s'’-]{3,40}$/u.test(s.trim());
+  const g = splitGrade(grade.text);
+  if (!isGradeLike(grade.text) && !(isGradeLike(g.grade) && /^\d/.test(g.grade) && inWords(g.rest))) return null;
+  if (words && (isGradeLike(words.text) || !inWords(words.text))) return null;
+  return { name, grade, words };
+}
+
+/**
+ * Tables printed without a heading row: certificate lines ("Matemática ........ 78 setenta y ocho") and plain lists of
+ * subjects and marks. Only runs of at least three such lines count, with the grades lined up in one column and the
+ * subjects in another, so a stray "label value" line is never a course. The year heading above a run is its period.
+ */
+function headerless(rows: Row[], used: Set<number>): RawCourse[] {
+  const out: RawCourse[] = [];
+  let run: { i: number; line: NonNullable<ReturnType<typeof subjectLine>> }[] = [];
+  let heading: Row | undefined;
+  let runHeading: Row | undefined;
+  const flush = () => {
+    if (run.length >= 3) {
+      const med = (xs: number[]) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)];
+      const h = med(run.map((r) => r.line.grade.h));
+      const gx = med(run.map((r) => r.line.grade.x));
+      const nx = med(run.map((r) => r.line.name.x));
+      const aligned = run.filter((r) => Math.abs(r.line.grade.x - gx) < h * 2.5 && Math.abs(r.line.name.x - nx) < h * 2.5);
+      if (aligned.length >= 3 && aligned.length >= run.length * 0.8) {
+        for (const { i, line } of aligned) {
+          used.add(i);
+          out.push({ name: line.name, grade: line.grade, words: line.words, period: runHeading ? rowText(runHeading) : '', periodCell: runHeading?.cells[0] });
+        }
+        if (runHeading) used.add(rows.indexOf(runHeading));
+      }
+    }
+    run = [];
+  };
+  let missed = false;
+  rows.forEach((r, i) => {
+    const prev = rows[i - 1];
+    if (used.has(i) || (prev && prev.page !== r.page)) {
+      flush();
+      if (used.has(i)) return;
+    }
+    const line = subjectLine(r);
+    if (line) {
+      if (!run.length) runHeading = heading;
+      run.push({ i, line });
+      missed = false;
+      return;
+    }
+    // One unreadable line inside a run ("911noventa y uno") does not end it; a heading or a second miss does.
+    const next = rows[i + 1];
+    if (run.length && !missed && !isHeadingRow(r) && next && next.page === r.page && !used.has(i + 1) && subjectLine(next)) {
+      missed = true;
+      return;
+    }
+    missed = false;
+    flush();
+    heading = isHeadingRow(r) ? r : undefined;
+  });
+  flush();
+  return out;
 }
 
 export const cellKey = (c: Cell) => key(c.text);
