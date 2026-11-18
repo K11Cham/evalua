@@ -141,6 +141,12 @@ export function infoFieldExact(label: string): InfoField {
   const k = key(label.replace(/\(.*?\)/g, ' '));
   if (!k) return 'other';
   for (const { term, field } of LABEL_INDEX) if (k === term) return field;
+  // A long label with one OCR slip ("Candidat Name" for "Candidate Name"), when only one known label is that close.
+  if (k.length >= 9) {
+    const near = LABEL_INDEX.filter(({ term }) => term.length >= 9 && Math.abs(term.length - k.length) <= 2 && similarity(term, k) >= 0.88);
+    const fields = new Set(near.map((x) => x.field));
+    if (fields.size === 1) return [...fields][0];
+  }
   return 'other';
 }
 
@@ -153,7 +159,11 @@ export function labelWithoutColon(text: string): { label: string; value: string 
   const words = text.trim().split(/\s+/);
   for (let n = Math.min(6, words.length - 1); n >= 1; n--) {
     const label = words.slice(0, n).join(' ');
-    if (/[A-Za-z]/.test(label) && n < 2) continue;
+    // One Latin word is a label only before a value that looks like one: two or more capitalised words
+    // ("School GREATLAND LOWER BASIC SCHOOL"), never an ordinary line ("School subjects and grades").
+    const rest = words.slice(n);
+    // A label in capitals before capitals is a heading ("STUDENT ACADEMIC TRANSCRIPT"), so the label must not be.
+    if (/[A-Za-z]/.test(label) && n < 2 && !(/^\p{Lu}\p{Ll}/u.test(label) && rest.length >= 2 && rest.every((w) => /^[\p{Lu}\d]/u.test(w)))) continue;
     if (infoFieldExact(label) !== 'other' && key(label).length >= 2) return { label, value: words.slice(n).join(' ') };
   }
   return null;
@@ -377,9 +387,16 @@ const WORD_KEYS = Object.keys(NUMBER_WORDS);
 
 /** One word as a number, tolerating an OCR slip in words of five letters or more. */
 function wordNumber(w: string): number | undefined {
-  const k = key(w);
+  // Inside a word a zero is a misread "o" ("0ne").
+  const k = /\p{L}/u.test(w) ? key(w.replace(/0/g, 'o')) : key(w);
   if (k in NUMBER_WORDS) return NUMBER_WORDS[k];
-  if (k.length < 5) return undefined;
+  if (k.length < 3) return undefined;
+  if (k.length < 5) {
+    // A short word with one letter misread ("Twm" for "Two"), when only one number word fits.
+    const near = WORD_KEYS.filter((x) => x.length === k.length && [...x].filter((ch, i) => ch !== k[i]).length === 1);
+    const values = new Set(near.map((x) => NUMBER_WORDS[x]));
+    return values.size === 1 ? [...values][0] : undefined;
+  }
   const near = WORD_KEYS.filter((x) => x.length >= 5 && Math.abs(x.length - k.length) <= 1 && similarity(x, k) >= 0.8);
   const values = new Set(near.map((x) => NUMBER_WORDS[x]));
   return values.size === 1 ? [...values][0] : undefined;
@@ -397,10 +414,14 @@ export function gradeFromWords(text: string): number | null {
   return null;
 }
 
-export function splitGrade(text: string): { grade: string; rest: string } {
+export function splitGrade(text: string): { grade: string; rest: string; repaired?: boolean } {
   const s = asciiDigits(text).trim();
-  const m = /^(\d{1,3}(?:[.,]\d{1,2})?|[A-F][1-9]?[+\-*]?)\s*[(（]\s*(.*?)\s*[)）]?$/.exec(s);
+  const m = /^(\d{1,3}(?:[.,]\d{1,2})?|[A-F][1-9]?[+\-*]?)\s*[(（]\s*(.*?)\s*[)）\]]?$/.exec(s);
   if (m) return { grade: m[1], rest: m[2] };
+  // "1(One)" as OCR often returns it: the opening bracket read as a letter or a zero ("10One)", "1jOma)", "1[Two)").
+  // A closing bracket with no opening one gives it away; the misread bracket is the character after the first digit.
+  const b = /^(\d)\s*[0OojJlI|{[]\s*(\p{L}{1,8})\s*[)）\]}]$/u.exec(s);
+  if (b) return { grade: b[1], rest: b[2], repaired: true };
   const n = /^(\d{1,3}(?:[.,]\d{1,2})?)\s+([\p{L}][\p{L} ]+)$/u.exec(s);
   if (n) return { grade: n[1], rest: n[2] };
   return { grade: s, rest: '' };

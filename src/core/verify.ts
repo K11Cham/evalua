@@ -133,12 +133,17 @@ export function courseFlags(ex: Extraction): VerifyFlag[] {
   if (name.value && !name.edited) {
     // "DEEm", "BENMANSouR", "adeYEMI": capitals, then lower case, then capitals again, or the reverse.
     const odd = name.value.split(/\s+/).find((w) => /^\p{Lu}{2,}\p{Ll}+$/u.test(w) || /\p{Lu}{2,}\p{Ll}+\p{Lu}/u.test(w) || /\p{Ll}\p{Lu}{2,}/u.test(w));
-    if (name.confidence < 0.8 || odd) {
+    // A full name in one long word ("Chamkyargd") is several words OCR ran together. Scripts written without spaces
+    // between names (Chinese, Japanese, Korean) are not.
+    const runTogether = !/\s/.test(name.value.trim()) && /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}]{8,}$/u.test(name.value.trim());
+    if (name.confidence < 0.8 || odd || runTogether) {
       add({
         id: 'name-unsure',
         severity: 'check',
         title: 'Student name may be misread',
-        detail: odd ? `“${odd}” in “${name.value}” looks like a reading slip. Check the name against the original and correct it.` : `The name was read with low confidence (${pct(name.confidence)}). Check it against the original.`,
+        detail: runTogether
+          ? `“${name.value}” is one word: the given names and surname may have been run together, or misread. Check the name against the original and correct it.`
+          : odd ? `“${odd}” in “${name.value}” looks like a reading slip. Check the name against the original and correct it.` : `The name was read with low confidence (${pct(name.confidence)}). Check it against the original.`,
         source: name.source,
       });
     }

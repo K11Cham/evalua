@@ -1,10 +1,10 @@
 // Extraction: positioned text → structured record (student, school, system, courses), with provenance.
 import type { Cell, Row } from './layout.ts';
-import { rowText } from './layout.ts';
-import { academicYear, detectTerm, genericLevel, gradeFromWords, infoField, isGradeLike, isPeriodLabel, labelWithoutColon, looksLikeSchool, splitGrade, STUDENT_CLASS, termOf, type InfoField } from './lexicon.ts';
+import { buildRows, rowText } from './layout.ts';
+import { academicYear, detectTerm, genericLevel, gradeFromWords, infoField, infoFieldExact, isGradeLike, isPeriodLabel, labelWithoutColon, looksLikeSchool, splitGrade, STUDENT_CLASS, termOf, type InfoField } from './lexicon.ts';
 import { buildMatcher, fixOcrNumerals } from './match.ts';
 import { readTables, type RawCourse, type TableResult } from './tables.ts';
-import { asciiDigits, displayName, dominantScript, key, parseDate, parseNumber, stripDiacritics } from './text.ts';
+import { asciiDigits, displayName, dominantScript, key, parseDate, parseNumber, similarity, stripDiacritics } from './text.ts';
 import type { DocTokens, ExtractedCourse, Extraction, Field, KnowledgeBase, SourceRef, SystemProfile } from './types.ts';
 
 const src = (c: Cell): SourceRef => ({ page: c.page, x: c.x, y: c.y, w: c.w, h: c.h });
@@ -56,8 +56,12 @@ interface Pair {
 function splitLabel(text: string): { label: string; value: string } | null {
   const m = /^(.{1,70}?)\s*[:：]\s*(.*)$/.exec(text);
   if (m && !/^\d+$/.test(m[1])) return { label: m[1], value: m[2] };
-  // No colon (OCR often drops it): only an exact known label at the start.
-  return labelWithoutColon(text);
+  // No colon (OCR often drops it): only an exact known label at the start…
+  const lw = labelWithoutColon(text);
+  if (lw) return lw;
+  // …or a cell that is nothing but a known label, its value in the next cell ("Candidate Name | KEBBEH FATOU").
+  if (infoFieldExact(text) !== 'other') return { label: text.trim(), value: '' };
+  return null;
 }
 
 function readInfo(rows: Row[], rtl: boolean): Pair[] {
@@ -140,12 +144,41 @@ function findCountry(text: string, profile: SystemProfile | undefined): string {
 
 const SCRIPT_LANG: Record<string, string> = { han: 'zh', hangul: 'ko', kana: 'ja', cyrillic: 'ru', arabic: 'ar', devanagari: 'hi', thai: 'th', greek: 'el', hebrew: 'he' };
 
-function cleanGrade(text: string): { value: string; descriptor: string } {
-  const { grade, rest } = splitGrade(text);
+function cleanGrade(text: string): { value: string; descriptor: string; repaired?: boolean } {
+  const { grade, rest, repaired } = splitGrade(text);
   let v = grade.trim();
   if (/^\d+,\d+$/.test(v)) v = v.replace(',', '.');
   if (/^0\d+(\.\d+)?$/.test(v)) v = v.replace(/^0+(?=\d)/, '');
-  return { value: v, descriptor: rest };
+  return { value: v, descriptor: rest, repaired };
+}
+
+/**
+ * The grade band a remark names on the system's own scales: `values` are the grades it covers, `value` the one grade
+ * when it covers exactly one. OCR-damaged remarks ("Eacellem") still match.
+ */
+export function bandFromRemark(text: string, profile: SystemProfile | undefined): { value: string; values: string[] } | null {
+  const k = key(text);
+  if (!profile || k.length < 3 || k.length > 24) return null;
+  const byDescriptor = new Map<string, string[]>();
+  for (const s of profile.scales)
+    for (const e of s.entries) {
+      if (!e.descriptor) continue;
+      const v = e.labels?.[0] ?? (e.min != null && e.min === e.max ? String(e.min) : null);
+      if (v == null) continue;
+      const d = key(e.descriptor);
+      byDescriptor.set(d, [...new Set([...(byDescriptor.get(d) ?? []), v])]);
+    }
+  let best: { d: string; sim: number } | null = null;
+  for (const d of byDescriptor.keys()) {
+    const sim = d === k ? 1 : similarity(d, k);
+    if (sim >= 0.6 && (!best || sim > best.sim)) best = { d, sim };
+  }
+  if (!best) return null;
+  // Two descriptors almost as close ("Good" against "Very Good") make the remark ambiguous.
+  const rivals = [...byDescriptor.keys()].filter((d) => d !== best!.d && similarity(d, k) > best!.sim - 0.05);
+  if (rivals.length) return null;
+  const values = byDescriptor.get(best.d)!;
+  return { value: values.length === 1 ? values[0] : '', values };
 }
 
 function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; header: PageHeader; ocr: boolean; match: ReturnType<typeof buildMatcher> }): ExtractedCourse {
@@ -162,7 +195,9 @@ function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; hea
   };
   if (raw.grade) {
     const g = cleanGrade(raw.grade.text);
-    const shape = isGradeLike(raw.grade.text) ? 1 : 0.55;
+    // A grade recovered from a misread bracket ("10One)" → 1) is worth checking; it is confirmed below if the word
+    // beside it names the same number.
+    const shape = isGradeLike(raw.grade.text) ? 1 : g.repaired ? 0.7 : 0.55;
     course.grade = { value: g.value, original: raw.grade.text, confidence: Math.min(0.99, raw.grade.conf) * shape * (raw.gradeGuessed ? 0.7 : 1), source: src(raw.grade) };
     // A grade written only in words ("SIETE") is the number it names.
     const onlyWords = parseNumber(g.value) == null ? gradeFromWords(raw.grade.text) : null;
@@ -176,6 +211,16 @@ function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; hea
       const agrees = Math.abs(fromWords - asNumber) < 1e-6;
       course.gradeWords = { text: wordsText, value: fromWords, agrees, source: wordsCell ? src(wordsCell) : course.grade.source };
       course.grade.confidence = agrees ? Math.max(course.grade.confidence, 0.95) : Math.min(course.grade.confidence, 0.5);
+    }
+    // A remark that names one grade band of the system's own scale ("Excellent" is 1 on GABECE): it fills in a grade
+    // OCR could not read, and confirms one that agrees. It never overrules a readable grade, because schools also
+    // write remarks of their own.
+    const band = raw.remark ? bandFromRemark(raw.remark.text, ctx.profile) : null;
+    if (band && !course.gradeWords) {
+      // Only a grade that does not look like a grade at all ("HO )") is filled in; a school's own letter is kept.
+      const unreadable = !course.grade.value || (!isGradeLike(course.grade.value) && parseNumber(course.grade.value) == null);
+      if (unreadable && band.value) course.grade = { ...course.grade, value: band.value, confidence: 0.6 };
+      else if (band.values.includes(course.grade.value)) course.grade.confidence = Math.max(course.grade.confidence, 0.9);
     }
     // "Annual", "Cumulative", "Cả năm" columns are whole-year results ("SEM FINAL GRADE" is not).
     if (raw.gradeHeader && WHOLE_YEAR.test(raw.gradeHeader) && !/\bsem/i.test(raw.gradeHeader)) course.wholeYear = true;
@@ -381,6 +426,21 @@ export function extract(doc: DocTokens, kb: KnowledgeBase, opts: ExtractOptions 
     else if (!c.period.value.toLowerCase().includes(span.label.toLowerCase())) c.period.value = `${span.label} · ${c.period.value}`;
   }
 
+  // The aggregate an examination certificate prints ("Aggregate 06"), so it can be checked against the grades.
+  let aggregate: Field<number> | undefined;
+  const aggLabel = profile?.credit.aggregate?.label;
+  if (aggLabel) {
+    const re = new RegExp(`^\\s*${aggLabel}\\b[^\\d]{0,12}(\\d{1,3})\\s*$`, 'iu');
+    for (const r of buildRows(doc)) {
+      const m = re.exec(asciiDigits(r.cells.map((c) => c.text).join(' ')));
+      if (m) {
+        const cell = r.cells[r.cells.length - 1];
+        aggregate = { value: Number(m[1]), original: m[1], confidence: Math.min(0.95, cell.conf), source: src(cell) };
+        break;
+      }
+    }
+  }
+
   const extraction: Extraction = {
     systemId: { value: profile?.id ?? 'generic', confidence: forced ? 1 : profile ? Math.min(0.99, 0.55 + guess.score / 40) : 0.3 },
     docType: profile?.name ?? 'Unprofiled system',
@@ -389,6 +449,7 @@ export function extract(doc: DocTokens, kb: KnowledgeBase, opts: ExtractOptions 
     student,
     school: { name: school },
     issued,
+    aggregate,
     courses,
     flags: [],
     method: 'rules',

@@ -9,6 +9,7 @@ import { convertGrade, type SectionContext } from './convert.ts';
 import { planLadders, roundToStep, spans, type CoverageOptions } from './coverage.ts';
 import { buildMatcher } from './match.ts';
 import { periodKey } from './periods.ts';
+import { parseNumber } from './text.ts';
 import { courseFlags } from './verify.ts';
 import { usCourses } from '../kb/usCourses.ts';
 import type {
@@ -284,6 +285,51 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
       needsReview: !ov.accepted && (confidence < 0.7 || d.concept.id === 'elective.other' || !d.grade.letter || ((d.review || !!aw?.review) && ov.credits == null) || d.policySensitive),
     };
   });
+
+  // A one-year examination certificate (GABECE lists nine or more subjects for Grade 9) is one school year, not one
+  // full-year course per subject: share its credit out so the year totals about a normal year in this district.
+  if (profile?.credit.fitToYear) {
+    const auto = suggestions.filter((s) => s.credits > 0 && overrides[s.courseId]?.credits == null);
+    const total = suggestions.reduce((a, s) => a + s.credits, 0);
+    const typical = district.typicalCreditsPerYear;
+    if (auto.length && total > typical) {
+      const fixed = total - auto.reduce((a, s) => a + s.credits, 0);
+      const factor = Math.max(0, typical - fixed) / auto.reduce((a, s) => a + s.credits, 0);
+      for (const s of auto) {
+        const before = s.credits;
+        s.credits = Math.max(step / 2, Math.round((before * factor) / (step / 2)) * (step / 2));
+        s.reasons.push({ text: `This examination certificate covers one school year with ${suggestions.length} subjects, more than the ${typical} credits a student in ${district.name} normally earns in a year. Credit is shared out across the subjects (${before} → ${s.credits}) so the year totals about ${typical}.`, source: profile.credit.provenance.source });
+      }
+    }
+  }
+
+  // The certificate's aggregate (GABECE: the four core subjects plus the best two others), worked out from the grades
+  // and checked against the printed one.
+  const agg = profile?.credit.aggregate;
+  if (agg) {
+    const graded = included.map((c) => ({ c, concept: conceptOf.get(c.id) ?? '', n: parseNumber(c.grade.value) })).filter((x) => x.n != null);
+    const core = agg.core.map((p) => graded.find((x) => x.concept === p || (p.endsWith('.') && x.concept.startsWith(p))));
+    const printed = ex.aggregate;
+    const src = profile.credit.provenance.source;
+    if (core.some((x) => !x)) {
+      if (printed) flags.push({ id: 'aggregate', severity: 'info', title: `Aggregate ${printed.value} printed`, detail: `The ${agg.label} could not be checked: not every core subject was read with a grade. Check it against the original.`, source: printed.source });
+    } else {
+      const coreSet = new Set(core.map((x) => x!.c.id));
+      const others = graded.filter((x) => !coreSet.has(x.c.id)).map((x) => x.n!).sort((a, b) => a - b).slice(0, agg.best);
+      const sum = core.reduce((a, x) => a + x!.n!, 0) + others.reduce((a, n) => a + n, 0);
+      const how = `the core subjects (${core.map((x) => `${x!.c.name.value} ${x!.n}`).join(', ')}) plus the best ${agg.best} others (${others.join(', ') || 'none read'})`;
+      if (printed && printed.value !== sum) {
+        flags.push({ id: 'aggregate', severity: 'check', title: `The printed ${agg.label} (${printed.value}) does not match the grades (${sum})`, detail: `Worked out from ${how}. A grade or the ${agg.label} was misread; check both against the original.`, source: printed.source });
+      } else {
+        flags.push({
+          id: 'aggregate', severity: 'info',
+          title: `${agg.label[0].toUpperCase()}${agg.label.slice(1)} ${sum}${sum === agg.bestPossible ? ' (the best possible)' : ''}${printed ? ', matches the grades' : ''}`,
+          detail: `${printed ? 'The printed aggregate agrees with' : 'No aggregate was printed; worked out from'} ${how}. ${agg.bestPossible} is the best possible (${src.title}).`,
+          source: printed?.source,
+        });
+      }
+    }
+  }
 
   // Graduation requirement progress. Credit beyond a requirement spills into electives.
   const earnedBy = new Map<string, { earned: number; ids: string[] }>();

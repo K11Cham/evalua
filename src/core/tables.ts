@@ -28,6 +28,8 @@ export interface RawCourse {
   credits?: Cell;
   hours?: Cell;
   qualifier?: Cell;
+  /** A remark or interpretation cell ("Excellent", "Very Good"). */
+  remark?: Cell;
   /** The grade written out in words, from its own column ("LETRA", "in words"). */
   words?: Cell;
   /** Period label text (heading above the table, or matrix column group). */
@@ -482,6 +484,7 @@ function coursesFromGroup(cols: HCol[], idx: number[], grid: (Cell | undefined)[
       course.hours = first(['hours']);
       course.qualifier = first(['qualifier']);
       course.words = first(['words']);
+      course.remark = first(['remark']);
       // The number could not be read but the same grade is written out in words beside it.
       // The number may also have slid into the words column as one cell ("10 DIEZ").
       if (!course.grade && course.words) {

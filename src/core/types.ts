@@ -114,6 +114,8 @@ export interface Extraction {
   };
   school: { name: Field<string> };
   issued?: Field<string>;
+  /** An aggregate printed on an examination certificate ("Aggregate 06"). */
+  aggregate?: Field<number>;
   courses: ExtractedCourse[];
   flags: VerifyFlag[];
   /** How the structure was produced. */
@@ -255,6 +257,10 @@ export interface SystemProfile {
     hoursPerCredit?: number;
     /** Years of study an exam-certificate subject normally represents. */
     examCourseYears?: number;
+    /** A one-year certificate with more subjects than a US year: share its credit out to a normal year. */
+    fitToYear?: boolean;
+    /** How the certificate's aggregate is computed, so the printed one can be checked. */
+    aggregate?: { core: string[]; best: number; bestPossible: number; label: string };
     /** No US credit should be suggested (entrance tests). */
     noCredit?: boolean;
     note: string;
