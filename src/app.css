@@ -319,6 +319,7 @@ dialog.typed h2 { margin-bottom: 6px; }
 .typed-rows td:nth-child(2), .typed-rows td:nth-child(3) { width: 22%; }
 .typed-rows td:last-child { width: 36px; }
 .paste { margin-top: 12px; }
+dialog .preview { max-height: 46vh; overflow: auto; background: var(--paper-sunk); border: 1px solid var(--rule); border-radius: var(--radius); padding: 10px 12px; font: 0.78rem/1.45 var(--mono); white-space: pre-wrap; word-break: break-word; margin: 0; }
 .paste summary { cursor: pointer; font-weight: 600; font-size: 0.9rem; }
 .paste textarea { width: 100%; font-family: var(--mono); }
 

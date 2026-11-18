@@ -53,6 +53,23 @@ export function Privacy() {
       <p>
         The project includes fictitious sample transcripts (marked SPECIMEN) for the systems it knows. They are in the <a href="https://github.com/K11Cham/evalua/tree/main/fixtures/fake" target="_blank" rel="noreferrer noopener">fixtures/fake folder of the source code</a>. Use those to try the tool.
       </p>
+
+      <h2 id="real-records">Testing with real records</h2>
+      <p>Nothing you open in evalua leaves the browser, whether or not it is anonymized. If you are testing with real student records, anonymize them first anyway:</p>
+      <ul>
+        <li>
+          <strong>Redact with a real redaction tool, or print and scan.</strong> Drawing a black box over a name in a PDF hides it on screen but leaves the text in the file, where anyone can copy it out. A redaction tool (in Adobe Acrobat, for example) removes the text; printing the page and scanning it removes it too. evalua warns you if a PDF still has text under a black box.
+        </li>
+        <li>
+          <strong>Strip photo metadata.</strong> A phone photo can carry the place and time it was taken. Remove it before sharing (on Windows, the file’s Properties → Details → “Remove Properties and Personal Information”; on an iPhone, turn off Location in the share sheet’s Options), or take a screenshot of the photo instead.
+        </li>
+        <li>
+          <strong>Black out the student’s name, ID and date of birth</strong>, and anything else that identifies them, such as a photo or an address. evalua reads blacked-out fields as redacted, and reads the courses and grades as usual.
+        </li>
+        <li>
+          To send corrections back to improve evalua, use <strong>Export corrections for feedback</strong> on a case. It shows you everything it will save, and it never includes the student’s details, the school’s name or the document itself.
+        </li>
+      </ul>
     </article>
   );
 }

@@ -55,6 +55,8 @@ export interface Field<T> {
   source?: SourceRef;
   /** Set when a person changed the value. */
   edited?: boolean;
+  /** What evalua had read, kept from the first time a person changed the value (for feedback on reading). */
+  read?: { value: string; confidence: number };
   /** The document has the field but its value was blacked out or replaced ("XXXX", "[REDACTED]"). */
   redacted?: boolean;
 }

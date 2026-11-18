@@ -70,6 +70,10 @@ for (const width of [1440, 820]) {
   await check(page, 'case', width);
   await page.locator('table.courses button:has-text("Why")').first().click();
   await check(page, 'case with reasoning open', width);
+  await page.locator('button:has-text("Export corrections for feedback")').click();
+  await page.waitForSelector('dialog[open] pre.preview');
+  await check(page, 'export corrections for feedback', width);
+  await page.locator('dialog[open] button:has-text("Cancel")').click();
   await page.locator('a:has-text("Report")').first().click();
   await page.waitForSelector('article.report');
   await check(page, 'report', width);

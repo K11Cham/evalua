@@ -12,6 +12,7 @@ import { caseLabel, DEFAULT_DISTRICT, deleteCase, now, STATUS_LABEL, STATUS_ORDE
 import { Confidence, fmtDateTime, Icon, Source, Stamp } from './bits.tsx';
 import { CourseTable } from './CourseTable.tsx';
 import { DocViewer } from './DocViewer.tsx';
+import { FeedbackDialog } from './FeedbackDialog.tsx';
 import { FlagList } from './FlagList.tsx';
 import { InstructionNote } from './Instruction.tsx';
 import { TypedTable } from './TypedTable.tsx';
@@ -31,6 +32,7 @@ export function CaseView({ id }: { id: string }) {
   const [aiError, setAiError] = useState('');
   const [aiDone, setAiDone] = useState('');
   const [typing, setTyping] = useState(false);
+  const [feedback, setFeedback] = useState(false);
 
   const district = useMemo(() => kb.districts.find((d) => d.id === rec?.districtId) ?? (kb.districts.find((d) => d.id === DEFAULT_DISTRICT) ?? kb.districts[0]), [kb, rec?.districtId]);
   const evaluation = useMemo(() => (rec?.extraction ? evaluate(rec.extraction, kb, district, rec.overrides, rec.assume) : null), [rec?.extraction, rec?.overrides, rec?.assume, kb, district]);
@@ -72,6 +74,7 @@ export function CaseView({ id }: { id: string }) {
     if (before === value) return;
     update((c) => {
       const f = get(c);
+      f.read ??= { value: f.value, confidence: f.confidence };
       f.value = value;
       f.edited = true;
       f.confidence = 1;
@@ -80,7 +83,13 @@ export function CaseView({ id }: { id: string }) {
   const editCourse = (courseId: string, label: string, change: (c: ExtractedCourse) => void, detail: string) =>
     update((c) => {
       const course = c.extraction!.courses.find((x) => x.id === courseId);
-      if (course) change(course);
+      if (!course) return;
+      // Keep what evalua had read the first time a person corrects it.
+      const name0 = { value: course.name.value, confidence: course.name.confidence };
+      const grade0 = { value: course.grade.value, confidence: course.grade.confidence };
+      change(course);
+      if (course.name.value !== name0.value) course.name.read ??= name0;
+      if (course.grade.value !== grade0.value) course.grade.read ??= grade0;
     }, { action: `Changed ${label}`, detail });
   const override = (courseId: string, patch: Partial<NonNullable<CaseRecord['overrides'][string]>>, action: string, detail?: string) =>
     update((c) => {
@@ -622,7 +631,13 @@ export function CaseView({ id }: { id: string }) {
                 </ul>
               </div>
               <div>
-                <h3 style={{ marginBottom: 6 }}>What changed, and who changed it</h3>
+                <div className="row" style={{ justifyContent: 'space-between', marginBottom: 6 }}>
+                  <h3>What changed, and who changed it</h3>
+                  <button className="btn small" onClick={() => setFeedback(true)} title="Save what you corrected, without the student’s details, to help improve evalua’s reading">
+                    Export corrections for feedback
+                  </button>
+                </div>
+                {feedback && <FeedbackDialog rec={rec} kb={kb} district={district} files={doc.files.map((f) => ({ name: f.name, type: f.type }))} onClose={() => setFeedback(false)} />}
                 <ul className="log">
                   {[...rec.log].reverse().map((l, i) => (
                     <li key={i}>
