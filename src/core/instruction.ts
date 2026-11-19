@@ -93,7 +93,8 @@ export function assessInstruction(ex: Pick<Extraction, 'language' | 'stated'> & 
     const english = inst.languages.includes('en') ? (inst.languages.length === 1 ? true : null) : false;
     // The record's own country when it names one ("The Gambia’s"), else the system's.
     const country = ex.country?.value && !ex.country.value.includes('/') ? ex.country.value : profile!.countries.length === 1 ? profile!.countries[0] : '';
-    const where = country ? `${country}’s` : `${profile!.countries.slice(0, -1).join(', ')} and ${profile!.countries.at(-1)}’s`;
+    // An international programme (IB) has no country: "IB schools", not "International’s schools".
+    const where = country === 'International' ? (profile!.id === 'ib' ? 'IB' : 'international') : country ? `${country}’s` : `${profile!.countries.slice(0, -1).join(', ')} and ${profile!.countries.at(-1)}’s`;
     const summary = strong
       ? `Taught in ${label(inst.languages)}: ${where} secondary schools teach in ${label(inst.languages)}.`
       : `Usually taught in ${label(inst.languages)} in ${where} schools, but ${VARIES[inst.varies]}. Check the record or ask the school.`;

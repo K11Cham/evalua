@@ -134,3 +134,9 @@ describe('JCPS rules for English and civics taken abroad', () => {
     expect(conceptOf(ve, evaluate(ve, kb, jcps, { [civ.courseId]: { requirementId: 'social' } }), /Cívica/).requirementId).toBe('social');
   });
 });
+
+it('names IB schools as IB schools, not a country', () => {
+  const a = assessInstruction({ language: 'en', stated: undefined, country: { value: 'International', confidence: 1 } }, sys('ib'));
+  expect(a.summary).toMatch(/in IB schools/);
+  expect(a.summary).not.toMatch(/International’s/);
+});
