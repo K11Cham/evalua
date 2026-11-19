@@ -98,3 +98,39 @@ describe('the district’s English-learner process', () => {
     expect([p.source, ...(p.more ?? [])].map((s) => s.url)).toEqual(expect.arrayContaining([expect.stringMatching(/jefferson\.kyschools\.us/), expect.stringMatching(/KY-ID-Placement-Guidance/)]));
   });
 });
+
+// JCPS counselors: English counts as English credit only when taught in English, and civics from abroad is mostly not
+// accepted as the civics credit.
+describe('JCPS rules for English and civics taken abroad', () => {
+  const sheet = (head: string, subjects: [string, string][]) =>
+    `${head}<table><tr><th>Subject</th><th>Grade</th></tr>${subjects.map(([s, g]) => `<tr><td>${s}</td><td>${g}</td></tr>`).join('')}</table>`;
+  const unknown = combine(sheet('<p>Ministry of Education</p><p>School Leaving Record — Grade 11</p><p>Name: Test Student</p>', [['English', 'A'], ['Mathematics', 'B'], ['Biology', 'B']]));
+  it('places English as an elective to decide when the language of instruction is not known', () => {
+    const ev = evaluate(unknown, kb, jcps);
+    const en = conceptOf(unknown, ev, /^English$/);
+    expect(ev.instruction.english).toBeNull();
+    expect(en.requirementId).toBe('elective');
+    expect(en.needsReview).toBe(true);
+    expect(en.reasons.map((r) => r.text).join(' ')).toMatch(/English credit only for English-medium coursework/);
+  });
+  it('counts it as English once the counselor sets the requirement', () => {
+    const first = evaluate(unknown, kb, jcps);
+    const id = conceptOf(unknown, first, /^English$/).courseId;
+    expect(conceptOf(unknown, evaluate(unknown, kb, jcps, { [id]: { requirementId: 'ela' } }), /^English$/).requirementId).toBe('ela');
+  });
+  it('still counts English from an English-medium system as English', () => {
+    const wa = combine(termReport('SECOND TERM', 'SS 2', rows));
+    const ev = evaluate(wa, kb, jcps);
+    expect(conceptOf(wa, ev, /ENGLISH/).requirementId).toBe('ela');
+  });
+  it('places civics taken abroad as an elective to decide, and lets the counselor count it', () => {
+    const ve = combine(sheet('<p>República Bolivariana de Venezuela — Ministerio del Poder Popular para la Educación</p><p>4to año</p>', [['Educación Cívica', '15'], ['Matemática', '14'], ['Química', '16']]));
+    const ev = evaluate(ve, kb, jcps);
+    const civ = conceptOf(ve, ev, /Cívica/);
+    expect(civ.conceptId).toBe('ss.civics');
+    expect(civ.requirementId).toBe('elective');
+    expect(civ.needsReview).toBe(true);
+    expect(civ.reasons.map((r) => r.text).join(' ')).toMatch(/Civics taken abroad/);
+    expect(conceptOf(ve, evaluate(ve, kb, jcps, { [civ.courseId]: { requirementId: 'social' } }), /Cívica/).requirementId).toBe('social');
+  });
+});

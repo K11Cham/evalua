@@ -20,6 +20,9 @@ const KECS: SourceInfo = { title: 'Kentucky course codes (KDE course database an
 const JCPS_LAU: SourceInfo = { title: 'JCPS Lau Plan for Multilingual Learners, 2026-27, Section II (linked from the Office of Multilingual Learners page)', url: 'https://www.jefferson.kyschools.us/page/office-of-multilingual-learners/' };
 const KY_EL_ID: SourceInfo = { title: 'Kentucky English Learner Identification and Placement Guidance, 2025-26 (KDE and WIDA)', url: 'https://wida.wisc.edu/sites/default/files/id-placement/KY-ID-Placement-Guidance.pdf' };
 const KY_EL_MISID: SourceInfo = { title: 'KDE: Addressing the Misidentification of Students as English Learners', url: 'https://education.ky.gov/federal/progs/eng/Documents/Process%20for%20Addressing%20the%20Misidentification%20of%20Students%20as%20English%20Learners.pdf' };
+// What JCPS counselors who evaluate international transcripts accept in practice. Not published; the counselor's name is
+// kept out of the repository.
+const COUNSELORS: SourceInfo = { title: 'JCPS counselor guidance on international transcripts (email to the evalua project, 18 November 2026)' };
 const KAR_307: SourceInfo = { title: '704 KAR 3:307, credit for students from non-accredited schools (as quoted in the JCPS handbook)', url: SPPG.url };
 
 const k = (code: string | undefined, title: string, requirement: string, concepts: string[], o: { levels?: number[]; credits?: number; keywords?: string[] } = {}): CatalogCourse => ({
@@ -137,6 +140,18 @@ const policies: DistrictPolicy[] = [
     source: KDE_FAQ,
   },
   {
+    id: 'english-medium-only',
+    title: 'English credit only for English-medium coursework',
+    text: 'English coursework from abroad counts as an English credit only when English was the language of instruction; there are restrictions on which countries JCPS accepts English credit from. When the language of instruction is not known, the course is placed as an elective until the counselor confirms it.',
+    source: COUNSELORS,
+  },
+  {
+    id: 'concept:ss.civics',
+    title: 'Civics taken abroad',
+    text: 'For the most part, JCPS does not accept civics taken in another country as the civics credit, so it is placed as an elective. A counselor can still count it toward Social Studies.',
+    source: COUNSELORS,
+  },
+  {
     id: 'concept:ela.efl',
     title: 'English studied as a foreign language',
     text: 'English taken abroad as a foreign-language subject is placed as an elective. Kentucky course-code guidance says English learner (ESL) courses count only as electives, not toward the four English credits. Coursework taught in English as the language of instruction (English Language in West African systems) is English language arts.',
@@ -191,7 +206,8 @@ export const jcps: DistrictProfile = {
     },
   ],
   catalog,
-  conceptOverrides: {},
+  // Civics from abroad is an elective unless the counselor decides otherwise (policy concept:ss.civics).
+  conceptOverrides: { 'ss.civics': 'elective' },
   policies,
   provenance: { source: SPPG, schoolYear: '2025-26', addedOn: '2026-11-15' },
 };

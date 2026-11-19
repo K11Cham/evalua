@@ -107,6 +107,9 @@ function baseUnits(
   return { raw: 1, review: false, reasons: [{ text: 'Full-year course (no hours are printed on the document).' }] };
 }
 
+/** A course name that is English itself, in the languages evalua reads. */
+const NAMES_ENGLISH = /\b(english|ingl[ée]s|ingles|anglais|ingl[êe]s|englisch|английск|영어|英语|tiếng anh|إنجليزي|अंग्रेज)/iu;
+
 export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictProfile, overrides: Record<string, Override> = {}, opts: EvaluateOptions = {}): Evaluation {
   const profile = kb.systems.find((s) => s.id === ex.systemId.value);
   const generic = kb.systems.find((s) => s.id === 'generic');
@@ -134,6 +137,7 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
   // language arts; elsewhere it is English studied as a foreign language, whatever language the record is written in.
   const instruction = assessInstruction(ex, profile);
   const englishReason = new Map<string, Reason>();
+  const englishUnknown = new Set<string>();
   const instrSource = profile?.instruction.provenance.source;
   for (const c of included) {
     const look = match(c.name.original ?? c.name.value);
@@ -142,7 +146,7 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
     const langArts = concept === 'ela.english' || concept === 'ela.efl' || concept === 'ela.literature';
     if (!overrides[c.id]?.conceptId && instruction.english != null && langArts) {
       // Is the subject English itself, or the school's own language arts ("Literature", "Reading and Writing")?
-      const namesEnglish = /\b(english|ingl[ée]s|ingles|anglais|ingl[êe]s|englisch|английск|영어|英语|tiếng anh|إنجليزي|अंग्रेज)/iu.test(`${c.name.original ?? ''} ${c.name.value}`);
+      const namesEnglish = NAMES_ENGLISH.test(`${c.name.original ?? ''} ${c.name.value}`);
       const taught = instruction.languages.map((l) => LANGUAGE_LABEL[l] ?? l).join(' or ');
       const how = instruction.strength === 'printed' ? 'the record states the language of instruction' : `${profile?.name ?? 'the system'} teaches in ${taught}`;
       const translatedNote = instruction.translated ? ' The record is a translation, so its being in English says nothing about this.' : '';
@@ -165,6 +169,14 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
       }
       if (text) englishReason.set(c.id, { text, source: instruction.strength === 'printed' ? undefined : instrSource });
       concept = want;
+    } else if (!overrides[c.id]?.conceptId && instruction.english == null && (concept === 'ela.english' || concept === 'ela.literature') && NAMES_ENGLISH.test(`${c.name.original ?? ''} ${c.name.value}`)) {
+      // Not known whether the school taught in English: English credit waits for the counselor to confirm it.
+      englishUnknown.add(c.id);
+      const rule = district.policies.find((p) => p.id === 'english-medium-only');
+      englishReason.set(c.id, {
+        text: `It is not known whether “${c.name.original}” was taught in English: ${instruction.summary}${rule ? ` ${rule.title}: it is placed as an elective until you confirm the school taught in English, then set its requirement to English.` : ' Confirm before counting it as English.'}`,
+        source: rule?.source ?? instrSource,
+      });
     }
     conceptOf.set(c.id, concept);
   }
@@ -188,7 +200,9 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
     const er = englishReason.get(c.id);
     if (er) reasons.push(er);
 
-    const overrideReq = ov.requirementId ?? district.conceptOverrides[conceptId];
+    // English whose language of instruction is unknown waits as an elective where the district requires English-medium.
+    const englishWaits = englishUnknown.has(c.id) && district.policies.some((p) => p.id === 'english-medium-only');
+    const overrideReq = ov.requirementId ?? (englishWaits ? 'elective' : district.conceptOverrides[conceptId]);
     const req =
       district.requirements.find((r) => r.id === overrideReq) ??
       district.requirements.find((r) => r.concepts?.includes(conceptId)) ??
@@ -196,7 +210,9 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
       elective;
     const policy = district.policies.find((p) => p.id === `concept:${conceptId}`);
     if (ov.requirementId) reasons.push({ text: `Requirement area set by the counselor: ${req?.label ?? 'Elective'}.` });
-    else if (policy) reasons.push({ text: `${policy.title}: ${policy.text}`, source: policy.source });
+    else if (englishWaits) {
+      // The English reason above already says why it waits as an elective.
+    } else if (policy) reasons.push({ text: `${policy.title}: ${policy.text}`, source: policy.source });
     else if (req && req.id !== 'elective') reasons.push({ text: `${concept.label} counts toward “${req.label}” in ${district.name} (${district.schoolYear}).`, source: district.provenance.source });
     else reasons.push({ text: `No graduation requirement in ${district.name} names this subject; it counts as an elective.`, source: district.provenance.source });
 
@@ -222,7 +238,7 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
     drafts.push({
       courseId: c.id, concept, req, reasons, grade,
       confidence: Math.min(c.name.confidence || 0.5, matchConf, grade.letter ? Math.max(grade.confidence, 0.3) : 0.3),
-      policySensitive: !!policy && !ov.requirementId,
+      policySensitive: (!!policy || englishWaits) && !ov.requirementId,
       raw: base.raw, rawReasons: [...(base.zero ? [] : sp.reasons), ...base.reasons], review: base.review, zero: base.zero,
     });
   }
