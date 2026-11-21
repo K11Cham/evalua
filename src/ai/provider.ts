@@ -1,6 +1,7 @@
 // Every model call goes through this interface. evalua works with no provider at all (rules and dictionaries);
 // a provider only fills gaps, and what it returns is always shown as a suggestion a person can change.
 import type { Settings } from '../store/db.ts';
+import { PROMPT } from './prompt.ts';
 
 export interface CourseTranslation {
   /** The name exactly as given. */
@@ -16,14 +17,6 @@ export interface AiProvider {
   /** Translates course names. `language` is a BCP-47 hint; `system` describes the education system. */
   translateCourses(names: string[], language: string, system: string): Promise<CourseTranslation[]>;
 }
-
-// Measured with qwen2.5-coder 7B and 14B on OCR-damaged Russian names ("Фиика", "Бнодогия"): without the note on
-// OCR slips and the numbered answers, the model guessed other subjects and answers could not be matched safely.
-const PROMPT = (names: string[], language: string, system: string) =>
-  `These are course names from a school transcript (${system}; language code ${language}). They may have been read by OCR, which can change or drop a letter, so read each as the closest real school subject in that language. ` +
-  `Give the plain English course name a US school registrar would use, keeping a course number or level only when one is printed (I, II, HL); never add one. If you are not sure, give an empty string. ` +
-  `Do not explain. Answer with JSON only, in this exact shape: {"translations":[{"n":1,"original":"…","english":"…"}]}\n\n` +
-  names.map((n, i) => `${i + 1}. ${n}`).join('\n');
 
 function parse(text: string, names: string[]): CourseTranslation[] {
   const json = /\{[\s\S]*\}/.exec(text)?.[0];
@@ -90,9 +83,15 @@ export function serverProvider(model: string): AiProvider {
     id: 'server',
     label: `${model} (configured by this site's host)`,
     async translateCourses(names, language, system) {
-      const res = await fetch('/api/ai/translate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ names, language, system }) });
-      if (!res.ok) throw new Error(`The server model answered with an error (${res.status}).`);
-      return parse(JSON.stringify(await res.json()), names);
+      // The server takes at most 40 names a request (functions/lib/aiGuard.ts).
+      const out: CourseTranslation[] = [];
+      for (let i = 0; i < names.length; i += 40) {
+        const part = names.slice(i, i + 40);
+        const res = await fetch('/api/ai/translate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ names: part, language, system: system.slice(0, 80) }) });
+        if (!res.ok) throw new Error(`The server model answered with an error (${res.status}).`);
+        out.push(...parse(JSON.stringify(await res.json()), part));
+      }
+      return out;
     },
   };
 }
