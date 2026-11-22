@@ -55,9 +55,9 @@ describe('server model: what goes back', () => {
 });
 
 describe('no model key in the browser code', () => {
-  const files = (dir: string): string[] => readdirSync(dir).flatMap((f) => (statSync(join(dir, f)).isDirectory() ? files(join(dir, f)) : [join(dir, f)]));
+  const files = (dir: string): string[] => readdirSync(dir).flatMap((n) => (statSync(join(dir, n)).isDirectory() ? files(join(dir, n)) : [join(dir, n)]));
   it('src reads no VITE_ variable and never lets an SDK run in the browser', () => {
-    for (const f of files('src').filter((f) => /\.(ts|tsx)$/.test(f))) {
+    for (const f of files('src').filter((p) => /\.(ts|tsx)$/.test(p))) {
       const text = readFileSync(f, 'utf8');
       expect(text, f).not.toMatch(/VITE_|dangerouslyAllowBrowser/);
     }
