@@ -16,6 +16,8 @@ export interface HCol {
   /** Period label of the parent header (matrix layouts). */
   group?: string;
   groupCell?: Cell;
+  /** A column set with no period printed over it (see regroupRepeats). */
+  unprinted?: boolean;
 }
 
 export interface RawCourse {
@@ -265,7 +267,8 @@ export function dataColumns(body: Row[]): { x0: number; x1: number }[] {
 
 /** The roles a heading names, in order: "CALIF.LETRA CRÉDITOS" → grade, words, credits. */
 function headingRoles(text: string): { role: ColRole; text: string }[] {
-  const words = text.split(/[\s.·/|]+/).filter(Boolean);
+  // Two headings OCR read as one word ("CalifHrs.") are split where a small letter meets a capital.
+  const words = text.replace(/(\p{Ll})(\p{Lu})/gu, '$1 $2').split(/[\s.·/|]+/).filter(Boolean);
   const out: { role: ColRole; text: string }[] = [];
   // Shortest match first: a longer span would also "contain" the role of its last word.
   for (let i = 0; i < words.length; ) {
@@ -284,6 +287,32 @@ function headingRoles(text: string): { role: ColRole; text: string }[] {
     i += hit.n;
   }
   return out;
+}
+
+/**
+ * One period printed over the first of several identical column sets ("10° | Hrs. Calif. | Hrs. Calif. | Hrs. Calif.",
+ * the later years left blank): the period heads only the set beneath it, and each other set is a period of its own
+ * whose name was not printed. Without this, a stray mark in an empty later column would be taken for the year's grade.
+ */
+function regroupRepeats(cols: HCol[]): HCol[] {
+  const subs = cols.filter((c) => c.group && c.role !== 'name');
+  if (subs.length < 4 || new Set(subs.map((c) => c.group)).size !== 1 || !subs[0].groupCell) return cols;
+  const per = subs.findIndex((c, i) => i > 0 && c.role === subs[0].role);
+  if (per <= 0 || subs.length % per !== 0 || !subs.every((c, i) => c.role === subs[i % per].role)) return cols;
+  const p = subs[0].groupCell;
+  const sets = Array.from({ length: subs.length / per }, (_, k) => subs.slice(k * per, (k + 1) * per));
+  const centre = p.x + p.w / 2;
+  const dist = (set: HCol[]) => Math.abs((set[0].x0 + set[set.length - 1].x1) / 2 - centre);
+  const own = sets.reduce((best, x) => (dist(x) < dist(best) ? x : best), sets[0]);
+  sets.forEach((set, k) => {
+    if (set === own) return;
+    for (const col of set) {
+      col.group = `${p.text} (column set ${k + 1}, period not printed)`;
+      col.groupCell = undefined;
+      col.unprinted = true;
+    }
+  });
+  return cols;
 }
 
 /**
@@ -452,6 +481,8 @@ function coursesFromGroup(cols: HCol[], idx: number[], grid: (Cell | undefined)[
     const next = entries[k + 1];
     if (hasName(e) && !hasValue(e)) {
       if (isPeriodLabel(e.cells[nameIdx]!.text) || isSummaryLabel(e.cells[nameIdx]!.text)) continue;
+      // Dashes in its mark cells: a subject not taken ("Geografía Humana | — | — | —"), not a wrapped line of a name.
+      if (others.some((i) => e.cells[i] && isBlank(e.cells[i]) && GRADE_ROLES.includes(cols[i].role))) continue;
       const toNext = next && near(e, next) && (!hasName(next) || CONNECTOR_END.test(e.cells[nameIdx]!.text)) && hasValue(next);
       const toPrev = prev && near(prev, e) && hasName(prev);
       // When it could belong to either, it belongs to the row it is closer to: a name's last line sits right under it.
@@ -545,6 +576,10 @@ function coursesFromGroup(cols: HCol[], idx: number[], grid: (Cell | undefined)[
         const c = pick([...others.filter((i) => cols[i].group === g), ...shared.filter((i) => !sharedGrades.includes(i))]);
         if (!c || !c.grade) continue;
         const gc = cols[others.find((i) => cols[i].group === g)!];
+        // A year actually taken in a set with no period printed shows its hours (or credits) as the printed year
+        // does; a lone mark there is a stray stroke or a dash misread.
+        const setRoles = others.filter((i) => cols[i].group === g).map((i) => cols[i].role);
+        if (gc.unprinted && (setRoles.includes('hours') || setRoles.includes('credits')) && !c.hours && !c.credits) continue;
         c.period = g;
         c.periodCell = gc.groupCell;
         c.context = h.text;
@@ -706,7 +741,7 @@ export function readTables(doc: DocTokens): TableResult {
     if (!body.length) return;
     bodyIdx.forEach((i) => used.add(i));
 
-    band.cols = reconcile(splitMergedHeadings(band.cols, body), body);
+    band.cols = regroupRepeats(reconcile(splitMergedHeadings(band.cols, body), body));
     const grid = assign(band.cols, body);
     resolveYearColumns(band.cols, grid);
     const guessedRoles = inferRoles(band.cols, grid);

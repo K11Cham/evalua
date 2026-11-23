@@ -72,3 +72,42 @@ describe('layouts without the usual heading row', () => {
     expect(r.courses.map((c) => [c.name.original, c.grade.value]).sort()).toEqual([['Física', '59'], ['Física', '62'], ['Matemática', '66'], ['Matemática', '70'], ['Química', '72'], ['Química', '77']]);
   });
 });
+
+// A fictitious Panamanian certificate as OCR reads a phone scan of it: "10°" over the first Hrs./Calif. pair, the
+// later years' pairs left blank (dashes, a stray stroke read as "1"), one heading read as "CalifHrs.".
+describe('a certificate with one year printed over several column sets', () => {
+  const W = 1970;
+  const lines: [number, [number, string][]][] = [
+    [52, [[34, 'REPÚBLICA DE PANAMÁ']]],
+    [102, [[32, 'MINISTERIO DE EDUCACIÓN']]],
+    [219, [[30, 'Certificado de Estudios']]],
+    [621, [[23, 'PERÍODO ESCOLAR'], [50, '2025']]],
+    [668, [[23, 'ASIGNATURA'], [50, '10°']]],
+    [715, [[47, 'Hrs.'], [52, 'Calif.'], [58, 'Hrs.'], [63, 'CalifHrs.'], [73, 'Calif.']]],
+    [761, [[47, 'Sem.'], [58, 'Sem.'], [68, 'Sem.']]],
+    [808, [[23, 'Español'], [48, '5'], [54, '3.3'], [60, '二'], [65, '一'], [70, '一'], [75, '一']]],
+    [847, [[23, 'Inglés'], [49, '4'], [54, '3.5'], [60, '一'], [65, '一'], [70, '一'], [76, '1']]],
+    [890, [[23, 'Geografía Física'], [49, '3'], [54, '3.4'], [60, '一'], [65, '二'], [70, '一'], [76, '--']]],
+    [932, [[23, 'Geografía Humana'], [54, '一'], [60, '一'], [65, '一'], [70, '一'], [76, '一']]],
+    [974, [[23, 'Historia Moderna'], [49, '3.'], [54, '3.7'], [60, '一'], [65, '二'], [70, '一'], [76, '一']]],
+    [1015, [[24, 'Física'], [49, '4'], [54, '3.1'], [66, '-'], [71, '-'], [76, '1']]],
+  ];
+  const doc = {
+    kind: 'ocr' as const,
+    pages: [{ width: W, height: 2600 }],
+    tokens: lines.flatMap(([y, cells]) => cells.map(([x, text]) => ({ text, page: 0, x: (x / 100) * W, y, w: text.length * 17, h: 36, conf: 0.95 }))),
+    engine: 'test',
+    warnings: [],
+  };
+  it('reads each subject once, with the printed year’s grade and hours, and skips a subject not taken', () => {
+    const r = runExtraction(doc, kb);
+    expect(r.systemId.value).toBe('pa');
+    expect(r.courses.map((c) => [c.name.original, c.grade.value, c.hours?.value, c.level])).toEqual([
+      ['Español', '3.3', 5, 10],
+      ['Inglés', '3.5', 4, 10],
+      ['Geografía Física', '3.4', 3, 10],
+      ['Historia Moderna', '3.7', 3, 10],
+      ['Física', '3.1', 4, 10],
+    ]);
+  });
+});

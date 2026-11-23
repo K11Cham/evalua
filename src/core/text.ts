@@ -118,7 +118,8 @@ export function dominantScript(s: string): Script {
 
 /** Parses "13,5", "8.0", "087", "9/10" (→ 9) into a number; null when not numeric. */
 export function parseNumber(raw: string): number | null {
-  const s = asciiDigits(raw).trim().replace(/\s/g, '');
+  // A stray full stop after a number ("3.", a speck on a scan) is not part of it.
+  const s = asciiDigits(raw).trim().replace(/\s/g, '').replace(/^(\d+)[.,]$/, '$1');
   const m = /^(-?\d+(?:[.,]\d+)?)(?:\/\d+(?:[.,]\d+)?)?%?$/.exec(s);
   if (!m) return null;
   const v = Number(m[1].replace(',', '.'));

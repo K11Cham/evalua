@@ -30,7 +30,8 @@ const ORD: Record<number, string> = {
 /** Rules for "<ordinal> <word>" → US grade, e.g. year 1 of a 5-year secundaria is US grade 8. */
 const years = (word: string, first: number, count: number, usOfFirst: number) =>
   // "Cuarto grado de bachillerato", "4º año de bachillerato": a level word and "de" may sit between the two.
-  Array.from({ length: count }, (_, i) => ({ pattern: `\\b${ORD[first + i]}\\s*(?:(?:grado|a[ñn]o|curso)\\s+)?(?:de\\s+)?(?:${word})\\b`, level: usOfFirst + i }));
+  // A grade printed alone over its column ("10°", "11vo") is the same year: the ordinal sign makes it a grade.
+  Array.from({ length: count }, (_, i) => ({ pattern: `\\b${ORD[first + i]}\\s*(?:(?:grado|a[ñn]o|curso)\\s+)?(?:de\\s+)?(?:${word})\\b|^\\s*${first + i}\\s*(?:º|°|ª|o|er|ero|ro|do|to|vo|no|mo)\\.?\\s*$`, level: usOfFirst + i }));
 
 // Course names shared across Spanish-speaking systems, from their published curricula.
 const SPANISH: SystemCourse[] = [

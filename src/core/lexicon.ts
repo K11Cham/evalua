@@ -221,6 +221,9 @@ const PERIOD_RES: RegExp[] = [
   // NFKC turns "11º" into "11o", so ordinal endings are allowed before the word boundary.
   /\b\d{1,2}\s*(?:º|ª|°|o|a|er|ero|ro|do|to|vo|no|mo)?\.?\s*(?:a[ñn]o\s+)?(?:de\s+)?(medio|bgu|bachillerato|secundaria|b[áa]sico|diversificado|curso|grado|a[ñn]o|egb)(?![\p{L}\p{N}])/iu,
   /\b(grado|curso)\s*\.?:?\s*\d{1,2}\s*(?:º|ª|°|o|a|er|ro|do|to|vo|no|mo)?(?![\p{L}\p{N}])/iu,
+  // A grade printed alone over its column ("ASIGNATURA | 10° | 11° | 12°", "7mo | 8vo"): the ordinal sign or ending
+  // is what makes it a grade and not a number.
+  /^\s*(?:[1-9]|1[0-3])\s*(?:º|ª|°|er|ro|do|to|vo|no|mo)\.?\s*$/iu,
   /\b(primer[oa]?|segund[oa]|tercer[oa]?|cuart[oa]|quint[oa]|sext[oa]|s[ée]ptim[oa]|octav[oa]|noven[oa]|d[ée]cim[oa]|und[ée]cim[oa]|duod[ée]cim[oa])\s+(?:a[ñn]o\s+)?(?:de\s+)?(medio|bgu|bachillerato|secundaria|b[áa]sico|diversificado|curso|grado|a[ñn]o)(?![\p{L}\p{N}])/iu,
   /\bgrado\s+(d[ée]cimo|und[ée]cimo|once|diez|noveno|octavo|s[ée]ptimo|sexto)(?![\p{L}\p{N}])/iu,
   /\b(qualifikationsphase|einführungsphase|kursstufe|oberstufe)\b/iu,
