@@ -2,6 +2,9 @@
 // Coloured text (red headings, blue stamps) can drop out of OCR in colour; a greyscale image with its
 // contrast stretched keeps it, and does not hurt black-on-white text.
 
+/** Longest side, in pixels, a page or photo is read at. A phone scan (often 3000×4000 or more) is scaled down to it. */
+export const MAX_SIDE = 2600;
+
 /**
  * True when the page has strongly coloured ink (a red heading, blue text). Those pages are read in greyscale.
  * Others are left alone: on noisy black-and-white scans the contrast stretch makes the noise worse.

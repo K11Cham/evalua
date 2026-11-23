@@ -9,7 +9,7 @@ import { modelUrls, OCR_MODELS, routeOcr, type OcrModelId, type OcrSegment } fro
 import { segmentsToTokens } from '../../src/ingest/ocrTokens.ts';
 import { installBoxFilter } from '../../src/ingest/detectFix.ts';
 import { typedTextToDoc } from '../../src/ingest/typed.ts';
-import { greyStretch, hasColouredInk, maskBars } from '../../src/ingest/prepare.ts';
+import { greyStretch, hasColouredInk, maskBars, MAX_SIDE } from '../../src/ingest/prepare.ts';
 import { estimateSkew, SKEW_WIDTH } from '../../src/ingest/deskew.ts';
 import { darkBoxes, hiddenItems, looksScanned, pdfItemsToTokens, type PdfTextItem } from '../../src/ingest/pdfText.ts';
 
@@ -97,7 +97,8 @@ async function ingestPdf(file: string): Promise<DocTokens> {
       continue;
     }
     const { createCanvas } = await import('@napi-rs/canvas');
-    const scale = 2;
+    // As in the browser: twice the page size, but never more than MAX_SIDE (a phone scan's page can be 3000 pt wide).
+    const scale = Math.min(2, MAX_SIDE / Math.max(vp.width, vp.height));
     const v2 = page.getViewport({ scale });
     const canvas = createCanvas(Math.ceil(v2.width), Math.ceil(v2.height));
     await page.render({ canvas: canvas as unknown as HTMLCanvasElement, canvasContext: canvas.getContext('2d') as unknown as CanvasRenderingContext2D, viewport: v2 }).promise;
@@ -115,10 +116,10 @@ async function ingestPdf(file: string): Promise<DocTokens> {
 
 async function ingestImage(file: string): Promise<DocTokens> {
   const sharp = (await import('sharp')).default;
-  const buf = readFileSync(file);
-  const meta = await sharp(buf).metadata();
+  // As in the browser: turned upright from the photo's orientation tag, and scaled down to MAX_SIDE.
+  const { data: buf, info } = await sharp(readFileSync(file)).rotate().resize({ width: MAX_SIDE, height: MAX_SIDE, fit: 'inside', withoutEnlargement: true }).png().toBuffer({ resolveWithObject: true });
   const r = await ocrImage(buf, 0, 'auto');
-  return { kind: 'ocr', pages: [{ width: meta.width ?? 1000, height: meta.height ?? 1400, skew: await skewOf(buf) }], tokens: r.tokens, engine: OCR_MODELS[r.model].label, warnings: [], redactionBars: r.bars || undefined };
+  return { kind: 'ocr', pages: [{ width: info.width, height: info.height, skew: await skewOf(buf) }], tokens: r.tokens, engine: OCR_MODELS[r.model].label, warnings: [], redactionBars: r.bars || undefined };
 }
 
 async function ingestDocx(file: string): Promise<DocTokens> {

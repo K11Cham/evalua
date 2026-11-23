@@ -5,7 +5,7 @@ import { docxHtmlToDoc } from './docx.ts';
 import { typedTextToDoc } from './typed.ts';
 import { OCR_MODELS, type OcrModelId } from './ocrModels.ts';
 import { segmentsToTokens } from './ocrTokens.ts';
-import { greyStretch, hasColouredInk, maskBars } from './prepare.ts';
+import { greyStretch, hasColouredInk, maskBars, MAX_SIDE } from './prepare.ts';
 import { darkBoxes, hiddenItems, looksScanned, pdfItemsToTokens, type PdfTextItem } from './pdfText.ts';
 import type { OcrRequest, OcrResponse } from './ocr.worker.ts';
 
@@ -16,8 +16,6 @@ export interface Ingested {
 }
 
 export type Progress = (message: string) => void;
-
-const MAX_SIDE = 2600;
 
 let worker: Worker | null = null;
 let seq = 0;
