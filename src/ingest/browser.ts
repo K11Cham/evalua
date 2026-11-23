@@ -5,6 +5,7 @@ import { docxHtmlToDoc } from './docx.ts';
 import { typedTextToDoc } from './typed.ts';
 import { OCR_MODELS, type OcrModelId } from './ocrModels.ts';
 import { segmentsToTokens } from './ocrTokens.ts';
+import { betterReading, worthLookingAgain } from './ocrRetry.ts';
 import { greyStretch, hasColouredInk, maskBars, MAX_SIDE } from './prepare.ts';
 import { darkBoxes, hiddenItems, looksScanned, pdfItemsToTokens, type PdfTextItem } from './pdfText.ts';
 import type { OcrRequest, OcrResponse } from './ocr.worker.ts';
@@ -42,11 +43,11 @@ function ocrWorker(): Worker {
   return worker;
 }
 
-function ocr(image: ArrayBuffer, hint: OcrModelId | 'auto', progress: Progress) {
+function ocr(image: ArrayBuffer, hint: OcrModelId | 'auto', progress: Progress, fine = false) {
   return new Promise<Extract<OcrResponse, { ok: true }>>((resolve, reject) => {
     const id = ++seq;
     pending.set(id, { resolve, reject, progress });
-    const req: OcrRequest = { id, image, hint };
+    const req: OcrRequest = { id, image, hint, fine };
     ocrWorker().postMessage(req, [image]);
   });
 }
@@ -84,7 +85,14 @@ async function ocrCanvas(canvas: HTMLCanvasElement, page: number, hint: OcrModel
   const png = await toBlob(prepared, 'image/png');
   const res = await ocr(await png.arrayBuffer(), hint, progress);
   const info: PageInfo = { width: canvas.width, height: canvas.height, skew: skewOf(canvas) };
-  return { tokens: segmentsToTokens(res.lines, page), info, model: res.model, bars };
+  let read = { tokens: segmentsToTokens(res.lines, page), model: res.model };
+  // Text but almost no table: look again with text found at the page's full size (see ocrRetry.ts).
+  if (worthLookingAgain(read.tokens, info)) {
+    progress('Looking at the page again more closely…');
+    const again = await ocr(await png.arrayBuffer(), res.model, progress, true);
+    read = betterReading(read, { tokens: segmentsToTokens(again.lines, page), model: again.model }, info);
+  }
+  return { tokens: read.tokens, info, model: read.model, bars };
 }
 
 async function imageToCanvas(blob: Blob): Promise<HTMLCanvasElement> {

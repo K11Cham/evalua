@@ -10,6 +10,8 @@ export interface Token {
   h: number;
   /** 0–1. Text-layer tokens are 1. */
   conf: number;
+  /** OCR read this together with neighbouring cells and it was split back out: never joined to a neighbour again. */
+  alone?: boolean;
 }
 
 export interface PageInfo {

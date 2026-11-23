@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parseCatalog } from '../src/core/catalog.ts';
 import { estimateSkew } from '../src/ingest/deskew.ts';
 import { routeOcr, type OcrSegment } from '../src/ingest/ocrModels.ts';
-import { fixRtl } from '../src/ingest/ocrTokens.ts';
+import { fixRtl, splitCells, unglueMarks } from '../src/ingest/ocrTokens.ts';
 import { dropNonTextBoxes, type Box } from '../src/ingest/detectFix.ts';
 import { pdfItemsToTokens, repairArabic } from '../src/ingest/pdfText.ts';
 import { kb } from './helpers.ts';
@@ -92,5 +92,36 @@ describe('right-to-left detection in the PDF text layer', () => {
   it('still joins Korean, Chinese and other left-to-right scripts', () => {
     expect(pdfItemsToTokens([item('1학년', 50, 30), item(' ', 80, 4), item('1학기', 84, 30)], 800, 0).map((t) => t.text)).toEqual(['1학년 1학기']);
     expect(pdfItemsToTokens([item('第二', 50, 20), item(' ', 70, 4), item('学期', 74, 20)], 800, 0).map((t) => t.text)).toEqual(['第二 学期']);
+  });
+});
+
+describe('cells OCR read as one piece of text', () => {
+  const tok = (text: string) => ({ text, page: 0, x: 100, y: 50, w: 400, h: 20, conf: 0.9 });
+  const texts = (text: string) => splitCells(tok(text)).map((t) => t.text);
+
+  it('splits marks run together, when every piece is a mark with the same decimals', () => {
+    expect(unglueMarks('85.0081.0085.0083.00')).toEqual(['85.00', '81.00', '85.00', '83.00']);
+    expect(unglueMarks('7.55.0')).toEqual(['7.5', '5.0']);
+    expect(unglueMarks('8.08.0')).toEqual(['8.0', '8.0']);
+    expect(unglueMarks('83,7086.00')).toEqual(['83,70', '86.00']);
+    // Not marks: a value over 100, a section number, a plain number.
+    expect(unglueMarks('10.0110.0')).toBeNull();
+    expect(unglueMarks('1.2.3')).toBeNull();
+    expect(unglueMarks('85.5')).toBeNull();
+  });
+
+  it('separates a subject from its marks and places each at its share of the box', () => {
+    expect(texts('ESPAÑOL (5) 7.0 8.08.0')).toEqual(['ESPAÑOL (5)', '7.0', '8.0', '8.0']);
+    expect(texts('TECNOLOGIA(3)10.0 10.0')).toEqual(['TECNOLOGIA(3)', '10.0', '10.0']);
+    expect(texts('8.6 7.0')).toEqual(['8.6', '7.0']);
+    expect(texts('Español 5 3.3')).toEqual(['Español', '5', '3.3']);
+    const parts = splitCells(tok('ABCDE 1.0 2.0'));
+    expect(parts.map((t) => Math.round(t.x))).toEqual([100, 100 + Math.round((400 * 6) / 13), 100 + Math.round((400 * 10) / 13)]);
+    expect(parts.every((t) => t.x + t.w <= 500.01)).toBe(true);
+  });
+
+  it('leaves labels, years and single whole numbers alone', () => {
+    for (const s of ['GRADE 7', 'Days Present: 195', 'School Year: 2013-2014', 'SC1ENCE & TECHNOLOGY', 'Cívica III', '85.00', '4.776A 84 F'])
+      expect(texts(s)).toEqual([s]);
   });
 });

@@ -135,12 +135,16 @@ function pageRows(tokens: Token[], page: number, pageWidth: number, deskew: bool
   return groups.map((g) => {
     const toks = g.items.map((x) => x.t).sort((a, b) => a.x - b.x);
     const cells: Cell[] = [];
+    let lastAlone = false;
     for (const t of toks) {
       const text = t.text.trim();
       if (!text) continue;
       const last = cells[cells.length - 1];
       const gap = last ? t.x - (last.x + last.w) : Infinity;
-      if (last && gap < Math.max(last.h, t.h) * gapFactor) {
+      // A cell split out of a piece OCR had read across several cells keeps to itself.
+      const join = last && !t.alone && !lastAlone && gap < Math.max(last.h, t.h) * gapFactor;
+      lastAlone = !!t.alone;
+      if (join) {
         const needsSpace = gap > Math.max(last.h, t.h) * 0.12 && !/[぀-鿿가-힯]$/.test(last.text);
         // Right-to-left text reads from the right-most token.
         const rtl = RTL_CHAR.test(last.text) || RTL_CHAR.test(text);

@@ -6,8 +6,9 @@ import path from 'node:path';
 import type { DocTokens, Token } from '../../src/core/types.ts';
 import { docxHtmlToDoc } from '../../src/ingest/docx.ts';
 import { modelUrls, OCR_MODELS, routeOcr, type OcrModelId, type OcrSegment } from '../../src/ingest/ocrModels.ts';
+import { betterReading, FINE_SIDE, worthLookingAgain } from '../../src/ingest/ocrRetry.ts';
 import { segmentsToTokens } from '../../src/ingest/ocrTokens.ts';
-import { installBoxFilter } from '../../src/ingest/detectFix.ts';
+import { installBoxFilter, withDetectionSide } from '../../src/ingest/detectFix.ts';
 import { typedTextToDoc } from '../../src/ingest/typed.ts';
 import { greyStretch, hasColouredInk, maskBars, MAX_SIDE } from '../../src/ingest/prepare.ts';
 import { estimateSkew, SKEW_WIDTH } from '../../src/ingest/deskew.ts';
@@ -24,7 +25,7 @@ const READER_SOURCES = [
 const INGEST_VERSION = createHash('sha1').update(READER_SOURCES.sort().map((f) => readFileSync(path.resolve(f))).join('\0')).update(JSON.stringify(Object.keys(OCR_MODELS))).digest('hex').slice(0, 12);
 
 interface OcrService {
-  recognize(image: ArrayBuffer): Promise<{ lines: OcrSegment[][] }>;
+  recognize(image: ArrayBuffer, options?: { noCache?: boolean }): Promise<{ lines: OcrSegment[][] }>;
   destroy(): Promise<void>;
 }
 const services = new Map<OcrModelId, OcrService>();
@@ -65,7 +66,15 @@ async function ocrImage(input: Buffer, page: number, hint: OcrModelId | 'auto'):
   if (coloured || bars) buf = await sharp(Buffer.from(px), { raw: { width: info.width, height: info.height, channels: 4 } }).png().toBuffer();
   const ab = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
   const routed = await routeOcr(async (id) => (await (await service(id)).recognize(ab.slice(0))).lines, hint);
-  return { tokens: segmentsToTokens(routed.lines, page), model: routed.model, bars };
+  let read = { tokens: segmentsToTokens(routed.lines, page), model: routed.model };
+  // As in the browser: text but almost no table, so look again with text found at full size (see ocrRetry.ts).
+  const meta = { width: info.width, height: info.height };
+  if (worthLookingAgain(read.tokens, meta)) {
+    // The library caches results by image: the second look must not be answered from the first.
+    const lines = await withDetectionSide(FINE_SIDE, async () => (await (await service(routed.model)).recognize(ab.slice(0), { noCache: true })).lines);
+    read = betterReading(read, { tokens: segmentsToTokens(lines, page), model: routed.model }, meta);
+  }
+  return { tokens: read.tokens, model: read.model, bars };
 }
 
 async function ingestPdf(file: string): Promise<DocTokens> {

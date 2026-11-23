@@ -113,11 +113,43 @@ const PATCHED = Symbol.for('evalua.dropNonTextBoxes');
  */
 export function installBoxFilter(DetectionService: DetectorClass): void {
   for (let proto = DetectionService.prototype as Record<string | symbol, unknown> | null; proto && proto !== Object.prototype; proto = Object.getPrototypeOf(proto) as Record<string | symbol, unknown> | null) {
-    if (!Object.prototype.hasOwnProperty.call(proto, 'postprocessDetection') || proto[PATCHED]) continue;
-    const original = proto.postprocessDetection as Postprocess;
-    proto.postprocessDetection = function (this: unknown, detection: unknown, input: DetectionInput, ...rest: unknown[]) {
-      return dropNonTextBoxes(original.call(this, detection, input, ...rest), contrastFrom(input));
-    };
-    proto[PATCHED] = true;
+    if (Object.prototype.hasOwnProperty.call(proto, 'postprocessDetection') && !proto[PATCHED]) {
+      const original = proto.postprocessDetection as Postprocess;
+      proto.postprocessDetection = function (this: unknown, detection: unknown, input: DetectionInput, ...rest: unknown[]) {
+        return dropNonTextBoxes(original.call(this, detection, input, ...rest), contrastFrom(input));
+      };
+      proto[PATCHED] = true;
+    }
+    if (Object.prototype.hasOwnProperty.call(proto, 'preprocessDetection') && !proto[PATCHED_SIZE]) {
+      const original = proto.preprocessDetection as (this: { options: Record<string, unknown> }, ...a: unknown[]) => Promise<unknown>;
+      proto.preprocessDetection = async function (this: { options: Record<string, unknown> }, ...a: unknown[]) {
+        if (sideOverride == null) return original.apply(this, a);
+        const saved = this.options;
+        this.options = { ...saved, maxSideLength: sideOverride };
+        try {
+          return await original.apply(this, a);
+        } finally {
+          this.options = saved;
+        }
+      };
+      proto[PATCHED_SIZE] = true;
+    }
+  }
+}
+
+const PATCHED_SIZE = Symbol.for('evalua.detectionSide');
+let sideOverride: number | null = null;
+
+/**
+ * Runs one OCR pass with text detection at a given longest side, in pixels, instead of the library's own choice
+ * (which shrinks a large page to at most 1920 px first). Used to look again at a page whose cells came back merged:
+ * see ocrRetry.ts. One pass at a time: the OCR engine reads pages one after another.
+ */
+export async function withDetectionSide<T>(side: number | null, run: () => Promise<T>): Promise<T> {
+  sideOverride = side;
+  try {
+    return await run();
+  } finally {
+    sideOverride = null;
   }
 }
