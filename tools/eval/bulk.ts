@@ -215,8 +215,10 @@ interface Worksheet {
   rows: { text: string; course?: number }[];
   evaluaOnly: number[];
 }
-const PERSONAL = /\b(names?|nombres?|apellidos?|birth|born|dob|d\.?o\.?b|nacimiento|address|direcci[oó]n|phone|tel[eé]fono|e-?mail|parents?|guardian|padres?|madre|padre|signature|signed|firma|student\s*(?:id|no|number|#)|id\s*(?:no|number|#)|ssn|matr[ií]cula|c[eé]dula|curp|dni|counselor|evaluated by|prepared by)\b/i;
-const IDENTIFYING = /\b\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\b|\d{6,}/;
+// Staff and family names, addresses and signatures sit next to these words; a line that has one is left out whole.
+const PERSONAL = /\b(names?|nombres?|nome|apellidos?|birth|born|dob|d\.?o\.?b|nacimiento|nacid[oa]|address|addres|direcci[oó]n|domicilio|subd|barangay|phone|tel[eé]fono|e-?mail|parents?|guardian|padres?|madre|padre|tutor|signature|signed|firma|sello|seal|student\s*(?:id|no|number|#)|id\s*(?:no|number|#)|ssn|matr[ií]cula|c[eé]dula|curp|dni|lrn|counselor|evaluated by|prepared by|secretari[oa]?|secretary|director[a]?|principal|rector[a]?|registrar|profesor[a]?|teacher|adviser|advisor|alumn[oa]|estudiante|learner|pupil|candidate|mr|mrs|ms|miss|sr|sra|srta|lic|licda|prof|dr|dra)\b\.?/i;
+// Dates, long numbers and ID-shaped codes ("8-1085-73", "TH-2021-00417").
+const IDENTIFYING = /\b\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\b|\d{6,}|\b\d{1,2}-\d{2,4}-\d{1,5}\b|\b[A-Z]{1,4}-\d{2,}(?:-\d+)*\b/;
 const IMAGE = /\.(png|jpe?g|webp|gif|bmp|tiff?)$/i;
 
 async function readWorksheet(file: string, courses: CaseReport['courses']): Promise<Worksheet> {
