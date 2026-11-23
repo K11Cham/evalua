@@ -13,9 +13,12 @@
 // each run, to tell which files belong to the same student. Unread lines and flag details are never printed: either
 // can quote personal data.
 import { randomBytes, createHash } from 'node:crypto';
-import { mkdirSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
+import { extract } from '../../src/core/extract.ts';
 import { evaluate, READER_VERSION, runExtraction } from '../../src/core/pipeline.ts';
+import { similarity } from '../../src/core/text.ts';
 import type { DocTokens, Field } from '../../src/core/types.ts';
 import { seedKb } from '../../src/kb/index.ts';
 import { rowDoubts } from '../../src/ui/doubts.ts';
@@ -26,25 +29,27 @@ const REPO = path.resolve(import.meta.dirname, '../..');
 
 const args = process.argv.slice(2);
 const opt = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
-const valued = new Set(['--out', '--district']);
+const valued = new Set(['--out', '--district', '--worksheets']);
 const positional = args.filter((a, i) => !a.startsWith('--') && !valued.has(args[i - 1] ?? ''));
 const recordsDir = positional[0];
 const outDir = opt('--out');
 const only = positional.slice(1);
-if (!recordsDir || !outDir) throw new Error('usage: npm run bulk -- <records folder> --out <report folder> [--district ky-jcps] [--fingerprint] [--rows]');
+const wsDir = opt('--worksheets');
+if (!recordsDir || !outDir) throw new Error('usage: npm run bulk -- <records folder> [case filter…] --out <report folder> [--worksheets <folder>] [--district ky-jcps] [--fingerprint] [--rows]');
 
 /** True when p is this repository or inside it. */
 function insideRepo(p: string): boolean {
   const rel = path.relative(REPO, path.resolve(p));
   return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
 }
-for (const [what, p] of [['records folder', recordsDir], ['report folder', outDir]] as const)
-  if (insideRepo(p)) throw new Error(`The ${what} must be outside the repository (${REPO}), so real records cannot be committed.`);
+for (const [what, p] of [['records folder', recordsDir], ['report folder', outDir], ['worksheet folder', wsDir ?? '']] as const)
+  if (p && insideRepo(p)) throw new Error(`The ${what} must be outside the repository (${REPO}), so real records cannot be committed.`);
 
 const kb = seedKb();
 const districtId = opt('--district') ?? 'ky-jcps';
-const district = kb.districts.find((d) => d.id === districtId);
-if (!district) throw new Error(`No district "${districtId}". Known: ${kb.districts.map((d) => d.id).join(', ')}`);
+const found = kb.districts.find((d) => d.id === districtId);
+if (!found) throw new Error(`No district "${districtId}". Known: ${kb.districts.map((d) => d.id).join(', ')}`);
+const district = found;
 // A run split over several processes shares one salt through EVALUA_BULK_SALT; it is never written anywhere.
 const salt = process.env.EVALUA_BULK_SALT ? Buffer.from(process.env.EVALUA_BULK_SALT) : randomBytes(16);
 const fingerprint = (v: string) => (v ? createHash('sha256').update(salt).update(v.normalize('NFKC').toLowerCase().replace(/\s+/g, ' ').trim()).digest('hex').slice(0, 8) : '');
@@ -52,14 +57,16 @@ const natural = (a: string, b: string) => a.localeCompare(b, undefined, { numeri
 const skip = (n: string) => n.startsWith('_') || n.startsWith('.');
 
 // Cases: a folder of files, or one file.
-const cases: { name: string; files: string[] }[] = [];
+const cases: { name: string; files: string[]; notes: string[] }[] = [];
 for (const entry of readdirSync(recordsDir).sort(natural)) {
   if (skip(entry) || (only.length && !only.some((f) => entry.includes(f)))) continue;
   const full = path.join(recordsDir, entry);
   if (statSync(full).isDirectory()) {
     const files = readdirSync(full).filter((f) => !skip(f) && READABLE.test(f)).sort(natural).map((f) => path.join(full, f));
-    if (files.length) cases.push({ name: entry, files });
-  } else if (READABLE.test(entry)) cases.push({ name: entry.replace(/\.[^.]+$/, ''), files: [full] });
+    // A counselor's note about the case ("_note.txt"): shown in the report, never given to evalua.
+    const notes = readdirSync(full).filter((f) => /^_note.*\.txt$/i.test(f)).map((f) => readFileSync(path.join(full, f), 'utf8').trim()).filter(Boolean);
+    if (files.length) cases.push({ name: entry, files, notes });
+  } else if (READABLE.test(entry)) cases.push({ name: entry.replace(/\.[^.]+$/, ''), files: [full], notes: [] });
 }
 if (!cases.length) throw new Error(`No readable files in ${recordsDir}`);
 
@@ -110,6 +117,10 @@ interface CaseReport {
   progress: { label: string; earned: number; required: number }[];
   /** Where the student would continue in each course sequence. */
   placements: { label: string; done: string[]; continueIn: string; confidence: string }[];
+  /** The counselor's notes about the case, as given (never given to evalua). */
+  notes: string[];
+  /** The counselor's own evaluation, read by the same OCR, beside evalua's courses. */
+  worksheet?: Worksheet;
   error?: string;
 }
 
@@ -117,7 +128,7 @@ const reports: CaseReport[] = [];
 mkdirSync(outDir, { recursive: true });
 for (const c of cases) {
   const started = Date.now();
-  const base: Pick<CaseReport, 'case' | 'files' | 'fileTypes'> = { case: c.name, files: c.files.length, fileTypes: [...new Set(c.files.map((f) => path.extname(f).slice(1).toLowerCase()))] };
+  const base: Pick<CaseReport, 'case' | 'files' | 'fileTypes' | 'notes'> = { case: c.name, files: c.files.length, fileTypes: [...new Set(c.files.map((f) => path.extname(f).slice(1).toLowerCase()))], notes: c.notes };
   try {
     const docs: DocTokens[] = [];
     for (const f of c.files) docs.push(await ingestFile(f, false));
@@ -193,6 +204,82 @@ for (const c of cases) {
   const r = reports.at(-1)!;
   console.log(r.error ? `✗ ${r.case}: ${r.error}` : `✓ ${r.case}: ${r.files} file(s), ${r.pages} page(s), ${r.words} text pieces, ${r.educationSystem} (${pct(r.systemConfidence)}) · ${r.country} · ${r.courses.length} courses · ${r.seconds}s`);
 }
+
+// The counselor's own evaluation of each case (--worksheets <folder>, files named "<case>-worksheet.*"). It is not an
+// answer key: counselors' evaluations are not always right either. It is read by the same OCR and laid beside
+// evalua's courses row by row, so the two can be compared neutrally. Lines that carry personal details are left out.
+interface Worksheet {
+  rotation: number;
+  textPieces: number;
+  dropped: number;
+  rows: { text: string; course?: number }[];
+  evaluaOnly: number[];
+}
+const PERSONAL = /\b(names?|nombres?|apellidos?|birth|born|dob|d\.?o\.?b|nacimiento|address|direcci[oó]n|phone|tel[eé]fono|e-?mail|parents?|guardian|padres?|madre|padre|signature|signed|firma|student\s*(?:id|no|number|#)|id\s*(?:no|number|#)|ssn|matr[ií]cula|c[eé]dula|curp|dni|counselor|evaluated by|prepared by)\b/i;
+const IDENTIFYING = /\b\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\b|\d{6,}/;
+const IMAGE = /\.(png|jpe?g|webp|gif|bmp|tiff?)$/i;
+
+async function readWorksheet(file: string, courses: CaseReport['courses']): Promise<Worksheet> {
+  // A worksheet may be photographed sideways: the rotation that reads the most text is used (for the worksheet
+  // only; evalua's reading of the record itself is never helped this way).
+  let best: { doc: DocTokens; rotation: number } | null = null;
+  if (IMAGE.test(file)) {
+    const sharp = (await import('sharp')).default;
+    const tmp = mkdtempSync(path.join(os.tmpdir(), 'evalua-ws-'));
+    try {
+      for (const rotation of [0, 90, 270]) {
+        const p = path.join(tmp, `r${rotation}.png`);
+        writeFileSync(p, await sharp(readFileSync(file)).rotate().rotate(rotation).png().toBuffer());
+        const doc = await ingestFile(p, false);
+        if (!best || doc.tokens.length > best.doc.tokens.length) best = { doc, rotation };
+      }
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
+    }
+  } else best = { doc: await ingestFile(file, false), rotation: 0 };
+  const { tables } = extract(best!.doc, kb);
+  const lines = [...tables.rows].sort((a, b) => a.page - b.page || a.y - b.y).map((r) => r.cells.map((c) => c.text.trim()).filter(Boolean));
+  const rows: Worksheet['rows'] = [];
+  let dropped = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const text = lines[i].join(' | ');
+    if (!text) continue;
+    if (PERSONAL.test(text) || IDENTIFYING.test(text)) {
+      dropped++;
+      // A label alone on its line ("Student name:") has its value on the next one.
+      if (lines[i].length === 1 && i + 1 < lines.length) (dropped++, i++);
+      continue;
+    }
+    rows.push({ text });
+  }
+  // Each evalua course beside the worksheet row that names the same subject, best matches first.
+  const pairs: { row: number; course: number; score: number }[] = [];
+  rows.forEach((row, ri) => {
+    const cells = row.text.split(' | ');
+    for (const c of courses) {
+      const score = Math.max(...cells.flatMap((cell) => [similarity(cell, c.printedSubject), similarity(cell, c.englishName)]));
+      if (score >= 0.6) pairs.push({ row: ri, course: c.n, score });
+    }
+  });
+  const usedRows = new Set<number>();
+  const usedCourses = new Set<number>();
+  for (const p of pairs.sort((a, b) => b.score - a.score)) {
+    if (usedRows.has(p.row) || usedCourses.has(p.course)) continue;
+    usedRows.add(p.row);
+    usedCourses.add(p.course);
+    rows[p.row].course = p.course;
+  }
+  return { rotation: best!.rotation, textPieces: best!.doc.tokens.length, dropped, rows, evaluaOnly: courses.map((c) => c.n).filter((n) => !usedCourses.has(n)) };
+}
+if (wsDir) {
+  const names = readdirSync(wsDir);
+  for (const r of reports) {
+    const f = names.find((n) => n.toLowerCase().startsWith(`${r.case.toLowerCase()}-worksheet`) && READABLE.test(n));
+    if (!f || r.error) continue;
+    r.worksheet = await readWorksheet(path.join(wsDir, f), r.courses);
+    console.log(`  worksheet ${r.case}: ${r.worksheet.rows.length} rows (${r.worksheet.dropped} personal lines left out), ${r.worksheet.rows.filter((x) => x.course).length} beside an evalua course`);
+  }
+}
 await closeOcr();
 
 // Reports: one per case (what a counselor would otherwise screenshot from the case view), a summary of all cases,
@@ -233,6 +320,31 @@ function caseReport(r: CaseReport): string {
   if (r.flags.length) {
     md += `\n## Items to verify\n\n`;
     for (const f of r.flags) md += `- ${cell(f.title)} (${f.severity})\n`;
+  }
+  if (r.notes.length) {
+    md += `\n## Counselor's note on the record\n\nGiven with the record; evalua was not told this.\n\n`;
+    for (const n of r.notes) md += `> ${n.replace(/\n/g, '\n> ')}\n`;
+  }
+  const ws = r.worksheet;
+  if (ws) {
+    md += `\n## The counselor's evaluation beside evalua's\n\n`;
+    md += `The counselor's worksheet, read by the same OCR${ws.rotation ? ` (turned ${ws.rotation}°)` : ''}: ${ws.rows.length} lines, ${ws.dropped} lines with personal details left out. `;
+    md += `This is not an answer key: where the two differ, either may be right. A worksheet line is placed beside the evalua course that names the same subject.\n\n`;
+    md += `${ws.rows.filter((x) => x.course).length} worksheet lines beside an evalua course · ${ws.evaluaOnly.length} evalua courses not on the worksheet\n\n`;
+    if (ws.rows.length) {
+      md += `| Worksheet line (as read) | evalua's course | evalua: US subject · counts toward · credits · letter |\n|---|---|---|\n`;
+      for (const row of ws.rows) {
+        const c = row.course ? r.courses.find((x) => x.n === row.course) : undefined;
+        md += `| ${cell(row.text)} | ${c ? `#${c.n} ${cell(c.printedSubject)} = ${cell(c.grade) || '—'}` : '—'} | ${c ? `${cell(c.usSubject)} · ${cell(c.countsToward)}${c.needsReview ? ' (to decide)' : ''} · ${c.credits} · ${c.usLetter || '—'}` : ''} |\n`;
+      }
+    }
+    if (ws.evaluaOnly.length) {
+      md += `\nevalua courses with no worksheet line:\n\n`;
+      for (const n of ws.evaluaOnly) {
+        const c = r.courses.find((x) => x.n === n)!;
+        md += `- #${c.n} ${cell(c.printedSubject)} = ${cell(c.grade) || '—'} → ${cell(c.usSubject)} · ${cell(c.countsToward)} · ${c.credits}\n`;
+      }
+    }
   }
   return md;
 }
