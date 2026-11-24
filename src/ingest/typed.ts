@@ -57,6 +57,9 @@ function cells(line: string): string[] {
     if (c.length > 1) return c;
   }
   const colon = /^(.+?)\s*:\s*(.+)$/.exec(line);
+  // A subject can hold a colon itself ("Segunda Lengua: Inglés III: 7.2"): the grade follows the last one.
+  const lastColon = /^(.+)\s*:\s*(\S+)$/.exec(line);
+  if (colon && lastColon && lastColon[1].includes(':') && !GRADE.test(colon[2].split(/\s{2,}|\s+[|·]\s+/)[0]) && NUMERIC_GRADE.test(lastColon[2])) return [lastColon[1].trim(), lastColon[2]];
   if (colon) return [colon[1], ...colon[2].split(/\s{2,}|\s+[|·]\s+/)];
   const dash = /^(.+?)\s+[-–—=|]\s+(.+)$/.exec(line);
   if (dash) return [dash[1], ...dash[2].split(/\s{2,}/)];

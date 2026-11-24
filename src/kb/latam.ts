@@ -48,7 +48,7 @@ const SPANISH: SystemCourse[] = [
   course(['Ciencias de la Tierra', 'Ciencias de la Tierra y del Universo'], 'Earth Sciences', 'sci.earth'),
   course(['Educación Ambiental', 'Ecología'], 'Environmental Education', 'sci.environmental'),
   course(['Lengua Castellana', 'Lengua Castellana y Literatura', 'Lengua y Literatura', 'Lengua Española', 'Castellano', 'Idioma Español', 'Español', 'Lenguaje', 'Lenguaje y Comunicación', 'Comunicación', 'Comunicación y Lenguaje', 'Lengua y Comunicación', 'Literatura', 'Prácticas del Lenguaje', 'Español y Literatura'], 'Spanish Language and Literature', 'wl.native'),
-  course(['Inglés', 'Ingles', 'Idioma Extranjero', 'Idioma Extranjero: Inglés', 'Lengua Extranjera', 'Lengua Extranjera: Inglés', 'Lenguas Extranjeras', 'Idioma Inglés', 'Lengua Extranjera Inglés'], 'English (foreign language)', 'ela.efl'),
+  course(['Inglés', 'Ingles', 'Idioma Extranjero', 'Idioma Extranjero: Inglés', 'Lengua Extranjera', 'Lengua Extranjera: Inglés', 'Lenguas Extranjeras', 'Idioma Inglés', 'Lengua Extranjera Inglés', 'Segunda Lengua: Inglés', 'Segunda Lengua Inglés', 'Segunda Lengua'], 'English (foreign language)', 'ela.efl'),
   course(['Francés', 'Portugués', 'Italiano', 'Alemán'], 'Foreign Language', 'wl.other'),
   course(['Historia', 'Historia Universal'], 'History', 'ss.history.world'),
   course(['Geografía', 'Geografia'], 'Geography', 'ss.geography'),
@@ -272,7 +272,7 @@ export const cu = profile({
   detect: [['república de cuba', 12], ['cuba', 6], ['ministerio de educación', 3], ['preuniversitario', 8], ['ipu', 4], ['ipvce', 7], ['secundaria básica', 5], ['carné de identidad', 5], ['la habana', 4]],
   levels: years('grado', 7, 6, 7),
   scales: [num('cu-100', 'Cuba 0–100, pass at 60 → US letter (Scholaro, 100-point)', [0, 100], '60', [R(90, 100, 'A', 'Excelente'), R(80, 89.99, 'B', 'Muy bueno'), R(70, 79.99, 'C', 'Bueno'), R(60, 69.99, 'D', 'Insuficiente'), R(0, 59.99, 'F', 'Deficiente')], 5)],
-  courses: [course(['Español-Literatura', 'Español Literatura'], 'Spanish and Literature', 'wl.native'), course(['Historia de Cuba'], 'History of Cuba', 'ss.history.national'), course(['Cultura Política'], 'Political Culture', 'ss.civics'), course(['Fundamentos de la Ideología'], 'Foundations of Ideology', 'ss.civics')],
+  courses: [course(['Español-Literatura', 'Español Literatura'], 'Spanish and Literature', 'wl.native'), course(['Historia de Cuba'], 'History of Cuba', 'ss.history.national'), course(['Cultura Política'], 'Political Culture', 'ss.civics'), course(['Educación Laboral'], 'Labor Education (technology and work skills)', 'cte.technology'), course(['Fundamentos de la Ideología'], 'Foundations of Ideology', 'ss.civics')],
 });
 
 export const pr = profile({

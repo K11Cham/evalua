@@ -35,6 +35,12 @@ export function detectSystem(text: string, systems: SystemProfile[]): SystemGues
         const hit = /[a-z]/.test(t) ? k.includes(` ${t} `) : k.includes(t);
         if (hit) score += d.weight;
       }
+      // The country named on the record ("Country: México" on a typed table, "República de Panamá" on a letterhead)
+      // counts for that country's system, once: on its own only when no other system serves that country (India has
+      // two boards, and state boards besides), otherwise only beside a term of the system's own.
+      const named = s.countries.filter((c) => (COUNTRY_WORDS[c] ?? []).some((w) => k.includes(` ${key(w)} `)));
+      const sole = named.some((c) => systems.filter((x) => x.countries.includes(c)).length === 1);
+      if (named.length && (sole || score > 0)) score += 5;
       return { s, score };
     })
     .sort((a, b) => b.score - a.score);
@@ -285,6 +291,13 @@ function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; hea
   course.maxMark = num(raw.max);
   course.credits = num(raw.credits);
   course.hours = num(raw.hours);
+  // Hours a week, not a year's total: said by the heading, or a number no year's course could be.
+  if (course.hours) {
+    const h = raw.hoursHeader ?? '';
+    const weekly = /per\s*w(?:ee)?k|\/\s*w(?:ee)?k|weekly|\bhpw\b|semanal|por\s+semana|\bh\s*\/\s*sem|hebdo|par\s+semaine|pro\s+woche|wochenstunden|periods?\s+per\s+week|intensidad\s+horaria|^\s*i\.?\s*h\.?\s*$/i.test(h);
+    const total = /total|anual|annual|per\s+year|por\s+a[ñn]o|carga\s+hor[áa]ria|semestr|semester/i.test(h);
+    if (weekly || (!total && course.hours.value <= 12)) course.hoursPerWeek = true;
+  }
   if (raw.qualifier && raw.qualifier.text.trim()) course.qualifier = raw.qualifier.text.trim();
   // The course's own period label (a matrix column, a heading over its table) comes first, then its report's header.
   // A term column ("1er Lapso") carries no level or year of its own; the heading over its table ("4to año, 2024-2025") does.
@@ -293,6 +306,14 @@ function toCourse(raw: RawCourse, i: number, ctx: { profile?: SystemProfile; hea
   course.level = lv.level ?? around.level ?? ctx.header.level;
   course.term = lv.term ?? termOf(raw.period);
   course.academicYear = academicYear(raw.period) ?? (raw.context ? academicYear(raw.context) : undefined) ?? ctx.header.year;
+  // Now the level is known, the English name follows the course the name means at that level.
+  if (course.level != null) {
+    const atLevel = ctx.match(original, course.level);
+    if (atLevel.en && atLevel.en !== look.en) {
+      course.name.value = atLevel.en;
+      course.translation = atLevel.translation;
+    }
+  }
   return course;
 }
 

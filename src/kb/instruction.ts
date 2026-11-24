@@ -100,6 +100,12 @@ export const INSTRUCTION = {
   pa: entry(['es'], 'by-school', 'Education in Panama is given in the official language, Spanish (Constitution Arts. 7 and 100).', CONST('Panama', 'Panama_2004')),
   cu: entry(['es'], 'no', 'Spanish is the official language of Cuba (Constitution Art. 2).', CONST('Cuba', 'Cuba_2019')),
   pr: entry([], 'unknown', 'Many private schools in Puerto Rico teach in English; the source does not say which language public schools use, so it is not known from the system. Check the record or ask the school.', src('Scholaro: Education System in Puerto Rico', 'https://www.scholaro.com/db/Countries/Puerto-Rico/Education-System')),
+  ke: entry(
+    ['en'], 'no',
+    'Kenyan schools teach in English from grade 4 (Standard 4) onward, through secondary school; the language of the school’s catchment area is used in grades 1–3, and Kiswahili is taught as a subject.',
+    src('UNICEF Eastern and Southern Africa (2016): The impact of language policy and practice on children’s learning, Country Review: Kenya', 'https://www.unicef.org/esa/sites/unicef.org.esa/files/2018-09/UNICEF-2016-Language-and-Learning-Kenya.pdf'),
+    [src('Kibabii University repository: Language of Instruction under the Competency-based Curriculum of Kenya: Policy, Practice and Performance', 'https://erepository.kibu.ac.ke/items/58144c7a-927b-4826-b552-3004ec83120d')],
+  ),
   sn: entry(['fr'], 'by-school', 'French is the official language of Senegal (Constitution Art. 1).', CONST('Senegal', 'Senegal_2016')),
   generic: entry([], 'unknown', 'The education system was not recognised, so the language of instruction is not known from it.', src('evalua: no profile for this system', 'https://evalua-5ly.pages.dev/#/reference')),
 } satisfies Record<string, InstructionLanguage>;

@@ -23,6 +23,7 @@ const KY_EL_MISID: SourceInfo = { title: 'KDE: Addressing the Misidentification 
 // What JCPS counselors who evaluate international transcripts accept in practice. Not published; the counselor's name is
 // kept out of the repository.
 const COUNSELORS: SourceInfo = { title: 'JCPS counselor guidance on international transcripts (email to the evalua project, 18 November 2026)' };
+const WORKSHEETS: SourceInfo = { title: 'JCPS counselors’ Foreign Transcript Evaluation and Summary of Educational Experience worksheets (examples given to the evalua project, November 2026)' };
 const KAR_307: SourceInfo = { title: '704 KAR 3:307, credit for students from non-accredited schools (as quoted in the JCPS handbook)', url: SPPG.url };
 
 const k = (code: string | undefined, title: string, requirement: string, concepts: string[], o: { levels?: number[]; credits?: number; keywords?: string[] } = {}): CatalogCourse => ({
@@ -167,6 +168,9 @@ export const jcps: DistrictProfile = {
   kind: 'district',
   creditsPerYearCourse: 1,
   hoursPerUnit: 120,
+  // The counselors’ worksheets: weekly hours over a 36-week year, 60 hours a half credit and 120 a full credit.
+  weeksPerYear: 36,
+  weeksSource: WORKSHEETS,
   creditStep: 0.5,
   // Not stated in the handbook: assumes a seven-period day.
   typicalCreditsPerYear: 7,

@@ -88,6 +88,13 @@ function baseUnits(
       reasons: [{ text: `${how} ÷ ${district.hoursPerUnit} hours per Carnegie unit = ${units.toFixed(2)} of a full-year course.`, source: source ?? CARNEGIE }],
     };
   };
+  if (c.hours && c.hours.value > 0 && c.hoursPerWeek) {
+    // Hours a week over the school year, for the part of the year this row covers.
+    const weeks = district.weeksPerYear ?? 36;
+    const total = c.hours.value * weeks * Math.min(1, share);
+    const part = share < 1 ? ` × ${r2(share)} of the year` : '';
+    return fromHours(total, `${c.hours.value} hour${c.hours.value === 1 ? '' : 's'} a week × ${weeks} weeks${part} = ${Math.round(total)} hours`, district.weeksSource);
+  }
   if (c.hours && c.hours.value > 0) return fromHours(c.hours.value, `${c.hours.value} hours of instruction`);
   if (c.credits && c.credits.value > 0 && profile?.credit.hoursPerCredit) {
     const hours = c.credits.value * profile.credit.hoursPerCredit;
@@ -140,7 +147,7 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
   const englishUnknown = new Set<string>();
   const instrSource = profile?.instruction.provenance.source;
   for (const c of included) {
-    const look = match(c.name.original ?? c.name.value);
+    const look = match(c.name.original ?? c.name.value, c.level);
     looks.set(c.id, look);
     let concept = overrides[c.id]?.conceptId ?? look.conceptId;
     const langArts = concept === 'ela.english' || concept === 'ela.efl' || concept === 'ela.literature';

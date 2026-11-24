@@ -104,6 +104,8 @@ interface CaseReport {
     gradeConfidence: number;
     hours?: number;
     usSubject: string;
+    /** The district course it counts as, when one is identified ("Algebra I"). */
+    usCourse: string;
     countsToward: string;
     credits: number;
     usLetter: string;
@@ -162,6 +164,7 @@ for (const c of cases) {
         gradeConfidence: course.grade.confidence,
         hours: course.hours?.value,
         usSubject: s?.conceptLabel ?? '',
+        usCourse: s?.usCourse?.title ?? s?.catalogTitle ?? '',
         countsToward: s?.requirementLabel ?? '',
         credits: s?.credits ?? 0,
         usLetter: s?.grade.letter ?? '',
@@ -309,7 +312,7 @@ function caseReport(r: CaseReport): string {
   md += `\n## Summary\n\n${r.courses.length} courses · ${r.totals.earned} of ${r.totals.required} credits · ${r.totals.toDecide} to decide · ${r.totals.doubts} with doubts · ${r.totals.gradeUnreadable} grades unreadable · ${r.totals.subjectNotRecognised} subjects not recognised\n`;
   if (r.courses.length) {
     md += `\n## Courses\n\n| # | Period | Level | Printed subject | English name | Grade | US subject | Counts toward | Credits | US letter | Conf. | Doubts |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n`;
-    for (const c of r.courses) md += `| ${c.n} | ${cell(c.period) || '—'}${c.term ? ` T${c.term}` : ''}${c.academicYear ? ` ${c.academicYear}` : ''} | ${c.level ?? '?'} | ${cell(c.printedSubject)} | ${cell(c.englishName)}${c.translation === 'none' ? '' : ` (${c.translation})`} | ${cell(c.grade) || '—'} (${pct(c.gradeConfidence)})${c.hours ? ` · ${c.hours} h` : ''} | ${cell(c.usSubject)} | ${cell(c.countsToward)}${c.needsReview ? ' (to decide)' : ''} | ${c.credits} | ${c.usLetter || '—'} | ${pct(c.confidence)} | ${c.doubts.join('; ')} |\n`;
+    for (const c of r.courses) md += `| ${c.n} | ${cell(c.period) || '—'}${c.term ? ` T${c.term}` : ''}${c.academicYear ? ` ${c.academicYear}` : ''} | ${c.level ?? '?'} | ${cell(c.printedSubject)} | ${cell(c.englishName)}${c.translation === 'none' ? '' : ` (${c.translation})`} | ${cell(c.grade) || '—'} (${pct(c.gradeConfidence)})${c.hours ? ` · ${c.hours} h` : ''} | ${cell(c.usSubject)}${c.usCourse ? ` (${cell(c.usCourse)})` : ''} | ${cell(c.countsToward)}${c.needsReview ? ' (to decide)' : ''} | ${c.credits} | ${c.usLetter || '—'} | ${pct(c.confidence)} | ${c.doubts.join('; ')} |\n`;
   }
   if (r.progress.length) {
     md += `\n## Toward the diploma\n\n| Requirement | Earned | Required |\n|---|---|---|\n`;
@@ -337,7 +340,7 @@ function caseReport(r: CaseReport): string {
       md += `| Worksheet line (as read) | evalua's course | evalua: US subject · counts toward · credits · letter |\n|---|---|---|\n`;
       for (const row of ws.rows) {
         const c = row.course ? r.courses.find((x) => x.n === row.course) : undefined;
-        md += `| ${cell(row.text)} | ${c ? `#${c.n} ${cell(c.printedSubject)} = ${cell(c.grade) || '—'}` : '—'} | ${c ? `${cell(c.usSubject)} · ${cell(c.countsToward)}${c.needsReview ? ' (to decide)' : ''} · ${c.credits} · ${c.usLetter || '—'}` : ''} |\n`;
+        md += `| ${cell(row.text)} | ${c ? `#${c.n} ${cell(c.printedSubject)} = ${cell(c.grade) || '—'}` : '—'} | ${c ? `${cell(c.usSubject)}${c.usCourse ? ` (${cell(c.usCourse)})` : ''} · ${cell(c.countsToward)}${c.needsReview ? ' (to decide)' : ''} · ${c.credits} · ${c.usLetter || '—'}` : ''} |\n`;
       }
     }
     if (ws.evaluaOnly.length) {
@@ -363,4 +366,4 @@ for (const r of reports) {
 writeFileSync(path.join(outDir, `${stem}.md`), md);
 console.log(`\n${reports.length} cases · ${all.length} courses · grade unreadable ${all.filter((c) => !c.grade).length} · subject not recognised ${all.filter((c) => c.doubts.includes('Subject not recognised')).length} · to decide ${all.filter((c) => c.needsReview).length}`);
 console.log(`wrote ${path.join(outDir, `${stem}.md`)} and .json`);
-if (args.includes('--rows')) for (const r of reports) for (const c of r.courses) console.log(`  ${r.case} #${c.n} [${c.period || '—'} L${c.level ?? '?'}] ${c.printedSubject} => ${c.grade || '—'} → ${c.usSubject} / ${c.countsToward} / ${c.credits} cr / ${c.usLetter || '—'}${c.doubts.length ? ` · ${c.doubts.join('; ')}` : ''}`);
+if (args.includes('--rows')) for (const r of reports) for (const c of r.courses) console.log(`  ${r.case} #${c.n} [${c.period || '—'} L${c.level ?? '?'}] ${c.printedSubject} => ${c.grade || '—'} → ${c.usSubject}${c.usCourse ? ` (${c.usCourse})` : ''} / ${c.countsToward} / ${c.credits} cr / ${c.usLetter || '—'}${c.doubts.length ? ` · ${c.doubts.join('; ')}` : ''}`);

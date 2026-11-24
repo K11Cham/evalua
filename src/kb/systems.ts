@@ -13,7 +13,7 @@ const WENR_WA: SourceInfo = { title: 'WES World Education News & Reviews: Ghana 
 
 const L = (labels: string[], us: USLetter, descriptor?: string): ScaleEntry => ({ labels, us, descriptor });
 const R = (min: number, max: number, us: USLetter, descriptor?: string): ScaleEntry => ({ min, max, us, descriptor });
-const course = (names: string[], en: string, concept: string): SystemCourse => ({ names, en, concept });
+const course = (names: string[], en: string, concept: string, levels?: [number, number]): SystemCourse => ({ names, en, concept, ...(levels ? { levels } : {}) });
 const d = (term: string, weight: number) => ({ term, weight });
 
 const WAEC_LABELS: ScaleEntry[] = [
@@ -413,7 +413,9 @@ const mx: SystemProfile = {
     { pattern: '\\b(primer|1er\\.?)\\s+(año|grado)\\s+(de\\s+)?(bachillerato|preparatoria)', level: 10 },
     { pattern: '\\b(segundo|2do\\.?)\\s+(año|grado)\\s+(de\\s+)?(bachillerato|preparatoria)', level: 11 },
     { pattern: '\\b(tercer|3er\\.?)\\s+(año|grado)\\s+(de\\s+)?(bachillerato|preparatoria)', level: 12 },
-    { pattern: '\\b(tercer|tercero|3er\\.?)\\s+(año|grado)\\s+(de\\s+)?secundaria', level: 9 },
+    { pattern: '\\b(primer|primero|1er\\.?|1\\s*[°ºo]?)\\s*(año|grado)\\s+(de\\s+)?(educaci[óo]n\\s+)?secundaria', level: 7 },
+    { pattern: '\\b(segundo|2do\\.?|2\\s*[°ºo]?)\\s*(año|grado)\\s+(de\\s+)?(educaci[óo]n\\s+)?secundaria', level: 8 },
+    { pattern: '\\b(tercer|tercero|3er\\.?|3\\s*[°ºo]?)\\s*(año|grado)\\s+(de\\s+)?(educaci[óo]n\\s+)?secundaria', level: 9 },
     // English translations of the certificate print the semesters in English.
     { pattern: '\\b(first|1st|second|2nd)\\s+semester', level: 10 },
     { pattern: '\\b(third|3rd|fourth|4th)\\s+semester', level: 11 },
@@ -430,10 +432,26 @@ const mx: SystemProfile = {
     provenance: prov('Dirección General del Bachillerato (SEP): plan de estudios', 'https://dgb.sep.gob.mx'),
   },
   courses: [
-    course(['Matemáticas I'], 'Mathematics I (Algebra)', 'math.algebra1'),
-    course(['Matemáticas II'], 'Mathematics II (Geometry and Trigonometry)', 'math.geometry'),
-    course(['Matemáticas III'], 'Mathematics III (Analytic Geometry)', 'math.algebra2'),
-    course(['Matemáticas IV'], 'Mathematics IV (Functions)', 'math.precalc'),
+    // Bachillerato (US grades 10–12).
+    course(['Matemáticas I'], 'Mathematics I (Algebra)', 'math.algebra1', [10, 12]),
+    course(['Matemáticas II'], 'Mathematics II (Geometry and Trigonometry)', 'math.geometry', [10, 12]),
+    course(['Matemáticas III'], 'Mathematics III (Analytic Geometry)', 'math.algebra2', [10, 12]),
+    course(['Matemáticas IV'], 'Mathematics IV (Functions)', 'math.precalc', [10, 12]),
+    // Secundaria (grades 1–3, US grades 7–9), SEP Plan de Estudios 2011: the same names are the middle-school sequence,
+    // and each year's science course has its emphasis (Ciencias I biology, II physics, III chemistry).
+    course(['Matemáticas I', 'Matemáticas II', 'Matemáticas III', 'Matemáticas'], 'Mathematics', 'math.general', [7, 9]),
+    course(['Español I', 'Español II', 'Español III', 'Español'], 'Spanish', 'wl.native', [7, 9]),
+    course(['Ciencias I', 'Ciencias I (énfasis en Biología)'], 'Science I (emphasis on Biology)', 'sci.biology', [7, 9]),
+    course(['Ciencias II', 'Ciencias II (énfasis en Física)'], 'Science II (emphasis on Physics)', 'sci.physics', [7, 9]),
+    course(['Ciencias III', 'Ciencias III (énfasis en Química)'], 'Science III (emphasis on Chemistry)', 'sci.chemistry', [7, 9]),
+    course(['Historia I'], 'History I (world history)', 'ss.history.world', [7, 9]),
+    course(['Historia II'], 'History II (history of Mexico)', 'ss.history.national', [7, 9]),
+    course(['Segunda Lengua: Inglés', 'Segunda Lengua: Inglés I', 'Segunda Lengua: Inglés II', 'Segunda Lengua: Inglés III', 'Segunda Lengua Inglés'], 'Second Language: English', 'ela.efl'),
+    course(['Formación Cívica y Ética', 'Formación Cívica y Ética I', 'Formación Cívica y Ética II'], 'Civic and Ethical Education', 'ss.civics'),
+    course(['Tecnología', 'Tecnología I', 'Tecnología II', 'Tecnología III'], 'Technology', 'cte.technology'),
+    course(['Educación Física', 'Educación Física I', 'Educación Física II', 'Educación Física III'], 'Physical Education', 'pe'),
+    course(['Artes', 'Artes I', 'Artes II', 'Artes III'], 'Arts', 'arts.visual'),
+    course(['Asignatura Estatal'], 'State-defined subject', 'elective.other'),
     course(['Taller de Lectura y Redacción'], 'Reading and Writing Workshop', 'wl.native'),
     course(['Literatura'], 'Literature', 'wl.native'),
     course(['Inglés', 'Lengua Adicional al Español', 'Lengua Extranjera'], 'English', 'ela.efl'),
@@ -616,6 +634,10 @@ const ph: SystemProfile = {
     course(['MAPEH', 'Music, Arts, Physical Education and Health'], 'Music, Arts, Physical Education and Health', 'pe'),
     course(['Edukasyon sa Pagpapakatao', 'EsP', 'Values Education'], 'Values Education', 'ss.religion'),
     course(['Technology and Livelihood Education', 'TLE'], 'Technology and Livelihood Education', 'cte.technology'),
+    // The English subject of the 2002 Basic Education Curriculum, still on records of students who started before K to 12.
+    course(['Communication Arts and Skills Through Philippine Literature', 'Communication Arts and Skills Through Literature', 'Comm. Arts & Skills Through Literature', 'Communication Arts'], 'English (Communication Arts)', 'ela.english'),
+    course(['Speech and Oral Communication', 'Speech & Oral Communication'], 'Speech and Oral Communication', 'ela.english'),
+    course(['Christian Living Education', 'Christian Living', 'CLE'], 'Christian Living Education', 'ss.religion'),
     course(['Understanding Culture, Society and Politics'], 'Understanding Culture, Society and Politics', 'ss.social'),
     course(['Personal Development'], 'Personal Development', 'health'),
     course(['Empowerment Technologies'], 'Empowerment Technologies', 'cs'),
@@ -629,6 +651,54 @@ const ph: SystemProfile = {
   ],
   documentation: [{ title: 'Department of Education, Philippines', url: 'https://www.deped.gov.ph' }],
   provenance: PH_SRC,
+};
+
+const KE_SRC = scholaro('Kenya', 'Kenya');
+const ke: SystemProfile = {
+  id: 'ke',
+  instruction: INSTRUCTION['ke'],
+  name: 'Kenya: secondary school (Form 1–4, KCSE)',
+  countries: ['Kenya'],
+  languages: ['en', 'sw'],
+  summary:
+    'Secondary school is four years after eight years of primary school (Scholaro: “After 4 years of study they write their Kenya Certificate of Secondary Education examination”), so Form 1–4 match US grades 9–12. Report forms give marks out of 100 with KCSE letter grades from A to E.',
+  detect: [d('republic of kenya', 10), d('kenya', 6), d('kcse', 8), d('kenya certificate of secondary education', 12), d('knec', 8), d('kenya national examinations council', 10), d('kiswahili', 6), d('history and government', 5), d('history & government', 5), d('christian religious education', 4), d('islamic religious education', 4), d('nairobi', 3), d('mombasa', 3), d('kisumu', 3), d('nakuru', 3), d('eldoret', 3)],
+  dateOrder: 'dmy',
+  levels: [
+    { pattern: '\\bform\\s*(?:1|one|i)\\b', level: 9 },
+    { pattern: '\\bform\\s*(?:2|two|ii)\\b', level: 10 },
+    { pattern: '\\bform\\s*(?:3|three|iii)\\b', level: 11 },
+    { pattern: '\\bform\\s*(?:4|four|iv)\\b', level: 12 },
+  ],
+  scales: [
+    {
+      id: 'ke-100', label: 'Kenya marks out of 100 → US letter (Scholaro, KCSE)', kind: 'numeric', domain: [0, 100], requiresAbove: 12, passing: '30 (D−)',
+      entries: [R(75, 100, 'A', 'A (80–100), A− (75–79)'), R(60, 74.99, 'B', 'B+ (70–74), B (65–69), B− (60–64)'), R(45, 59.99, 'C', 'C+ (55–59), C (50–54), C− (45–49)'), R(30, 44.99, 'D', 'D+ (40–44), D (35–39), D− (30–34)'), R(0, 29.99, 'F', 'E (0–29)')],
+      provenance: KE_SRC,
+      note: 'Scholaro gives a US grade with a plus or minus for each KCSE grade; evalua keeps the letter.',
+    },
+    {
+      id: 'ke-letters', label: 'Kenya KCSE letter grades → US letter (Scholaro, KCSE)', kind: 'labels',
+      entries: [L(['A', 'A-'], 'A'), L(['B+', 'B', 'B-'], 'B'), L(['C+', 'C', 'C-'], 'C'), L(['D+', 'D', 'D-'], 'D'), L(['E'], 'F')],
+      provenance: KE_SRC,
+    },
+  ],
+  credit: { note: 'One full-year subject is one course; hours are used when the record prints them.', provenance: KE_SRC },
+  courses: [
+    course(['English'], 'English', 'ela.english'),
+    course(['Kiswahili', 'Swahili'], 'Kiswahili', 'wl.other'),
+    course(['History and Government', 'History & Government', 'History & Govt', 'Hist & Govt', 'History and Govt'], 'History and Government', 'ss.social'),
+    course(['Christian Religious Education', 'CRE', 'C.R.E'], 'Christian Religious Education', 'ss.religion'),
+    course(['Islamic Religious Education', 'IRE', 'I.R.E'], 'Islamic Religious Education', 'ss.religion'),
+    course(['Hindu Religious Education', 'HRE', 'H.R.E'], 'Hindu Religious Education', 'ss.religion'),
+    course(['Business Studies'], 'Business Studies', 'cte.business'),
+    course(['Agriculture'], 'Agriculture', 'cte.agriculture'),
+    course(['Home Science'], 'Home Science', 'cte.home'),
+    course(['Computer Studies'], 'Computer Studies', 'cs'),
+    course(['Art and Design', 'Art & Design'], 'Art and Design', 'arts.visual'),
+  ],
+  documentation: [{ title: 'Scholaro: Education System in Kenya', url: 'https://www.scholaro.com/db/Countries/Kenya/Education-System' }],
+  provenance: KE_SRC,
 };
 
 const BR_SRC = scholaro('Brazil', 'Brazil');
@@ -1008,5 +1078,5 @@ waec.sequences = [
   },
 ];
 
-export const systems: SystemProfile[] = [waec, gabece, jamb, ib, uk, inCbse, inCisce, cn, mx, fr, de, ph, br, kr, vn, ru, eg, ...latamSystems, sn, generic];
+export const systems: SystemProfile[] = [waec, gabece, jamb, ib, uk, inCbse, inCisce, cn, mx, fr, de, ph, ke, br, kr, vn, ru, eg, ...latamSystems, sn, generic];
 export type { GradeScale };

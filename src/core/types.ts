@@ -78,6 +78,8 @@ export interface ExtractedCourse {
   maxMark?: Field<number>;
   credits?: Field<number>;
   hours?: Field<number>;
+  /** The hours are a week's ("Hrs per wk", "Intensidad horaria", or a number too small for a year's total). */
+  hoursPerWeek?: boolean;
   /** Period label as printed ("PRIMER SEMESTRE", "SS 2", "高二上"). */
   period: Field<string>;
   /** US grade-level equivalent (9–12), when it can be determined. */
@@ -227,6 +229,8 @@ export interface SystemCourse {
   names: string[];
   en: string;
   concept: string;
+  /** The US grades at which the name means this course, when it means another course at other levels. */
+  levels?: [number, number];
 }
 
 export interface Calendar {
@@ -377,6 +381,10 @@ export interface DistrictProfile {
   creditsPerYearCourse: number;
   /** Hours of instruction per Carnegie unit used for hour conversion. */
   hoursPerUnit: number;
+  /** Weeks in the school year, for hours printed per week (36 when not given). */
+  weeksPerYear?: number;
+  /** Where the weeks per year come from. */
+  weeksSource?: SourceInfo;
   /** Credits a full-time student normally earns in one year (used to flag over-awards). */
   typicalCreditsPerYear: number;
   /** Smallest part of a full-year course the district awards, as a fraction of it (0.5 = one semester). */

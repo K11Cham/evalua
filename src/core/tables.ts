@@ -30,6 +30,8 @@ export interface RawCourse {
   max?: Cell;
   credits?: Cell;
   hours?: Cell;
+  /** The hours column's heading ("Hrs per wk", "Carga horária"), which says what the hours count. */
+  hoursHeader?: string;
   qualifier?: Cell;
   /** A remark or interpretation cell ("Excellent", "Very Good"). */
   remark?: Cell;
@@ -544,6 +546,8 @@ function coursesFromGroup(cols: HCol[], idx: number[], grid: (Cell | undefined)[
       course.max = first(['max']);
       course.credits = first(['credits']);
       course.hours = first(['hours']);
+      const hi = byRole(['hours'])[0];
+      if (hi != null) course.hoursHeader = cols[hi].text;
       course.qualifier = first(['qualifier']);
       course.words = first(['words']);
       course.remark = first(['remark']);
