@@ -25,6 +25,11 @@ export interface SystemGuess {
 /** Scores every system profile by its weighted keywords found in the document text. */
 export function detectSystem(text: string, systems: SystemProfile[]): SystemGuess {
   const k = ` ${key(text)} `;
+  // OCR runs words together ("MÉXICOCON", "NAIROBIKenya"): long terms are also looked for with the spaces taken out.
+  const compact = k.replace(/ /g, '');
+  // Only phrases and long words: a short word ("meduca") turns up inside others ("MinisterioMEducación").
+  const longEnough = (t: string, country: boolean) => /^[a-z ]+$/.test(t) && (country ? t.length >= 6 : t.includes(' ') ? t.replace(/ /g, '').length >= 8 : t.length >= 8);
+  const has = (t: string, country = false) => k.includes(` ${t} `) || (longEnough(t, country) && compact.includes(t.replace(/ /g, '')));
   const scored = systems
     .filter((s) => s.id !== 'generic')
     .map((s) => {
@@ -32,13 +37,13 @@ export function detectSystem(text: string, systems: SystemProfile[]): SystemGues
       for (const d of s.detect) {
         const t = key(d.term);
         if (!t) continue;
-        const hit = /[a-z]/.test(t) ? k.includes(` ${t} `) : k.includes(t);
+        const hit = /[a-z]/.test(t) ? has(t) : k.includes(t);
         if (hit) score += d.weight;
       }
       // The country named on the record ("Country: México" on a typed table, "República de Panamá" on a letterhead)
       // counts for that country's system, once: on its own only when no other system serves that country (India has
       // two boards, and state boards besides), otherwise only beside a term of the system's own.
-      const named = s.countries.filter((c) => (COUNTRY_WORDS[c] ?? []).some((w) => k.includes(` ${key(w)} `)));
+      const named = s.countries.filter((c) => (COUNTRY_WORDS[c] ?? []).some((w) => has(key(w), true)));
       const sole = named.some((c) => systems.filter((x) => x.countries.includes(c)).length === 1);
       if (named.length && (sole || score > 0)) score += 5;
       return { s, score };

@@ -2,6 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { runExtraction } from '../src/core/pipeline.ts';
 import { docxHtmlToDoc } from '../src/ingest/docx.ts';
+import { splitCells } from '../src/ingest/ocrTokens.ts';
 import { kb } from './helpers.ts';
 
 const t = (head: string[], rows: string[][]) => `<table><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr>${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;
@@ -108,6 +109,55 @@ describe('a certificate with one year printed over several column sets', () => {
       ['Geografía Física', '3.4', 3, 10],
       ['Historia Moderna', '3.7', 3, 10],
       ['Física', '3.1', 4, 10],
+    ]);
+  });
+});
+
+// OCR-shaped fictitious records: positions in % of a 1970 px page.
+const ocrDoc = (lines: [number, [number, string, number?][]][], h = 40) => {
+  const W = 1970;
+  return {
+    kind: 'ocr' as const,
+    pages: [{ width: W, height: 2600 }],
+    tokens: lines.flatMap(([y, cells]) => cells.flatMap(([x, text, w]) => splitCells({ text, page: 0, x: (x / 100) * W, y, w: w ? (w / 100) * W : text.length * 11, h, conf: 0.95 }))),
+    engine: 'test',
+    warnings: [],
+  };
+};
+
+describe('years printed under the hours and grade headings', () => {
+  it('gives each year its own hours and grade, not the hours as the grade', () => {
+    const r = runExtraction(ocrDoc([
+      [52, [[34, 'REPÚBLICA DE PANAMÁ']]],
+      [102, [[32, 'MINISTERIO DE EDUCACIÓN']]],
+      [736, [[16, 'Periodo Escolar'], [36, '2021'], [44, 'Rev.'], [53, '2022'], [61, 'Rev.'], [69, '2023'], [78, 'Rev.']]],
+      [779, [[33, 'Hras'], [39, 'Calif.'], [50, 'Hras'], [55, 'Calif.'], [67, 'Hras'], [72, 'Calif.']]],
+      [824, [[15, 'asignaturas'], [34, '7° grado'], [51, '8° grado'], [68, '9° grado']]],
+      [912, [[15, 'Español'], [34, '5'], [39, '4.1'], [51, '5'], [56, '3.8'], [68, '5'], [73, '3.2']]],
+      [955, [[15, 'Matemática'], [34, '5'], [39, '3.1'], [51, '5'], [56, '3.9'], [68, '5'], [73, '4.2']]],
+    ]), kb);
+    expect(r.courses.map((c) => [c.name.original, c.grade.value, c.hours?.value, c.level])).toEqual([
+      ['Español', '4.1', 5, 7], ['Español', '3.8', 5, 8], ['Español', '3.2', 5, 9],
+      ['Matemática', '3.1', 5, 7], ['Matemática', '3.9', 5, 8], ['Matemática', '4.2', 5, 9],
+    ]);
+  });
+});
+
+describe('a two-up permanent record with quarter columns', () => {
+  it('reads each half’s final grade at that half’s grade level', () => {
+    const r = runExtraction(ocrDoc([
+      [40, [[41, 'Republic of the Philippines']]],
+      [86, [[42, 'Department of Education']]],
+      [286, [[6, 'Classified As: GRADE 7'], [21, 'School Year: S.Y. 2014-2015'], [48, 'Classified As: GRADE 8'], [65, 'School Year: S.Y. 2015-2016']]],
+      [449, [[5, 'SubjeCts'], [23, 'CLASS STANDING', 12], [41, 'ACTION'], [52, 'Subjects'], [69, 'LASS STANDING', 12], [84, 'UNIT'], [88, 'ACTION']]],
+      [477, [[18, '1ST2ND 3RD 4THFINAL', 18], [38, 'UNIT'], [41, 'TAKEN'], [65, '15T'], [69, '2ND 3RD |4TH FINAL', 13], [88, 'TAKEN']]],
+      [509, [[1, 'FILIPINO'], [18, '80.00'], [22, '82.00'], [26, '84.00'], [30, '86.00'], [34, '83.00'], [38, '1'], [41, 'Promoted'], [47, 'FILIPINO'], [64, '81.0083.00!'], [72, '85.00'], [76, '87.00'], [80, '84.00'], [85, '1'], [87, 'Promoted']]],
+      [538, [[1, 'ENGLISH'], [18, '90.00'], [23, '88,00'], [25, '86.00'], [29, '84.00'], [34, '87.00'], [38, '1'], [41, 'Promoted'], [47, 'ENGLISH'], [64, '79.0081.00'], [72, '83.00'], [75, '85.00'], [80, '82.00'], [84, '1'], [87, 'Promoted']]],
+      [628, [[1, 'MATHEMATICS'], [19, '75.0077.00 79.0081.00'], [34, '78.00'], [39, '1'], [41, 'Promoted'], [47, 'MATHEMATICS'], [64, '82.0084.0086.0088.00 85.00'], [84, '1'], [87, 'Promoted']]],
+    ], 24), kb);
+    expect(r.courses.map((c) => [c.name.original, c.grade.value, c.level])).toEqual([
+      ['FILIPINO', '83.00', 7], ['ENGLISH', '87.00', 7], ['MATHEMATICS', '78.00', 7],
+      ['FILIPINO', '84.00', 8], ['ENGLISH', '82.00', 8], ['MATHEMATICS', '85.00', 8],
     ]);
   });
 });

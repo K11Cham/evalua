@@ -635,7 +635,7 @@ const ph: SystemProfile = {
     course(['Edukasyon sa Pagpapakatao', 'EsP', 'Values Education'], 'Values Education', 'ss.religion'),
     course(['Technology and Livelihood Education', 'TLE'], 'Technology and Livelihood Education', 'cte.technology'),
     // The English subject of the 2002 Basic Education Curriculum, still on records of students who started before K to 12.
-    course(['Communication Arts and Skills Through Philippine Literature', 'Communication Arts and Skills Through Literature', 'Comm. Arts & Skills Through Literature', 'Communication Arts'], 'English (Communication Arts)', 'ela.english'),
+    course(['Communication Arts and Skills Through Philippine Literature', 'Communication Arts and Skills Through Literature', 'Comm. Arts & Skills Through Literature', 'Communication Arts', 'Communication Arts and Skills Through', 'Comm. Arts & Skills Through', 'Comm Arts & Skills Through'], 'English (Communication Arts)', 'ela.english'),
     course(['Speech and Oral Communication', 'Speech & Oral Communication'], 'Speech and Oral Communication', 'ela.english'),
     course(['Christian Living Education', 'Christian Living', 'CLE'], 'Christian Living Education', 'ss.religion'),
     course(['Understanding Culture, Society and Politics'], 'Understanding Culture, Society and Politics', 'ss.social'),

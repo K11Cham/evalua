@@ -99,12 +99,17 @@ interface Band {
 
 function buildColumns(bandRows: Row[]): HCol[] {
   // Parent cells: period labels in a row that has role-bearing rows beneath it.
-  const lastRoleRow = bandRows.map((r) => r.cells.filter((c) => headerRole(c.text)).length >= 2).lastIndexOf(true);
+  // A row of grade labels ("7° grado | 8° grado") is periods, not the row of column roles.
+  const lastRoleRow = bandRows.map((r) => r.cells.filter((c) => { const role = headerRole(c.text); return role && role !== 'year'; }).length >= 2).lastIndexOf(true);
   const parents: Cell[] = [];
   const leaves: { cell: Cell; rowIdx: number }[] = [];
+  // A period printed below the role row ("Hras | Calif." over "7° grado | 8° grado") heads the columns above it just
+  // the same, when that row holds only the subject heading and period labels.
+  const periodCell = (c: Cell) => isPeriodLabel(c.text) && (!headerRole(c.text) || headerRole(c.text) === 'year');
+  const periodRow = (r: Row) => r.cells.filter(periodCell).length >= 2 && r.cells.every((c) => periodCell(c) || headerRole(c.text) === 'name');
   bandRows.forEach((r, i) => {
     for (const c of r.cells) {
-      if (i < lastRoleRow && isPeriodLabel(c.text) && !headerRole(c.text)) parents.push(c);
+      if ((i < lastRoleRow && isPeriodLabel(c.text) && !headerRole(c.text)) || (lastRoleRow >= 0 && i > lastRoleRow && periodRow(r) && periodCell(c))) parents.push(c);
       else leaves.push({ cell: c, rowIdx: i });
     }
   });
@@ -167,15 +172,16 @@ function findBands(rows: Row[]): Band[] {
     let start = i;
     // Absorb wrapped header fragments directly above / below (e.g. "SEM FINAL" over "GRADE").
     const anchor = rows.slice(i, end + 1).flatMap((r) => r.cells);
+    const headingLike = (c: Cell) => c.text.length <= 40 && !/[:：]/.test(c.text) && !labelWithoutColon(c.text) && !isPeriodLabel(c.text) && !/\d{3,}/.test(c.text);
+    const under = (c: Cell) => anchor.some((a) => overlap(a.x, a.x + a.w, c.x, c.x + c.w) > 0.3 * Math.min(a.w, c.w));
     const fits = (r: Row, ref: Row) =>
       r.page === ref.page &&
       Math.abs(r.y - ref.y) < ref.h * 1.7 &&
       !isDataRow(r) &&
-      r.cells.every(
-        (c) =>
-          c.text.length <= 40 && !/[:：]/.test(c.text) && !labelWithoutColon(c.text) && !isPeriodLabel(c.text) && !/\d{3,}/.test(c.text) &&
-          anchor.some((a) => overlap(a.x, a.x + a.w, c.x, c.x + c.w) > 0.3 * Math.min(a.w, c.w)),
-      );
+      r.cells.every(headingLike) &&
+      // Every cell under a heading above, or (a sub-heading row read with a misread label, "15T" for "1ST") most of
+      // them, when at least two name a column's role.
+      (r.cells.every(under) || (r.cells.filter(under).length >= r.cells.length * 0.6 && r.cells.filter((c) => headerRole(c.text) || headingRoles(c.text).length).length >= 2));
     // Lines closer together than one line height belong to the same multi-line header cell row.
     // A subject line ("Philosophy 9 NINE 6") right under a wrapped heading is the first row of the body, not more heading.
     const tight = (r: Row, ref: Row) => r.page === ref.page && Math.abs(r.y - ref.y) < Math.min(r.h, ref.h) * 0.8 && !isDataRow(r) && r.cells.every((c) => c.text.length <= 60 && !/[:：]\s*\S/.test(c.text));
@@ -270,7 +276,8 @@ export function dataColumns(body: Row[]): { x0: number; x1: number }[] {
 /** The roles a heading names, in order: "CALIF.LETRA CRÉDITOS" → grade, words, credits. */
 function headingRoles(text: string): { role: ColRole; text: string }[] {
   // Two headings OCR read as one word ("CalifHrs.") are split where a small letter meets a capital.
-  const words = text.replace(/(\p{Ll})(\p{Lu})/gu, '$1 $2').split(/[\s.·/|]+/).filter(Boolean);
+  // Ordinals run together ("1ST2ND 3RD 4THFINAL") are split after each ordinal ending.
+  const words = text.replace(/(\p{Ll})(\p{Lu})/gu, '$1 $2').replace(/(\d(?:st|nd|rd|th))(?=[\p{L}\d])/giu, '$1 ').split(/[\s.·/|]+/).filter(Boolean);
   const out: { role: ColRole; text: string }[] = [];
   // Shortest match first: a longer span would also "contain" the role of its last word.
   for (let i = 0; i < words.length; ) {
@@ -284,10 +291,13 @@ function headingRoles(text: string): { role: ColRole; text: string }[] {
       i++;
       continue;
     }
-    if (out.length && out[out.length - 1].role === hit.role) out[out.length - 1].text += ` ${hit.text}`;
+    // Parts of the year ("1ST 2ND 3RD 4TH") are columns each; other repeats are one heading read in pieces.
+    if (out.length && out[out.length - 1].role === hit.role && hit.role !== 'component') out[out.length - 1].text += ` ${hit.text}`;
     else out.push({ role: hit.role, text: hit.text });
     i += hit.n;
   }
+  // A label over the parts ("CLASS STANDING 1ST 2ND 3RD 4TH FINAL") is not a column of its own.
+  if (out.length > 2 && out[0].role !== 'component' && out[0].role !== 'name' && out[1].role === 'component' && out[2].role === 'component') out.shift();
   return out;
 }
 
@@ -333,8 +343,9 @@ function splitMergedHeadings(cols: HCol[], body: Row[]): HCol[] {
     const under = body.map((r) => r.cells.filter((x) => x.x + x.w / 2 > Math.max(left, c.x0 - x.h) && x.x + x.w / 2 < Math.min(right, c.x1 + x.h)).sort((a, b) => a.x - b.x)).filter((cs) => cs.length);
     const k = roles.length;
     const even = under.filter((cs) => cs.length === k);
-    // Most rows must show one cell per named role, so the heading really is several columns.
-    if (even.length < 2 || even.length < under.length * 0.5) return void out.push(c);
+    // Enough rows must show one cell per named role, so the heading really is several columns (OCR glues a few rows'
+    // marks together, and lines past the table's end can sit under it too).
+    if (even.length < 2 || even.length < under.length * 0.4) return void out.push(c);
     roles.forEach((r, j) => {
       const x0 = Math.min(...even.map((cs) => cs[j].x));
       const x1 = Math.max(...even.map((cs) => cs[j].x + cs[j].w));
@@ -704,6 +715,9 @@ export function readTables(doc: DocTokens): TableResult {
         if (count) break;
         continue;
       }
+      // Two or more "label: value" fields on one line ("Classified As: GRADE 9 · School Year: …") are the next block's
+      // details, not a subject line: the table has ended.
+      if (count && r.cells.filter((c) => /^[^:：]{2,40}[:：]\s*\S/.test(c.text)).length >= 2) break;
       if (r.page === prev.page && count >= 2) {
         const pitch = pitches.length ? [...pitches].sort((a, b2) => a - b2)[Math.floor(pitches.length / 2)] : r.h * 1.5;
         const gap = r.y - prev.y;
@@ -776,7 +790,9 @@ export function readTables(doc: DocTokens): TableResult {
         const adjacent = hr.page === rows[band.start].page && rows[band.start].y - hr.y < Math.max(hr.h, rows[band.start].h) * 2.6;
         // "Class on Leaving: SS 3" describes the student, not this table.
         const aboutStudent = /^[^:：]{1,40}[:：]/.test(text) && STUDENT_CLASS.test(text.split(/[:：]/)[0]);
-        if (!aboutStudent && cells.length && cells.length <= 3 && text.length < 120 && isPeriodLabel(text) && (adjacent || !/[:：]\s*\S.*[:：]/.test(text))) {
+        // A table printed in halves side by side gives each half its own "Classified As: GRADE 7 · School Year: …" line.
+        const ownHalf = groupsIdx.length > 1 && cells.some((c) => isPeriodLabel(c.text));
+        if (!aboutStudent && cells.length && cells.length <= 3 && text.length < 120 && isPeriodLabel(text) && (adjacent || ownHalf || !/[:：]\s*\S.*[:：]/.test(text))) {
           found = { text, cell: cells[0] };
           break;
         }

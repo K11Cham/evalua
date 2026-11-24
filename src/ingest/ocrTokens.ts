@@ -51,8 +51,12 @@ export function unglueMarks(s: string): string[] | null {
  * ends in marks with a decimal point, or in two or more marks: "GRADE 7", "Days Present: 195" and "2013-2014" stay whole.
  */
 export function splitCells(t: Token): Token[] {
-  // A subject glued to its first mark: "TECNOLOGIA(3)10.0" → "TECNOLOGIA(3) 10.0".
-  const text = t.text.replace(/([\p{L})])(?=\d{1,3}[.,]\d)/gu, '$1 ');
+  // A subject glued to its first mark: "TECNOLOGIA(3)10.0" → "TECNOLOGIA(3) 10.0". A table rule read beside a mark
+  // ("85.00|81.00", "82.00!", "84.00l") is a space; positions stay the same, as one character stands for another.
+  const text = t.text
+    .replace(/([\p{L})])(?=\d{1,3}[.,]\d)/gu, '$1 ')
+    .replace(/(?<=\d[.,]\d{2})[!|lI](?=\d|\s|$)/g, ' ')
+    .replace(/(?<=^|\s)[!|lI](?=\d{1,3}[.,]\d{2})/g, ' ');
   const words: { s: string; at: number }[] = [];
   for (const m of text.matchAll(/\S+/g)) words.push({ s: m[0], at: m.index! });
   // The marks at the end of the text, each unglued.

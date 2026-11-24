@@ -25,7 +25,7 @@ const ROLE_TERMS: Record<Role, string[]> = {
   grade: [
     'grade', 'grades', 'calif', 'calificación', 'calificaciones', 'nota', 'notas', 'note', 'noten', 'moyenne élève', 'moyenne', 'note punkte', 'punkte',
     '成绩', '成績', '分数', '得分', '评定', '성취도', '성적', 'điểm', 'प्राप्तांक', 'درجة الطالب', 'الدرجة', 'درجة', 'التقدير', 'отметка', 'оценка',
-    'mark', 'marks', 'marks obtained', 'result', 'resultado', 'conceito', 'média', 'promedio', 'media', 'nilai', 'alama', 'not',
+    'mark', 'marks', 'marks obtained', 'result', 'resultado', 'class standing', 'conceito', 'média', 'promedio', 'media', 'nilai', 'alama', 'not',
     'valoración', 'cuantitativa', 'nota numérica', 'puntaje', 'calificación numérica', 'nota cuantitativa', 'moy',
   ],
   score: ['score', 'percentage', 'percent', '원점수', '원점수 과목평균', 'raw score', 'points', 'pontos', 'puntos', '百分制'],
@@ -37,7 +37,7 @@ const ROLE_TERMS: Record<Role, string[]> = {
     '期中', '期末', '平时', '중간', '기말', 'thường xuyên', 'giữa kỳ', 'cuối kỳ',
   ],
   credits: ['credits', 'credit', 'créditos', 'crédits', 'units', 'unit', 'unit value', '단위수', '이수단위', '학점', '学分', '學分', 'tín chỉ', 'кредиты', 'credit hours', 'ects', 'sks', 'kredit'],
-  hours: ['hours', 'horas', 'intensidad horaria', 'i h', 'ih', 'horas semanales', 'horas anuales', 'carga horária', 'carga horaria', 'c h', 'ch', 'heures', 'stunden', 'wochenstunden', '课时', '学时', '시수', 'số tiết', 'часы', 'hrs', 'periods', 'hours per week', 'h sem'],
+  hours: ['hours', 'horas', 'intensidad horaria', 'i h', 'ih', 'horas semanales', 'horas anuales', 'carga horária', 'carga horaria', 'c h', 'ch', 'heures', 'stunden', 'wochenstunden', '课时', '学时', '시수', 'số tiết', 'часы', 'hrs', 'hras', 'hrs sem', 'hras sem', 'periods', 'hours per week', 'h sem'],
   max: ['maximum marks', 'max marks', 'max', 'maximum', 'full marks', 'النهاية العظمى', 'الدرجة العظمى', 'पूर्णांक', 'out of', '满分', 'puntos posibles'],
   min: ['minimum', 'min marks', 'minimum marks', 'pass marks', 'pass mark', 'النهاية الصغرى', 'الدرجة الصغرى', 'न्यूनतम'],
   words: ['in words', 'total in words', 'letra', 'en letra', 'con letra', 'por extenso', 'en toutes lettres', 'in worten', 'en letras', 'literal', 'cualitativa', 'desempeño', 'juicio valorativo', 'nivel de desempeño', 'nivel de logro'],
@@ -46,7 +46,7 @@ const ROLE_TERMS: Record<Role, string[]> = {
   area: ['교과', 'area', 'área', 'campo disciplinar', 'domaine', 'aufgabenfeld', '领域', 'learning area group', 'subject group', 'group'],
   rank: ['rank', 'position', '석차등급', '석차', 'positional grade', 'class rank', 'xếp hạng', '名次', 'rang', 'classement', 'percentile'],
   remark: [
-    'remark', 'remarks', 'interpretation', 'observaciones', 'observações', 'appréciations', 'appréciation', 'action taken', 'comment', 'comments',
+    'remark', 'remarks', 'interpretation', 'observaciones', 'observações', 'appréciations', 'appréciation', 'action taken', 'action', 'comment', 'comments',
     'nhận xét', '评语', '备注', '비고', 'ملاحظات', 'примечание', 'bemerkung', 'bemerkungen', 'teacher', 'professeur', 'enseignant', 'signature', 'lehrer',
   ],
   year: ['curso', 'grado', 'año', 'ano', 'año escolar', 'año lectivo', 'nivel escolar', 'série', 'school year', 'grade level', 'year level', 'année', 'classe'],
@@ -74,6 +74,10 @@ export function headerRole(text: string): Role | null {
   if (/%/.test(text) && text.length <= 24 && !/class|classe|turma|grupo/i.test(text)) return 'score';
   const k = key(text);
   if (!k || k.length > 70) return null;
+  // A bare ordinal over a column ("1ST | 2ND | 3RD | 4TH" under "Class standing") is one part of the year. Only alone:
+  // "1st Semester" stays a period label.
+  // OCR often reads "1ST" as "15T", "IST" or "lST".
+  if (/^(1st|15t|ist|lst|2nd|3rd|4th|first|second|third|fourth)$/.test(k)) return 'component';
   // A year column is headed by the bare word ("Curso", "Año"); "1ª Série" or "Primer grado" heads a matrix column group.
   for (const { term, role } of TERM_INDEX) if (role === 'year' ? k === term : containsTerm(k, term)) return role;
   // OCR-tolerant fallback for longer terms.

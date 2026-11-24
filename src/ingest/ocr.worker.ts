@@ -5,7 +5,6 @@ import * as ort from 'onnxruntime-web';
 import { DetectionService, PaddleOcrService } from 'ppu-paddle-ocr/web';
 import { installBoxFilter, withDetectionSide } from './detectFix.ts';
 import { modelUrls, routeOcr, type OcrModelId, type OcrSegment } from './ocrModels.ts';
-import { FINE_SIDE } from './ocrRetry.ts';
 
 installBoxFilter(DetectionService as unknown as Parameters<typeof installBoxFilter>[0]);
 
@@ -16,8 +15,8 @@ export interface OcrRequest {
   id: number;
   image: ArrayBuffer;
   hint: OcrModelId | 'auto';
-  /** Find text at the page's full size (a second look at a page whose cells came back merged). */
-  fine?: boolean;
+  /** A second look at a page that read as text but not as a table (see ocrRetry.ts). */
+  look?: { side?: number; perBox?: boolean };
 }
 export type OcrResponse =
   | { id: number; ok: true; model: OcrModelId; tried: OcrModelId[]; lines: OcrSegment[][] }
@@ -25,7 +24,7 @@ export type OcrResponse =
   | { id: number; progress: string };
 
 interface Service {
-  recognize(image: ArrayBuffer, options?: { noCache?: boolean }): Promise<{ lines: OcrSegment[][] }>;
+  recognize(image: ArrayBuffer, options?: { noCache?: boolean; strategy?: string }): Promise<{ lines: OcrSegment[][] }>;
 }
 const services = new Map<OcrModelId, Promise<Service>>();
 
@@ -49,13 +48,13 @@ function service(id: OcrModelId, reqId: number): Promise<Service> {
 const post = (m: OcrResponse) => (self as unknown as DedicatedWorkerGlobalScope).postMessage(m);
 
 self.onmessage = async (e: MessageEvent<OcrRequest>) => {
-  const { id, image, hint, fine } = e.data;
+  const { id, image, hint, look } = e.data;
   try {
-    const routed = await withDetectionSide(fine ? FINE_SIDE : null, () => routeOcr(async (model) => {
+    const routed = await withDetectionSide(look?.side ?? null, () => routeOcr(async (model) => {
       const svc = await service(model, id);
       post({ id, progress: model === 'main' ? 'Reading the page…' : `Trying the ${model} model…` });
       // The library caches results by image: a second, closer look must not be answered from the first.
-      return (await svc.recognize(image.slice(0), fine ? { noCache: true } : undefined)).lines;
+      return (await svc.recognize(image.slice(0), look ? { noCache: true, ...(look.perBox ? { strategy: 'per-box' } : {}) } : undefined)).lines;
     }, hint));
     post({ id, ok: true, model: routed.model, tried: routed.tried, lines: routed.lines });
   } catch (err) {

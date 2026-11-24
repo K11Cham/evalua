@@ -5,7 +5,7 @@ import { docxHtmlToDoc } from './docx.ts';
 import { typedTextToDoc } from './typed.ts';
 import { OCR_MODELS, type OcrModelId } from './ocrModels.ts';
 import { segmentsToTokens } from './ocrTokens.ts';
-import { betterReading, worthLookingAgain } from './ocrRetry.ts';
+import { bestReading, SECOND_LOOKS, worthLookingAgain, type Look } from './ocrRetry.ts';
 import { greyStretch, hasColouredInk, maskBars, MAX_SIDE } from './prepare.ts';
 import { darkBoxes, hiddenItems, looksScanned, pdfItemsToTokens, type PdfTextItem } from './pdfText.ts';
 import type { OcrRequest, OcrResponse } from './ocr.worker.ts';
@@ -43,11 +43,11 @@ function ocrWorker(): Worker {
   return worker;
 }
 
-function ocr(image: ArrayBuffer, hint: OcrModelId | 'auto', progress: Progress, fine = false) {
+function ocr(image: ArrayBuffer, hint: OcrModelId | 'auto', progress: Progress, look?: Look) {
   return new Promise<Extract<OcrResponse, { ok: true }>>((resolve, reject) => {
     const id = ++seq;
     pending.set(id, { resolve, reject, progress });
-    const req: OcrRequest = { id, image, hint, fine };
+    const req: OcrRequest = { id, image, hint, look: look ? { side: look.side, perBox: look.perBox } : undefined };
     ocrWorker().postMessage(req, [image]);
   });
 }
@@ -88,9 +88,13 @@ async function ocrCanvas(canvas: HTMLCanvasElement, page: number, hint: OcrModel
   let read = { tokens: segmentsToTokens(res.lines, page), model: res.model };
   // Text but almost no table: look again with text found at the page's full size (see ocrRetry.ts).
   if (worthLookingAgain(read.tokens, info)) {
-    progress('Looking at the page again more closely…');
-    const again = await ocr(await png.arrayBuffer(), res.model, progress, true);
-    read = betterReading(read, { tokens: segmentsToTokens(again.lines, page), model: again.model }, info);
+    const readings = [read];
+    for (const [i, look] of SECOND_LOOKS.entries()) {
+      progress(`Looking at the page again more closely (${i + 1} of ${SECOND_LOOKS.length})…`);
+      const again = await ocr(await png.arrayBuffer(), res.model, progress, look);
+      readings.push({ tokens: segmentsToTokens(again.lines, page), model: again.model });
+    }
+    read = bestReading(readings, info);
   }
   return { tokens: read.tokens, info, model: read.model, bars };
 }
