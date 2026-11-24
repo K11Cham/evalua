@@ -310,6 +310,17 @@ export interface SystemProfile {
     aggregate?: { core: string[]; best: number; bestPossible: number; label: string };
     /** No US credit should be suggested (entrance tests). */
     noCredit?: boolean;
+    /**
+     * The national weekly timetable, for records that print no hours: what counselors look up in UNESCO-IBE's World
+     * Data on Education. Each row gives a subject's time a week, in hours or in periods of `periodMinutes`.
+     */
+    weeklyTime?: {
+      unit: 'hours' | 'periods';
+      periodMinutes?: number;
+      rows: { label: string; names?: string[]; concepts?: string[]; levels?: [number, number]; value: number }[];
+      note: string;
+      provenance: Provenance;
+    };
     note: string;
     provenance: Provenance;
   };

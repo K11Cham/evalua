@@ -10,7 +10,7 @@ import { planLadders, roundToStep, spans, type CoverageOptions } from './coverag
 import { buildMatcher } from './match.ts';
 import { periodKey } from './periods.ts';
 import { assessInstruction, LANGUAGE_LABEL } from './instruction.ts';
-import { parseNumber } from './text.ts';
+import { key, parseNumber } from './text.ts';
 import { courseFlags } from './verify.ts';
 import { usCourses } from '../kb/usCourses.ts';
 import type {
@@ -72,6 +72,7 @@ function baseUnits(
   district: DistrictProfile,
   letter: USLetter | null,
   share: number,
+  conceptId = '',
 ): { raw: number; reasons: Reason[]; review: boolean; zero?: string } {
   if (profile?.credit.noCredit) {
     return { raw: 0, review: false, zero: 'admission test', reasons: [{ text: `${profile.name} is an admission test, not coursework: no credit is suggested. ${profile.credit.note}`, source: profile.credit.provenance.source }] };
@@ -100,6 +101,20 @@ function baseUnits(
     const hours = c.credits.value * profile.credit.hoursPerCredit;
     return fromHours(hours, `${c.credits.value} ${profile.name} credits × ${profile.credit.hoursPerCredit} hours each = ${Math.round(hours)} hours`, profile.credit.provenance.source);
   }
+  // No hours or credits printed: the national weekly timetable, as counselors look it up in World Data on Education.
+  const wt = profile?.credit.weeklyTime;
+  const row = wt && !c.hours && !c.credits ? timetableRow(wt, c, conceptId) : undefined;
+  if (wt && row) {
+    const perWeek = wt.unit === 'periods' ? (row.value * (wt.periodMinutes ?? 60)) / 60 : row.value;
+    const weeks = district.weeksPerYear ?? 36;
+    const total = perWeek * weeks * Math.min(1, share);
+    const what = wt.unit === 'periods' ? `${row.value} periods of ${wt.periodMinutes} minutes (${r2(perWeek)} hours)` : `${row.value} hours`;
+    const part = share < 1 ? ` × ${r2(share)} of the year` : '';
+    return {
+      ...fromHours(total, `The record prints no hours. ${row.label} has ${what} a week in the national timetable; × ${weeks} weeks${part} = ${Math.round(total)} hours`, wt.provenance.source),
+      review: false,
+    };
+  }
   if (profile?.credit.examCourseYears && !c.period.value && !c.term) {
     return {
       raw: 1,
@@ -112,6 +127,22 @@ function baseUnits(
   }
   if (share < 1) return { raw: share, review: false, reasons: [] };
   return { raw: 1, review: false, reasons: [{ text: 'Full-year course (no hours are printed on the document).' }] };
+}
+
+/** The timetable row for a course: by its name first (the name with any course number), then by its US subject. */
+function timetableRow(wt: NonNullable<SystemProfile['credit']['weeklyTime']>, c: Extraction['courses'][number], conceptId: string) {
+  const inLevel = (r: { levels?: [number, number] }) => !r.levels || (c.level != null && c.level >= r.levels[0] && c.level <= r.levels[1]);
+  const name = ` ${key(c.name.original ?? c.name.value)} `;
+  // The longest name wins: "Educación Física" is physical education, not the "Física" of the science row.
+  let best: { row: (typeof wt.rows)[number]; len: number } | undefined;
+  for (const r of wt.rows) {
+    if (!inLevel(r)) continue;
+    for (const n of r.names ?? []) {
+      const k = key(n);
+      if (name.includes(` ${k} `) && (!best || k.length > best.len)) best = { row: r, len: k.length };
+    }
+  }
+  return best?.row ?? wt.rows.find((r) => inLevel(r) && (r.concepts ?? []).includes(conceptId));
 }
 
 /** A course name that is English itself, in the languages evalua reads. */
@@ -240,7 +271,7 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
       });
     }
     const sp = span.get(c.id)!;
-    const base = baseUnits(c, profile, district, grade.letter, sp.share);
+    const base = baseUnits(c, profile, district, grade.letter, sp.share, concept.id);
     const matchConf = ov.conceptId ? 1 : look.confidence;
     drafts.push({
       courseId: c.id, concept, req, reasons, grade,

@@ -97,3 +97,18 @@ describe('typed tables from the counselors’ examples', () => {
     expect(Math.round(math.reduce((a, s) => a + s.credits, 0) * 100) / 100).toBe(1);
   });
 });
+
+describe('the national weekly timetable when a record prints no hours (World Data on Education)', () => {
+  it('Mexican secundaria: periods of 50 minutes over 36 weeks, as the counselors’ worksheet', () => {
+    const r = read('Country: México\nClass: 3 grado de secundaria\nEspañol III: 7.7\nSegunda Lengua: Inglés III: 7.2\nMatemáticas III: 7.1\nHistoria II: 7.5\nTecnología III: 9.2\nEducación Física III: 10\nArtes III (Música): 9.1');
+    expect(r.rows.map((x) => [x.name, x.credits])).toEqual([
+      ['Español III', 1], ['Segunda Lengua: Inglés III', 0.5], ['Matemáticas III', 1], ['Historia II', 1],
+      ['Tecnología III', 0.5], ['Educación Física III', 0.5], ['Artes III (Música)', 0.5],
+    ]);
+  });
+  it('Kenya: hours a week by subject group, and a record’s own hours still win', () => {
+    const r = read('Country: Kenya\nClass: Form 3\nEnglish: 54\nGeography: 69\nArabic: 80');
+    expect(r.rows.map((x) => [x.name, x.credits])).toEqual([['English', 1], ['Geography', 0.5], ['Arabic', 0.5]]);
+    expect(read('Country: Kenya\nClass: Form 3\nSubject, Grade, Hours per week\nArabic, 80, 4').rows[0].credits).toBe(1);
+  });
+});

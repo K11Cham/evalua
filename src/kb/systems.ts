@@ -8,6 +8,7 @@ import type { GradeScale, Provenance, ScaleEntry, SourceInfo, SystemCourse, Syst
 const YEAR = '2026-27';
 const ADDED = '2026-11-15';
 const prov = (title: string, url?: string): Provenance => ({ source: { title, url }, schoolYear: YEAR, addedOn: ADDED });
+const WDE = (country: string, edition: string) => prov(`UNESCO-IBE, World Data on Education, ${edition}: ${country} (weekly lesson timetable)`, `https://webarchive.unesco.org/web/20160810124912/http://www.ibe.unesco.org/sites/default/files/${country}.pdf`);
 const scholaro = (country: string, slug: string) => prov(`Scholaro: Grading System in ${country}`, `https://www.scholaro.com/db/Countries/${slug}/Grading-System`);
 const WENR_WA: SourceInfo = { title: 'WES World Education News & Reviews: Ghana secondary education (BECE, WASSCE)', url: 'https://wenr.wes.org/country-profiles/secondary-sections/ghana-secondary-education/' };
 
@@ -428,6 +429,25 @@ const mx: SystemProfile = {
   ],
   credit: {
     hoursPerCredit: 8,
+    // Secundaria only; bachillerato records print credits.
+    weeklyTime: {
+      unit: 'periods', periodMinutes: 50,
+      rows: [
+        { label: 'Español', names: ['Español'], concepts: ['wl.native'], levels: [7, 9], value: 5 },
+        { label: 'Matemáticas', names: ['Matemáticas'], concepts: ['math.general', 'math.algebra1'], levels: [7, 9], value: 5 },
+        { label: 'Ciencias', names: ['Ciencias', 'Química', 'Física', 'Biología'], concepts: ['sci.biology', 'sci.physics', 'sci.chemistry', 'sci.integrated'], levels: [7, 9], value: 6 },
+        { label: 'Historia', names: ['Historia'], levels: [8, 9], value: 4 },
+        { label: 'Geografía de México y del mundo', names: ['Geografía'], levels: [7, 7], value: 5 },
+        { label: 'Formación cívica y ética', names: ['Formación Cívica y Ética', 'Formación Cívica'], levels: [8, 9], value: 4 },
+        { label: 'Lengua extranjera', names: ['Lengua Extranjera', 'Segunda Lengua', 'Inglés'], concepts: ['ela.efl'], levels: [7, 9], value: 3 },
+        { label: 'Artes', names: ['Artes', 'Música', 'Danza', 'Teatro'], concepts: ['arts.visual', 'arts.music', 'arts.performing'], levels: [7, 9], value: 2 },
+        { label: 'Educación física', names: ['Educación Física'], concepts: ['pe'], levels: [7, 9], value: 2 },
+        { label: 'Tecnología', names: ['Tecnología'], concepts: ['cte.technology', 'cs'], levels: [7, 9], value: 3 },
+        { label: 'Asignatura estatal', names: ['Asignatura Estatal'], levels: [7, 7], value: 3 },
+      ],
+      note: 'Secundaria: 35 periods of 50 minutes a week (SEP Plan de estudios 2006, as given by World Data on Education); the later plans keep the same weekly load for most subjects.',
+      provenance: WDE('Mexico', '7th edition, 2010/11'),
+    },
     note: 'Bachillerato General study plan: two credits per weekly class hour over a 16-week semester, so one credit is about 8 class hours (a 10-credit subject meets 5 hours a week).',
     provenance: prov('Dirección General del Bachillerato (SEP): plan de estudios', 'https://dgb.sep.gob.mx'),
   },
@@ -683,7 +703,28 @@ const ke: SystemProfile = {
       provenance: KE_SRC,
     },
   ],
-  credit: { note: 'One full-year subject is one course; hours are used when the record prints them.', provenance: KE_SRC },
+  credit: {
+    weeklyTime: {
+      unit: 'hours',
+      rows: [
+        { label: 'English', names: ['English'], concepts: ['ela.english'], value: 4.7 },
+        { label: 'Kiswahili', names: ['Kiswahili', 'Swahili'], value: 4.0 },
+        { label: 'Mathematics', names: ['Mathematics'], concepts: ['math.general', 'math.algebra1', 'math.algebra2', 'math.geometry'], value: 4.7 },
+        { label: 'Biological science', names: ['Biological Science'], value: 4.0 },
+        { label: 'Biology', names: ['Biology'], concepts: ['sci.biology'], value: 3.3 },
+        { label: 'Physics', names: ['Physics'], concepts: ['sci.physics'], value: 3.3 },
+        { label: 'Chemistry', names: ['Chemistry'], concepts: ['sci.chemistry'], value: 3.3 },
+        { label: 'Physical science (geography, history and government, social education and ethics)', names: ['Physical Science'], value: 2.0 },
+        { label: 'Geography, history and government, social education and ethics (religious education is a choice in the same group)', names: ['Geography', 'History', 'Social Education'], concepts: ['ss.geography', 'ss.social', 'ss.religion', 'ss.history.world', 'ss.history.national'], value: 2.0 },
+        { label: 'Applied subjects (home science, agriculture, computer studies…)', concepts: ['cte.home', 'cte.agriculture', 'cs', 'cte.technology'], value: 3.3 },
+        { label: 'Cultural subjects and business education (French, German, Arabic, music, art and design, business studies)', names: ['Business Studies', 'French', 'German', 'Arabic', 'Music', 'Art and Design'], concepts: ['cte.business', 'wl.other', 'arts.visual', 'arts.music'], value: 2.7 },
+      ],
+      note: 'Average hours a week per subject in the 2002 secondary curriculum revision (lessons of 40 minutes).',
+      provenance: WDE('Kenya', '7th edition, 2006/07 (updated 2010)'),
+    },
+    note: 'One full-year subject is one course; hours are used when the record prints them, and otherwise the national timetable.',
+    provenance: KE_SRC,
+  },
   courses: [
     course(['English'], 'English', 'ela.english'),
     course(['Kiswahili', 'Swahili'], 'Kiswahili', 'wl.other'),
@@ -1042,8 +1083,11 @@ const CALENDARS: Record<string, NonNullable<SystemProfile['calendar']>> = {
   fr: cal('term', 3, 'The French school year has three trimesters; most lycées issue a report each trimester.', FR_SRC.source),
   de: cal('semester', 2, 'German schools issue reports for each half-year (Halbjahr).', DE_SRC.source),
   br: cal('term', 4, 'Brazilian schools commonly report by bimestre, four per year.', BR_SRC.source),
+  ke: cal('term', 3, 'Kenyan secondary schools divide the school year into three terms (Term 1, 2 and 3), and report forms give a mark for each.', {
+    title: 'Three-term year as printed on Kenyan school reports (“Term 1 / Term 2 / Term 3”); confirm with the sending school',
+  }),
 };
-for (const s of [waec, gabece, jamb, ib, uk, inCbse, inCisce, cn, mx, fr, de, ph, br, kr, vn, ru, eg, generic]) {
+for (const s of [waec, gabece, jamb, ib, uk, inCbse, inCisce, cn, mx, fr, de, ph, ke, br, kr, vn, ru, eg, generic]) {
   const c = CALENDARS[s.id];
   if (c) s.calendar = c;
 }
