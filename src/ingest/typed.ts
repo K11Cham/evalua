@@ -25,7 +25,7 @@ const FIELD = /^(student|student name|name|nom|nombre|nome|élève|alumno|aluno|
 // A grade: a number (85, 7,5, 15/20, 3.7), a letter grade (A, B+, A1, C6), or a short word grade (Pass, Distinction).
 const GRADE = /^(?:\d{1,3}(?:[.,]\d{1,2})?(?:\s*\/\s*\d{1,3})?\s*%?|[A-F][+-]?|[A-F][1-9]|[1-9]|pass|fail|merit|distinction|credit|excellent|good|satisfactory|[\p{L}]{2,14})$/iu;
 const NUMERIC_GRADE = /^\d{1,3}(?:[.,]\d{1,2})?(?:\s*\/\s*\d{1,3})?\s*%?$|^[A-F][+-]?$|^[A-F][1-9]$/i;
-const HEADER_WORDS = /^(subject|subjects|course|courses|matière|matières|asignatura|materia|disciplina|mark|marks|grade|grades|note|notes|nota|notas|calificación|score|result|credits?|hours?|créditos|horas|coefficient|coef)$/i;
+const HEADER_WORDS = /^(subject|subjects|course|courses|matière|matières|asignatura|materia|disciplina|mark|marks|grade|grades|note|notes|nota|notas|calificación|score|result|credits?|hours?|créditos|horas|coefficient|coef|units?|unidades|hrs\.?(?:\s*sem\.?)?|hras\.?(?:\s*sem\.?)?|hours per week|hrs per week|periods per week|horas semanales)$/i;
 
 function splitCsv(line: string, sep: string): string[] {
   const out: string[] = [];
@@ -51,8 +51,9 @@ function splitCsv(line: string, sep: string): string[] {
 function cells(line: string): string[] {
   if (line.includes('\t')) return line.split('\t').map((c) => c.trim());
   if (/;/.test(line) && !/,\d/.test(line.replace(/"[^"]*"/g, ''))) return splitCsv(line, ';');
-  // A comma separates cells unless it is a decimal comma ("7,5").
-  if (/,(?!\d)|"/.test(line)) {
+  // A comma separates cells unless it is a decimal comma ("7,5"); one straight after a word ("Filipino,84.75,1")
+  // always separates.
+  if (/,(?!\d)|"/.test(line) || /\p{L}[).]*\s*,\s*\d/u.test(line)) {
     const c = splitCsv(line, ',');
     if (c.length > 1) return c;
   }

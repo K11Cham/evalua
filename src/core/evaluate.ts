@@ -262,6 +262,20 @@ export function evaluate(ex: Extraction, kb: KnowledgeBase, district: DistrictPr
       d.confidence = Math.min(d.confidence, Math.max(0.5, a.confidence));
     }
   }
+  // The terms of one year are one course: every term of a subject (same name, level and school year) is the US course
+  // its first term was placed in, so its credit pools instead of moving up the ladder term by term.
+  const termKey = (id: string) => {
+    const c = courseOf.get(id)!;
+    return c.term ? `${(c.name.original ?? c.name.value).toLowerCase().replace(/\s+/g, ' ').trim()}|${c.level ?? '?'}|${c.academicYear ?? ''}` : '';
+  };
+  const firstUs = new Map<string, { id: string; title: string; concept: string }>();
+  for (const d of [...drafts].sort((a, b) => Number(courseOf.get(a.courseId)!.term ?? 0) - Number(courseOf.get(b.courseId)!.term ?? 0))) {
+    const k = termKey(d.courseId);
+    const us = usOf.get(d.courseId);
+    if (!k || !us) continue;
+    if (!firstUs.has(k)) firstUs.set(k, us);
+    else usOf.set(d.courseId, firstUs.get(k)!);
+  }
   // Second and later years of a single-course subject (Physics in SS1, SS2, SS3) are further study of it.
   const yearsSeen = new Map<string, number[]>();
   for (const d of [...drafts].sort((a, b) => (courseOf.get(a.courseId)!.level ?? 0) - (courseOf.get(b.courseId)!.level ?? 0))) {

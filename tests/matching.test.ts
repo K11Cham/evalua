@@ -78,3 +78,22 @@ describe('hours a week', () => {
     expect(row(r, 'Educación Laboral').concept).toBe('cte.technology');
   });
 });
+
+describe('typed tables from the counselors’ examples', () => {
+  it('reads comma-separated rows with numbers, and a Units or Hrs. Sem. heading', () => {
+    expect(parseTypedTable('Subject,Grade,Units\nFilipino,84.75,1\nElective - Foreign Language,88.75,0.5')).toMatchObject({
+      columns: ['Subject', 'Grade', 'Units'],
+      rows: [['Filipino', '84.75', '1'], ['Elective - Foreign Language', '88.75', '0.5']],
+    });
+    expect(parseTypedTable('Subject,Grade,Hrs. Sem.\nEspañol,3.3,5').rows).toEqual([['Español', '3.3', '5']]);
+  });
+  it('keeps the three terms of one subject in one US course, so their credit adds up to one', () => {
+    const docs = [1, 2, 3].map((t) => typedTextToDoc(`Country: Kenya\nClass: Form 3\nSchool year: 2014-2015\nTerm: Term ${t}\nMathematics: ${[70, 51, 73][t - 1]}\nPhysics: 60`));
+    const all = { ...docs[0], pages: docs.flatMap((d) => d.pages), tokens: docs.flatMap((d, i) => d.tokens.map((k) => ({ ...k, page: k.page + i }))), parts: docs.map((_, i) => ({ name: `t${i + 1}`, firstPage: i })) };
+    const ex = runExtraction(all, kb);
+    const ev = evaluate(ex, kb, jcps);
+    const math = ev.suggestions.filter((s) => ex.courses.find((c) => c.id === s.courseId)!.name.original === 'Mathematics');
+    expect(new Set(math.map((s) => s.usCourse?.id)).size).toBe(1);
+    expect(Math.round(math.reduce((a, s) => a + s.credits, 0) * 100) / 100).toBe(1);
+  });
+});
